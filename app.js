@@ -4,7 +4,7 @@ const express 		= require('express')
 const session 		= require('express-session')
 const bodyParser 	= require('body-parser')
 const morgan		= require('morgan')
-const config		= require('./config')
+const confServer	= require('./config/server')
 
 const index 			= require("./routes/index")
 const createAccount 	= require("./routes/createAccount")
@@ -33,6 +33,6 @@ app.use(session({
 		res.status(404).send('Page introuvable !')
 	})
 
- 	.listen(config.server.port)
+ 	.listen(confServer.port)
 
-console.log("server starting in " + config.server.host + " " + config.server.port)
+console.log("server starting in " + confServer.host + " " + confServer.port)
