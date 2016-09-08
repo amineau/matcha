@@ -1,0 +1,14 @@
+{
+	"server":
+	{
+		"host": "localhost",
+		"port": "8080"
+	},
+	"database":
+	{
+		"host": "107.170.15.105",
+		"port": "7474",
+		"user": "neo4j",
+		"pass": "94gV9FNjmS3q5V6v"
+	}
+}
