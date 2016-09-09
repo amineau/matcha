@@ -1,38 +1,20 @@
 "use strict"
 
 const express 		= require('express')
-const session 		= require('express-session')
 const bodyParser 	= require('body-parser')
 const morgan		= require('morgan')
 const confServer	= require('./config/server')
 
-const index 			= require("./routes/index")
-const createAccount 	= require("./routes/createAccount")
-const logout 			= require("./routes/logout")
+let app = express()
 
-const app = express()
-
-app.use(session({
-		secret: 'azertyu',
-		proxy: true,
-		resave: true,
-    	saveUninitialized: true
-    }))
-	.use(morgan('dev'))
+app.use(morgan('dev'))
 	.use(bodyParser.json())
-	.use(bodyParser.urlencoded({extended: true}))
+	.use(bodyParser.urlencoded({extended: false}))
 
 	.use(express.static(__dirname + '/public'))
-	
-	.use('/', index)
-	.use('/createAccount', createAccount)
-	.use('/logout', logout)
 
-	.use(function(req, res, next) {
-		res.setHeader('Content-Type', 'text/html')
-		res.status(404).send('Page introuvable !')
-	})
+//Routes
+require('./routes/user')(app)
 
- 	.listen(confServer.port)
-
-console.log("server starting in " + confServer.host + " " + confServer.port)
+app.listen(confServer.port)
+console.log("Server starting in " + confServer.host + " " + confServer.port)
