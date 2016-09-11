@@ -19,7 +19,7 @@ exports.doDatabaseOperation = (query, params, parser) => {
 			}
 		}, (err, res) => {
 	    	if (err)
-	    		reject("send mail to amineau@student.42.fr for report err:" + err);
+	    		reject("send mail to amineau@student.42.fr for report " + err);
 	    	else
 		    	resolve(parser(res.body));
 	    });
