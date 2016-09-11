@@ -8,6 +8,7 @@
     "morgan": "~1.7.0",
     "node-neo4j": "~2.0.3",
     "request": "^2.74.0",
+    "sha256": "^0.2.0",
     "socket.io": "~1.4.8",
     "underscore": "~1.8.3"
   }

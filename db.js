@@ -1,9 +1,13 @@
-const request	= require('request')
-const confDb	= require('./config/db')
+/*jshint node:true */
 
-const txUrl = "http://" + confDb.user + ":" + confDb.pass + "@" + confDb.host + ":" + confDb.port + "/db/data/transaction/commit"
+"use strict";
 
-exports.doDatabaseOperation = (query, params) => {
+const request	= require('request');
+const confDb	= require('./config/db');
+
+const txUrl = "http://" + confDb.user + ":" + confDb.pass + "@" + confDb.host + ":" + confDb.port + "/db/data/transaction/commit";
+
+exports.doDatabaseOperation = (query, params, parser) => {
 	return new Promise(function (resolve, reject) {
 		request.post({
 			uri: txUrl,
@@ -15,9 +19,9 @@ exports.doDatabaseOperation = (query, params) => {
 			}
 		}, (err, res) => {
 	    	if (err)
-	    		reject("send mail to amineau@student.42.fr for report err:" + err)
+	    		reject("send mail to amineau@student.42.fr for report err:" + err);
 	    	else
-		    	resolve(res.body)
-	    })
-	})
-}
+		    	resolve(parser(res.body));
+	    });
+	});
+};
