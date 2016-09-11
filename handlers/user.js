@@ -24,7 +24,7 @@ function reqDatabase(query, params, parser, res) {
 exports.signUp = (req, res) => {
 
 	const sha256 	= crypto.createHash("sha256");
-	const user 		= req.query;
+	const user 		= req.body;
 	const query 	=
 		`CREATE(user: User {
 			login: {login},
@@ -47,7 +47,7 @@ exports.signUp = (req, res) => {
 
 exports.signIn = (req, res) => {
 	const sha256 	= crypto.createHash("sha256");
-	const user 		= req.query;
+	const user 		= req.body;
 	const query 	=
 		`MATCH (u:User)
 		WHERE u.login = {login}
@@ -73,7 +73,7 @@ exports.signIn = (req, res) => {
 };
 
 exports.getIdByLogin = (req, res) => {
-	const login		= req.query.login;
+	const login		= req.body.login;
 	const query		= 
 		`MATCH (u:User)
 		WHERE u.login = {login}
@@ -84,7 +84,7 @@ exports.getIdByLogin = (req, res) => {
 };
 
 exports.getIdByEmail = (req, res) => {
-	const email		= req.query.email;
+	const email		= req.body.email;
 	const query		=
 		`MATCH (u:User)
 		WHERE u.email = {email}
@@ -106,7 +106,7 @@ exports.getUserById = (req, res) => {
 };
 
 exports.setUser = (req, res) => {
-	const user		= req.query;
+	const user		= req.body;
 	const query		= 
 		`MATCH (u:User)
 		WHERE id(u) = {id}
