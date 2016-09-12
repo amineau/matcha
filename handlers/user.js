@@ -10,6 +10,7 @@ const parser = new ParserDb();
 
 function reqDatabase(query, params, parser, res) {
 	const showSucces = (data) => {
+		console.log(data);
 		res.json(data);
 	};
 	const showError = (err) => {
@@ -72,6 +73,25 @@ exports.signIn = (req, res) => {
 		.catch(showError);
 };
 
+exports.logout = (req, res) => {
+	if (req.session.userId) {
+		req.session.destroy((err) => {
+			if (err) {
+				res.json({
+					success: false,
+					err: err
+				});
+			} else
+				res.json({success: true});
+		})
+	} else {
+		res.json({
+			success: false,
+			err: "Déconnexion impossible, vous n'êtes pas connecté."
+		});
+	}
+}
+
 exports.getIdByLogin = (req, res) => {
 	const login		= req.body.login;
 	const query		= 
@@ -94,7 +114,7 @@ exports.getIdByEmail = (req, res) => {
 	reqDatabase(query, params, parser.getIds, res);
 };
 
-exports.getUserById = (req, res) => {
+exports.getById = (req, res) => {
 	const id		= Number(req.params.id);
 	const query		=
 		`MATCH (u:User)		
@@ -105,12 +125,13 @@ exports.getUserById = (req, res) => {
 	reqDatabase(query, params, parser.getData, res);
 };
 
-exports.setUser = (req, res) => {
+exports.setLogin = (req, res) => {
+	const id 		= req.session.userId
 	const user		= req.body;
 	const query		= 
 		`MATCH (u:User)
 		WHERE id(u) = {id}
-		SET u += {user}
+		SET u = {login}
 		RETURN u;`;
 	const params	= {
 		'id': req.session.userId,
