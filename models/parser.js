@@ -6,7 +6,6 @@ class ParseDatabase {
 	
 	
 	getTrue(body) {
-		
 		const result = body.results[0].data[0];
 		if (typeof result !== "undefined")
 			return {success: true};

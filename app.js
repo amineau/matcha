@@ -20,7 +20,6 @@ app.use(morgan('dev'))
 		saveUninitialized: "true"
 		// cookie: {}
 	}))
-
 	.use(express.static(__dirname + '/public'));
 
 
