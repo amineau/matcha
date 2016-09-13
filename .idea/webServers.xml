@@ -3,11 +3,11 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="4d993d02-2e2b-498e-8b75-a06418321cfa" name="DigitalOcean" url="http://107.170.15.105">
-        <fileTransfer host="107.170.15.105" port="4242" rootFolder="~/" accessType="SFTP" username="root">
+        <fileTransfer host="107.170.15.105" port="22" rootFolder="/root" accessType="SFTP" password="dfe3dfe8df93dfc1df98dfc2dfc1dfcbdfe8dfc3dfc8dfe8dff0dfefdf9ddfe4df9cdf9ddfdadff2" username="root">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" />
           </advancedOptions>
-          <option name="port" value="4242" />
+          <option name="port" value="22" />
         </fileTransfer>
       </webServer>
     </option>
