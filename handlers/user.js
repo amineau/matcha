@@ -28,7 +28,7 @@ exports.signUp = (req, res) => {
     const user 		= req.body;
     const query 	=
         `CREATE(user: User {
-         	login: {login},
+         	name: {login},
             email: {email},
             firstName: {firstName},
             lastName: {lastName},
@@ -51,7 +51,7 @@ exports.signIn = (req, res) => {
     const user 		= req.body;
     const query 	=
         `MATCH (u:User)
-        WHERE u.login = {login}
+        WHERE u.name = {login}
         AND u.password = {password}
         RETURN u`;
     const params 	= {
@@ -102,7 +102,7 @@ exports.getIdByLogin = (req, res) => {
     const login		= req.body.login;
     const query		=
         `MATCH (u:User)
-        WHERE u.login = {login}
+        WHERE u.name = {login}
         RETURN u;`;
     const params	= {'login': login};
 
@@ -137,10 +137,10 @@ exports.setLogin = (req, res) => {
     const query	=
         `MATCH (u:User)
         WHERE id(u) = {id}
-        SET u.login = {login}
+        SET u.name = {login}
         RETURN u;`;
     const params	= {
-        'id': req.session.userId,
+        'id': id,
         'login': login
     };
 
