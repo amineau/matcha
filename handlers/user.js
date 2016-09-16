@@ -132,7 +132,7 @@ exports.getById = (req, res) => {
 };
 
 exports.setLogin = (req, res) => {
-    const id 	= req.session.userId
+    const id 	= req.session.userId;
     const login	= req.body.login;
     const query	=
         `MATCH (u:User)
@@ -148,7 +148,7 @@ exports.setLogin = (req, res) => {
 };
 
 exports.setEmail = (req, res) => {
-  const id 	  = req.session.userId
+  const id 	  = req.session.userId;
   const email = req.body.email;
   const query =
       `MATCH (u:User)
@@ -161,4 +161,101 @@ exports.setEmail = (req, res) => {
   };
 
   reqDatabase(query, params, parser.getDebug, res);
+};
+
+exports.setPassword = (req, res) => {
+    const sha256 	= crypto.createHash("sha256");
+    const id 	= req.session.userId;
+    const email = req.body.password;
+    const query =
+        `MATCH (u:User)
+        WHERE id(u) = {id}
+        SET u.password = {password}
+        RETURN u;`;
+    const params	= {
+        'id': req.session.userId,
+        'password': sha256.update(password).digest("base64")
+    };
+
+    reqDatabase(query, params, parser.getDebug, res);
+};
+
+exports.setFirstName = (req, res) => {
+    const id 	    = req.session.userId;
+    const firstName = req.body.firstName;
+    const query =
+        `MATCH (u:User)
+        WHERE id(u) = {id}
+        SET u.firstName = {firstName}
+        RETURN u;`;
+    const params	= {
+        'id': req.session.userId,
+        'firstName': firstName
+    };
+
+    reqDatabase(query, params, parser.getDebug, res);
+};
+
+exports.setLastName = (req, res) => {
+    const id 	    = req.session.userId;
+    const lastName = req.body.lastName;
+    const query =
+        `MATCH (u:User)
+        WHERE id(u) = {id}
+        SET u.firstName = {firstName}
+        RETURN u;`;
+    const params	= {
+        'id': req.session.userId,
+        'lastName': lastName
+    };
+
+    reqDatabase(query, params, parser.getDebug, res);
+};
+
+exports.setSex = (req, res) => {
+    const id 	= req.session.userId;
+    const sex   = req.body.sex;
+    const query =
+        `MATCH (u:User)
+        WHERE id(u) = {id}
+        SET u.sex = {sex}
+        RETURN u;`;
+    const params	= {
+        'id': req.session.userId,
+        'sex': sex
+    };
+
+    reqDatabase(query, params, parser.getDebug, res);
+};
+
+exports.setPrefer = (req, res) => {
+    const id 	 = req.session.userId;
+    const prefer = req.body.prefer;
+    const query  =
+        `MATCH (u:User)
+        WHERE id(u) = {id}
+        SET u.prefer = {prefer}
+        RETURN u;`;
+    const params	= {
+        'id': req.session.userId,
+        'prefer': prefer
+    };
+
+    reqDatabase(query, params, parser.getDebug, res);
+};
+
+exports.setBio = (req, res) => {
+    const id 	= req.session.userId;
+    const bio   = req.body.bio;
+    const query =
+        `MATCH (u:User)
+        WHERE id(u) = {id}
+        SET u.bio = {bio}
+        RETURN u;`;
+    const params	= {
+        'id': req.session.userId,
+        'bio': bio
+    };
+
+    reqDatabase(query, params, parser.getDebug, res);
 };

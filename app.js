@@ -25,6 +25,7 @@ app.use(morgan('dev'))
 
 //Routes
 require('./routes/user')(app);
+require('./routes/tags')(app);
 
 app.listen(confServer.port);
 console.log("Server starting in " + confServer.host + " " + confServer.port);
