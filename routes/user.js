@@ -1,5 +1,3 @@
-/*jshint node:true */
-
 "use strict";
 
 const user = require('../handlers/user');

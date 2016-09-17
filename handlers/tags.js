@@ -1,5 +1,3 @@
-/*jshint node:true */
-
 'use strict';
 
 const ParserDb	 	= require("../models/parser");
@@ -23,17 +21,25 @@ function reqDatabase(query, params, parser, res) {
 }
 
 exports.search = (req, res) => {
+  const id = req.session.userId;
   const search 	= req.body.tag;
   const query 	=
-      `MATCH(tag: Tag)
-      WHERE tag.name CONTAINS {search}
-      RETURN *;`;
-  const params 	= {'search': '(?i)' + search};
+      `MATCH(t: Tag), (u: User)
+      WHERE id(u) = {id}
+      AND t.name CONTAINS {search}
+      AND NOT (u)-[:LIKED]->(t)
+      RETURN t.name;`;
+  const params 	= {
+    'id': id,
+    'search': search
+  };
 
   reqDatabase(query, params, parser.getDebug, res);
 };
 
 exports.add = (req, res) => {
+
+  /*  In Promise in each function   */
   const id = req.session.userId;
   if (!id) {
     res.json({
@@ -41,11 +47,13 @@ exports.add = (req, res) => {
       err: "Opération impossible, vous n'êtes pas connecté."
     });
   }
+
   const tag 	= req.body.tag;
   const query 	=
       `MATCH (u: User)
       WHERE id(u) = {id}
-      MERGE (u)-[:LIKED]->(t:Tag {name: {tag}})
+      MERGE (t:Tag {name: {tag}})
+      CREATE UNIQUE (u)-[:LIKED]->(t)
       RETURN t;`;
   const params 	= {
     'id' : id,
