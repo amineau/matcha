@@ -20,6 +20,26 @@ function reqDatabase(query, params, parser, res) {
         .catch(showError);
 }
 
+function countPicture(id) {
+    const query =
+        `MATCH (u: User)-[]->(i :Img)
+        WHERE id(u) = {id}
+        RETURN count(i);`;
+    const params = {'id': id};
+
+    const showSucces = (data) => {
+        // console.log(data);
+        return data;
+    };
+    const showError = (err) => {
+        console.log(err);
+    };
+
+    return db.doDatabaseOperation(query, params, parser.getDebug)
+        .then(showSucces)
+        .catch(showError);
+}
+
 exports.getPic = (req, res) => {
     const id 	= req.params.id;
     const query =
@@ -34,7 +54,7 @@ exports.getPic = (req, res) => {
 exports.getPicsByUser = (req, res) => {
     const id 	= req.params.idUser;
     const query =
-        `MATCH(i: Img)-[:OWN]-(u: User)
+        `MATCH(i: Img)-[:OWNER]-(u: User)
         WHERE id(u) = {id}
         RETURN i.name;`;
     const params = {'id': id};
@@ -45,17 +65,21 @@ exports.getPicsByUser = (req, res) => {
 exports.add = (req, res) => {
     const id    = req.session.userId;
     const pic   = req.body.photo;
-    const profile = req.body.profile;
     const query =
-        `MATCH (u: User)
+        `MATCH (u: User)-[r:OWNER]->()
         WHERE id(u) = {id}
-        CREATE(i: Img {name: {pic}})
-        CREATE(u)-[:OWNER {profile: {profile}}]->(i)
-        RETURN i;`;
+        WITH r
+        MATCH (u: User)
+        WHERE id(u) = {id}
+        CREATE(new: Img {name: {pic}})
+        CREATE(u)-[p:OWNER {profile: first}]->(new)
+        SET p.profile = 
+        CASE WHEN r THEN false ELSE true
+        END
+        RETURN id(new);`;
     const params = {
         'id': id,
-        'pic': pic,
-        'profile': profile
+        'pic': pic
     };
 
     reqDatabase(query, params, parser.getDebug, res);
@@ -65,12 +89,14 @@ exports.profile = (req, res) => {
     const idUser  = req.session.userId;
     const idPic   = req.params.id;
     const query =
-        `MATCH (u: User)-[r:OWNER]->(p: Img)
-        WHERE id(u) = {idUser}
-        AND r.profile = false
-        AND id(p) = {idPic}
-        SET r.profile = true
-        RETURN i;`;
+        `MATCH (u: User)-[f:OWNER]->(l: Img)
+        WHERE id(u) = {idUser} AND f.profile = true
+        SET f.profile = false
+        WITH 1 AS dummy
+        MATCH (u:User)-[t:OWNER]->(i: Img)
+        WHERE id(u) = {idUser} AND id(i) = {idPic}
+        SET t.profile = true
+        RETURN t.profile;`;
     const params = {
         'idUser': idUser,
         'idPic': idPic
@@ -82,9 +108,12 @@ exports.profile = (req, res) => {
 exports.delete = (req, res) => {
     const idUser  = req.session.userId;
     const idPic   = req.params.id;
-    const query =
-        `MATCH (u: User)-[:OWNER]->(i: Img)
-        `;
+    const query   =
+        `MATCH (u: User)-[r:OWNER]->(i: Img)
+        WHERE id(u) = {idUser}
+        AND id(i) = {idPic}
+        DELETE (r)
+        RETURN i, u;`;
     const params = {
         'idUser': idUser,
         'idPic': idPic
