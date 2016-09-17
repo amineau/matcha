@@ -28,11 +28,12 @@ function countPicture(id) {
     const params = {'id': id};
 
     const showSucces = (data) => {
-        // console.log(data);
+        console.log(data);
         return data;
     };
     const showError = (err) => {
         console.log(err);
+        return 0;
     };
 
     return db.doDatabaseOperation(query, params, parser.getDebug)
@@ -64,22 +65,18 @@ exports.getPicsByUser = (req, res) => {
 
 exports.add = (req, res) => {
     const id    = req.session.userId;
-    const pic   = req.body.photo;
+    const pic   = req.body.pic;
+    var profile = countPicture(id) ? false : true;
     const query =
-        `MATCH (u: User)-[r:OWNER]->()
-        WHERE id(u) = {id}
-        WITH r
-        MATCH (u: User)
+        `MATCH (u: User)
         WHERE id(u) = {id}
         CREATE(new: Img {name: {pic}})
-        CREATE(u)-[p:OWNER {profile: first}]->(new)
-        SET p.profile = 
-        CASE WHEN r THEN false ELSE true
-        END
+        CREATE(u)-[p:OWNER {profile: {profile}}]->(new)
         RETURN id(new);`;
     const params = {
         'id': id,
-        'pic': pic
+        'pic': pic,
+        'profile': profile
     };
 
     reqDatabase(query, params, parser.getDebug, res);

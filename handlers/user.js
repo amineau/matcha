@@ -14,7 +14,7 @@ function reqDatabase(query, params, parser, res) {
         res.json(data);
     };
     const showError = (err) => {
-        res.json(err);
+        res.status(403).json(err);
     };
 
     return db.doDatabaseOperation(query, params, parser)
@@ -22,10 +22,38 @@ function reqDatabase(query, params, parser, res) {
             .catch(showError);
 }
 
-exports.signUp = (req, res) => {
+exports.loginExist = (req, res) => {
+    const login = req.body.login;
+    const query =
+        `MATCH (u: User)
+        WHERE u.login = {login}
+        RETURN u;`;
+    const params = {"login": login};
 
+    reqDatabase(query, params, parser.getTrue, res);
+};
+
+exports.emailExist = (req, res) => {
+    const email = req.body.email;
+    const query =
+        `MATCH (u: User)
+        WHERE u.email = {email}
+        RETURN u;`;
+    const params = {"email": email};
+
+    reqDatabase(query, params, parser.getTrue, res);
+};
+
+exports.signUp = (req, res) => {
     const sha256 	= crypto.createHash("sha256");
     const user 		= req.body;
+    if (!user.login || !user.password || !user.email || !user.firstName || !user.lastName) {
+        res.status(206).json({
+            success: false,
+            message: "Informations manquantes"
+        });
+        return;
+    }
     const query 	=
         `CREATE(user: User {
          	name: {login},
@@ -61,17 +89,17 @@ exports.signIn = (req, res) => {
 
     const showSucces = (data) => {
         if (req.session.userId){
-            res.json({success: false, error: "Vous êtes déjà connecté"})
+            res.json({success: false, message: "Vous êtes déjà connecté"})
         }else if ((req.session.userId = data.id[0])) {
             res.json({success: true});
         } else {
-            res.json({success: false, error: "Login et/ou mot de passe incorrect"})
+            res.json({success: false, message: "Login et/ou mot de passe incorrect"})
         }
     };
 
     const showError = (err) => {
         console.log(err);
-        res.json({success: false, error: "Un problème de connection à la base de donnée est survenu. Veuillez réessayer ultérieurement"});
+        res.status(403).json({success: false, message: "Un problème de connection à la base de donnée est survenu. Veuillez réessayer ultérieurement"});
     };
 
     db.doDatabaseOperation(query, params, parser.getIds)
@@ -91,7 +119,7 @@ exports.logout = (req, res) => {
                 res.json({success: true});
         })
     } else {
-        res.json({
+        res.status(401).json({
             success: false,
             err: "Déconnexion impossible, vous n'êtes pas connecté."
         });
