@@ -25,6 +25,23 @@ module.exports = class UserQuery {
         });
     }
 
+    AuthUser(data) {
+        return new Promise((resolve, reject) => {
+            const query 	=
+                `MATCH (u:User)
+                WHERE u.name = {login}
+                AND u.password = {password}
+                RETURN u`;
+            db.doDatabaseOperation(query, data)
+                .then((data) => {
+                    resolve(data);
+                })
+                .catch((err) => {
+                    reject(err);
+                })
+        });
+    }
+
     GetByEmail(data) {
         return new Promise((resolve, reject) => {
            const query =
@@ -72,4 +89,4 @@ module.exports = class UserQuery {
                 })
         });
     }
-}
+};

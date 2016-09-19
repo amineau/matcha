@@ -1,10 +1,10 @@
 "use strict";
 
-const crypto 		= require("crypto");
+const bcrypt        = require('bcrypt');
+const saltRounds    = 7;
 
 function hash(password) {
-    const sha256 = crypto.createHash("sha256");
-    return sha256.update(password).digest("base64");
+    return bcrypt.hashSync(password, saltRounds);
 }
 
 function parseName(name) {
@@ -45,11 +45,12 @@ module.exports = class UserValidator {
                 message: 'Nom incorrect'
             },
             password: {
-                match: /^^(?=.*[0-9])(?=.*[a-z])([a-z0-9.!#$%&’*+/=?^_`{|}~-]{6,50})$/i,
+                match: /^(?=.*[0-9])(?=.*[a-z])([a-z0-9.!#$%&’*+/=?^_`{|}~-]{6,50})$/i,
                 message: 'Mot de passe invalide'
             },
             id: {
-                message: 'Id manquant'
+                match: /^[0-9]+$/,
+                message: 'Id invalide'
             }
         };
     }
@@ -59,13 +60,26 @@ module.exports = class UserValidator {
      * @public
      * @return {Promise}
      */
-    ParseUser() {
+    ParseRegister() {
         return Promise.resolve()
             .then(() => this.ParserLogin())
             .then(() => this.ParserEmail())
             .then(() => this.ParserFirstName())
             .then(() => this.ParserLastName())
             .then(() => this.ParserPassword())
+            .then(() => this.GetResult());
+    }
+
+    ParseConnexion() {
+        return Promise.resolve()
+            .then(() => this.ParserLogin())
+            .then(() => this.ParserPassword())
+            .then(() => this.GetResult());
+    }
+
+    ParseId() {
+        return Promise.resolve()
+            .then(() => this.ParserId())
             .then(() => this.GetResult());
     }
 
@@ -76,7 +90,7 @@ module.exports = class UserValidator {
             else
                 reject({
                     status: 403,
-                    error: this._errors
+                    error: this._errors[0]
                 });
         })
     }
@@ -84,11 +98,10 @@ module.exports = class UserValidator {
     ParserLogin() {
         return new Promise((resolve) => {
             const login = this._toParse.login;
-                if (login && login.match(this._parser.login.match)) {
+                if (login && login.match(this._parser.login.match))
                     this._parsed.login = login;
-                } else {
+                else
                     this._errors.push({key: "login", message: this._parser.login.message})
-                }
             resolve(this._parsed);
         });
     }
@@ -96,11 +109,10 @@ module.exports = class UserValidator {
     ParserEmail() {
         return new Promise((resolve) => {
             const email = this._toParse.email;
-                if (email && email.match(this._parser.email.match)) {
+                if (email && email.match(this._parser.email.match))
                     this._parsed.email = email;
-                } else {
+                else
                     this._errors.push({key: "email", message: this._parser.email.message})
-                }
             resolve(this._parsed);
         });
     }
@@ -108,11 +120,10 @@ module.exports = class UserValidator {
     ParserFirstName() {
         return new Promise((resolve) => {
             const firstName = this._toParse.firstName;
-                if (firstName && firstName.match(this._parser.firstName.match)) {
+                if (firstName && firstName.match(this._parser.firstName.match))
                     this._parsed.firstName = parseName(firstName);
-                } else {
+                else
                     this._errors.push({key: "firstName", message: this._parser.firstName.message})
-                }
             resolve(this._parsed);
         });
     }
@@ -120,11 +131,10 @@ module.exports = class UserValidator {
     ParserLastName() {
         return new Promise((resolve) => {
             const lastName = this._toParse.lastName;
-                if (lastName && lastName.match(this._parser.lastName.match)) {
+                if (lastName && lastName.match(this._parser.lastName.match))
                     this._parsed.lastName = parseName(lastName);
-                } else {
+                else
                     this._errors.push({key: "lastName", message: this._parser.lastName.message})
-                }
             resolve(this._parsed);
         });
     }
@@ -132,11 +142,10 @@ module.exports = class UserValidator {
     ParserPassword() {
         return new Promise((resolve) => {
             const password = this._toParse.password;
-                if (password && password.match(this._parser.password.match)) {
+                if (password && password.match(this._parser.password.match))
                     this._parsed.password = hash(password);
-                } else {
+                else
                     this._errors.push({key: "password", message: this._parser.password.message})
-                }
             resolve(this._parsed);
         });
     }
@@ -144,12 +153,11 @@ module.exports = class UserValidator {
     ParserId() {
         return new Promise((resolve) => {
             const id = this._toParse.id;
-            if (id) {
+            if (id && id.match(this._parser.id.match))
                 this._parsed.id = Number(id);
-            } else {
-                this._errors.push({key: "id", message: this._parser.id.message})
-            }
+            else
+                this._errors.push(this._parser.id.message);
             resolve(this._parsed);
-        });
+        })
     }
-}
+};

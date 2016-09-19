@@ -7,7 +7,7 @@ const crypto 		= require("crypto");
 const parser = new ParserDb();
 
 function reqDatabase(query, params, parser, res) {
-    const showSucces = (data) => {
+    const showSuccess = (data) => {
         // console.log(data);
         res.json(data);
     };
@@ -16,7 +16,7 @@ function reqDatabase(query, params, parser, res) {
     };
 
     return db.doDatabaseOperation(query, params, parser)
-        .then(showSucces)
+        .then(showSuccess)
         .catch(showError);
 }
 
@@ -27,7 +27,7 @@ function countPicture(id) {
         RETURN count(i);`;
     const params = {'id': id};
 
-    const showSucces = (data) => {
+    const showSuccess = (data) => {
         console.log(data);
         return data;
     };
@@ -37,7 +37,7 @@ function countPicture(id) {
     };
 
     return db.doDatabaseOperation(query, params, parser.getDebug)
-        .then(showSucces)
+        .then(showSuccess)
         .catch(showError);
 }
 

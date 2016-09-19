@@ -21,9 +21,9 @@ exports.getById = (req, res) => {
         });
     };
 
-    validate.ParserId()
+    validate.ParseId()
         .then(Query.GetById)
-        .then(Parser.getData)
+        .then(Parser.GetData)
         .then(showSuccess)
         .catch(showError);
 };
@@ -42,7 +42,7 @@ exports.getIdByLogin = (req, res) => {
 
     validate.ParserLogin()
         .then(Query.GetByLogin)
-        .then(Parser.getId)
+        .then(Parser.GetId)
         .then(showSuccess)
         .catch(showError);
 };
@@ -61,7 +61,7 @@ exports.getIdByEmail = (req, res) => {
 
     validate.ParserEmail()
         .then(Query.GetByEmail)
-        .then(Parser.getId)
+        .then(Parser.GetId)
         .then(showSuccess)
         .catch(showError);
 };
@@ -78,16 +78,15 @@ exports.signUp = (req, res) => {
         });
     };
 
-    validate.ParseUser()
+    validate.ParseRegister()
         .then(Query.AddUser)
-        .then(Parser.getTrue)
+        .then(Parser.GetTrue)
         .then(showSuccess)
         .catch(showError);
 };
 
 exports.signIn = (req, res) => {
-    const sha256 	= crypto.createHash("sha256");
-    const user 		= req.body;
+    const validate  = new UserValidator(req.body);
     const query 	=
         `MATCH (u:User)
         WHERE u.name = {login}
@@ -98,7 +97,7 @@ exports.signIn = (req, res) => {
         'password': sha256.update(user.password).digest("base64")
     };
 
-    const showSucces = (data) => {
+    const showSuccess = (data) => {
         if (req.session.userId){
             res.json({success: false, message: "Vous êtes déjà connecté"})
         }else if ((req.session.userId = data.id[0])) {
@@ -113,8 +112,15 @@ exports.signIn = (req, res) => {
         res.status(403).json({success: false, message: "Un problème de connection à la base de donnée est survenu. Veuillez réessayer ultérieurement"});
     };
 
-    db.doDatabaseOperation(query, params, parser.getIds)
-        .then(showSucces)
+    validate.ParseConnexion()
+        /* Nop !! Pas comme ça :
+        *   GetIdByLogin
+        *   GetPassword
+        *   CheckPassword
+        */
+        .then(Query.AuthUser)
+        .then(Parser.GetId)
+        .then(showSuccess)
         .catch(showError);
 };
 
