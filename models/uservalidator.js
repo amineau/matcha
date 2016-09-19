@@ -86,11 +86,12 @@ module.exports = class UserValidator {
         return new Promise((resolve, reject) => {
             if (this._errors.length == 0)
                 resolve(this._parsed);
-            else
+            else {
                 reject({
                     status: 403,
                     error: this._errors[0]
                 });
+            }
         })
     }
 

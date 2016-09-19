@@ -89,6 +89,18 @@ exports.signUp = (req, res) => {
 exports.signIn = (req, res) => {
     const validate  = new UserValidator(req.body);
 
+    const checkAuth = () => {
+        return new Promise((resolve, reject) => {
+            if (req.session.userId) {
+                reject({
+                    status: 401,
+                    error: "Vous êtes déjà connecté"
+                });
+            }
+            resolve();
+        });
+    };
+
     const comparePass = (data) => {
       return new Promise((resolve, reject) => {
           if (bcrypt.compareSync(req.body.password, data.results[0].password)) {
@@ -100,27 +112,21 @@ exports.signIn = (req, res) => {
           }
       });
     };
+
     const showSuccess = (data) => {
-        if (req.session.userId){
-            res.status(401).json({
-                success: false,
-                err: "Vous êtes déjà connecté"
-            });
-        } else {
-            req.session.userId = data;
-            res.json({
-                success: true,
-                id: data
-            });
-        }
+        req.session.userId = data;
+        res.json({
+            success: true,
+            id: data
+        });
     };
 
     const showError = (err) => {
+        console.log("err: ", err);
         if (err.status == 403 || err.status == 404) {
             err.status = 401;
             err.error = "Login et/ou mot de passe incorrect"
         }
-        console.log("err: ", err);
         res.status(err.status).json({
             success: false,
             err: err.error
@@ -128,7 +134,8 @@ exports.signIn = (req, res) => {
     };
 
 
-    validate.ParseLogin()
+    checkAuth()
+        .then(validate.ParseLogin)
         .then(Query.GetPassword)
         .then(Parser.GetData)
         .then(comparePass)
@@ -137,21 +144,24 @@ exports.signIn = (req, res) => {
 };
 
 exports.logout = (req, res) => {
-    let promise = new Promise((resolve, reject) => {
-        if (req.session.userId) {
-            req.session.destroy((err) => {
-                if (err)
-                    reject(err);
-                else
-                    resolve({success: true});
-            })
-        } else {
-            reject({
-                status: 401,
-                error: "Déconnexion impossible, vous n'êtes pas connecté."
-            });
-        }
-    });
+    const sessionDestroy = () => {
+        return new Promise((resolve, reject) => {
+            if (req.session.userId) {
+                req.session.destroy((err) => {
+                    if (err)
+                        reject(err);
+                    else
+                        resolve({success: true});
+                })
+            } else {
+                reject({
+                    status: 401,
+                    error: "Déconnexion impossible, vous n'êtes pas connecté."
+                });
+            }
+        });
+    };
+
     const showSuccess = (data) => {
         res.json(data);
     };
@@ -161,7 +171,7 @@ exports.logout = (req, res) => {
             err: err.error
         });
     };
-    promise()
+    sessionDestroy()
         .then(showSuccess)
         .catch(showError);
 }
