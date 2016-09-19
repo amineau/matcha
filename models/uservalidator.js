@@ -70,10 +70,9 @@ module.exports = class UserValidator {
             .then(() => this.GetResult());
     }
 
-    ParseConnexion() {
+    ParseLogin() {
         return Promise.resolve()
             .then(() => this.ParserLogin())
-            .then(() => this.ParserPassword())
             .then(() => this.GetResult());
     }
 
@@ -160,4 +159,5 @@ module.exports = class UserValidator {
             resolve(this._parsed);
         })
     }
+
 };

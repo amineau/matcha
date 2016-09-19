@@ -15,6 +15,7 @@ module.exports = class UserQuery {
                     password: {password}
                 })
                 RETURN *;`;
+
             db.doDatabaseOperation(query, data)
                 .then((data) => {
                     resolve(data);
@@ -25,13 +26,14 @@ module.exports = class UserQuery {
         });
     }
 
-    AuthUser(data) {
+    GetPassword(data) {
+        console.log(data);
         return new Promise((resolve, reject) => {
             const query 	=
                 `MATCH (u:User)
-                WHERE u.name = {login}
-                AND u.password = {password}
-                RETURN u`;
+                WHERE u.login = {login}
+                RETURN id(u) as id, u.password as password`;
+
             db.doDatabaseOperation(query, data)
                 .then((data) => {
                     resolve(data);

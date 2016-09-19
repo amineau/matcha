@@ -4,6 +4,7 @@ const DbParser	 	= require("../models/dbparser");
 const UserValidator = require("../models/uservalidator");
 const UserQuery     = require("../models/userquery");
 const db			= require("../db");
+const bcrypt        = require('bcrypt');
 
 
 const Parser = new DbParser();
@@ -87,39 +88,46 @@ exports.signUp = (req, res) => {
 
 exports.signIn = (req, res) => {
     const validate  = new UserValidator(req.body);
-    const query 	=
-        `MATCH (u:User)
-        WHERE u.name = {login}
-        AND u.password = {password}
-        RETURN u`;
-    const params 	= {
-        'login': user.login,
-        'password': sha256.update(user.password).digest("base64")
-    };
 
+    const comparePass = (data) => {
+        console.log(data);
+      return new Promise((resolve, reject) => {
+          if (bcrypt.compareSync(req.body.password, data.password))
+              resolve(data);
+          reject(err.status = 403);
+      });
+    };
     const showSuccess = (data) => {
         if (req.session.userId){
-            res.json({success: false, message: "Vous êtes déjà connecté"})
-        }else if ((req.session.userId = data.id[0])) {
-            res.json({success: true});
+            res.status(401).json({
+                success: false,
+                err: "Vous êtes déjà connecté"
+            });
         } else {
-            res.json({success: false, message: "Login et/ou mot de passe incorrect"})
+            req.session.userId = data.id[0];
+            res.json({
+                success: true,
+                id: data.id[0]
+            });
         }
     };
 
     const showError = (err) => {
-        console.log(err);
-        res.status(403).json({success: false, message: "Un problème de connection à la base de donnée est survenu. Veuillez réessayer ultérieurement"});
+        if (err.status == 403 || err.status == 404) {
+            err.status = 401;
+            err.error = "Login et/ou mot de passe incorrect"
+        }
+        res.status(err.status).json({
+            success: false,
+            err: err.error
+        });
     };
 
-    validate.ParseConnexion()
-        /* Nop !! Pas comme ça :
-        *   GetIdByLogin
-        *   GetPassword
-        *   CheckPassword
-        */
-        .then(Query.AuthUser)
-        .then(Parser.GetId)
+
+    validate.ParseLogin()
+        .then(Query.GetPassword)
+        .then(Parser.GetData)
+        .then(comparePass)
         .then(showSuccess)
         .catch(showError);
 };
