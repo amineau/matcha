@@ -30,8 +30,8 @@ exports.search = (req, res) => {
       AND NOT (u)-[:LIKED]->(t)
       RETURN t.name;`;
   const params 	= {
-    'id': id,
-    'search': search
+    id: id,
+    search: search
   };
 
   reqDatabase(query, params, parser.getDebug, res);
@@ -56,8 +56,8 @@ exports.add = (req, res) => {
       CREATE UNIQUE (u)-[:LIKED]->(t)
       RETURN t;`;
   const params 	= {
-    'id' : id,
-    'tag': tag
+    id : id,
+    tag: tag
   };
   console.log(tag);
 

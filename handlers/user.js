@@ -1,77 +1,88 @@
-/*jshint node:true */
-
 'use strict';
 
-const ParserDb	 	= require("../models/parser");
+const DbParser	 	= require("../models/dbparser");
+const UserValidator = require("../models/uservalidator");
+const UserQuery     = require("../models/userquery");
 const db			= require("../db");
-const crypto 		= require("crypto");
 
-const parser = new ParserDb();
 
-function reqDatabase(query, params, parser, res) {
-    const showSucces = (data) => {
-        console.log(data);
+const Parser = new DbParser();
+const Query  = new UserQuery();
+
+exports.getById = (req, res) => {
+    const validate = new UserValidator(req.params);
+    const showSuccess = (data) => {
         res.json(data);
     };
     const showError = (err) => {
-        res.status(403).json(err);
+        res.status(err.status).json({
+            success: false,
+            err: err.error
+        });
     };
 
-    return db.doDatabaseOperation(query, params, parser)
-            .then(showSucces)
-            .catch(showError);
-}
-
-exports.loginExist = (req, res) => {
-    const login = req.body.login;
-    const query =
-        `MATCH (u: User)
-        WHERE u.login = {login}
-        RETURN u;`;
-    const params = {"login": login};
-
-    reqDatabase(query, params, parser.getTrue, res);
+    validate.ParserId()
+        .then(Query.GetById)
+        .then(Parser.getData)
+        .then(showSuccess)
+        .catch(showError);
 };
 
-exports.emailExist = (req, res) => {
-    const email = req.body.email;
-    const query =
-        `MATCH (u: User)
-        WHERE u.email = {email}
-        RETURN u;`;
-    const params = {"email": email};
+exports.getIdByLogin = (req, res) => {
+    const validate = new UserValidator(req.params);
+    const showSuccess = (data) => {
+        res.json(data);
+    };
+    const showError = (err) => {
+        res.status(err.status).json({
+            success: false,
+            err: err.error
+        });
+    };
 
-    reqDatabase(query, params, parser.getTrue, res);
+    validate.ParserLogin()
+        .then(Query.GetByLogin)
+        .then(Parser.getId)
+        .then(showSuccess)
+        .catch(showError);
+};
+
+exports.getIdByEmail = (req, res) => {
+    const validate = new UserValidator(req.params);
+    const showSuccess = (data) => {
+        res.json(data);
+    };
+    const showError = (err) => {
+        res.status(err.status).json({
+            success: false,
+            err: err.error
+        });
+    };
+
+    validate.ParserEmail()
+        .then(Query.GetByEmail)
+        .then(Parser.getId)
+        .then(showSuccess)
+        .catch(showError);
 };
 
 exports.signUp = (req, res) => {
-    const sha256 	= crypto.createHash("sha256");
-    const user 		= req.body;
-    if (!user.login || !user.password || !user.email || !user.firstName || !user.lastName) {
-        res.status(206).json({
+    const validate  = new UserValidator(req.body);
+    const showSuccess = (data) => {
+        res.json(data);
+    };
+    const showError = (err) => {
+        res.status(err.status).json({
             success: false,
-            message: "Informations manquantes"
+            err: err.error
         });
-        return;
-    }
-    const query 	=
-        `CREATE(user: User {
-         	name: {login},
-            email: {email},
-            firstName: {firstName},
-            lastName: {lastName},
-            password: {password}
-        })
-        RETURN *;`;
-    const params 	= {
-      'login': user.login,
-      'email': user.email,
-      'firstName': user.firstName,
-      'lastName': user.lastName,
-      'password': sha256.update(user.password).digest("base64")
     };
 
-    reqDatabase(query, params, parser.getTrue, res);
+    validate.ParseUser()
+        .then(Query.AddUser)
+        .then(Parser.getTrue)
+        .then(showSuccess)
+        .catch(showError);
 };
 
 exports.signIn = (req, res) => {
@@ -108,56 +119,34 @@ exports.signIn = (req, res) => {
 };
 
 exports.logout = (req, res) => {
-    if (req.session.userId) {
-        req.session.destroy((err) => {
-            if (err) {
-                res.json({
-                    success: false,
-                    err: err
-                });
-            } else
-                res.json({success: true});
-        })
-    } else {
-        res.status(401).json({
+    let promise = new Promise((resolve, reject) => {
+        if (req.session.userId) {
+            req.session.destroy((err) => {
+                if (err)
+                    reject(err);
+                else
+                    resolve({success: true});
+            })
+        } else {
+            reject({
+                status: 401,
+                error: "Déconnexion impossible, vous n'êtes pas connecté."
+            });
+        }
+    });
+    const showSuccess = (data) => {
+        res.json(data);
+    };
+    const showError = (err) => {
+        res.status(err.status).json({
             success: false,
-            err: "Déconnexion impossible, vous n'êtes pas connecté."
+            err: err.error
         });
-    }
+    };
+    promise()
+        .then(showSuccess)
+        .catch(showError);
 }
-
-exports.getIdByLogin = (req, res) => {
-    const login		= req.body.login;
-    const query		=
-        `MATCH (u:User)
-        WHERE u.name = {login}
-        RETURN u;`;
-    const params	= {'login': login};
-
-    reqDatabase(query, params, parser.getIds, res);
-};
-
-exports.getIdByEmail = (req, res) => {
-    const email		= req.body.email;
-    const query		=
-        `MATCH (u:User)
-        WHERE u.email = {email}
-        RETURN u;`;
-    const params	= {'email': email};
-
-    reqDatabase(query, params, parser.getIds, res);
-};
-
-exports.getById = (req, res) => {
-    const id		= Number(req.params.id);
-    const query		=
-        `MATCH (u:User)		
-        WHERE id(u) = {id}
-        RETURN u;`;
-    const params	= {'id': id};
-
-    reqDatabase(query, params, parser.getData, res);
-};
 
 exports.setLogin = (req, res) => {
     const id 	= req.session.userId;
