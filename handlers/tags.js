@@ -1,6 +1,6 @@
 'use strict';
 
-const ParserDb	 	= require("../models/parser");
+const ParserDb	 	= require("../models/dbparser");
 const db			= require("../db");
 const crypto 		= require("crypto");
 
