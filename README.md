@@ -39,9 +39,7 @@ sécurisés :<br>
 
 ## Résumé
 Vous devrez donc concevoir une application permettant à deux potentielles âmes soeurs de se rencontrer, de l’inscription au contact final.
-<br>
-
-**********************************************************************************************
+<br><br>
 
 Pour installer toutes les dépendances npm:
 
