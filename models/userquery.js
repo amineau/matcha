@@ -27,7 +27,6 @@ module.exports = class UserQuery {
     }
 
     GetPassword(data) {
-        console.log(data);
         return new Promise((resolve, reject) => {
             const query 	=
                 `MATCH (u:User)

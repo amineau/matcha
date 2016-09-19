@@ -1,5 +1,7 @@
 "use strict";
 
+const _ = require('underscore');
+
 module.exports = class ParseDatabase {
 	
 	
@@ -40,26 +42,23 @@ module.exports = class ParseDatabase {
 	}
 
 	GetData(body) {
-		console.log(body.results[0]);
 		return new Promise((resolve, reject) => {
 			const result = body.results[0];
-			let json = {};
+			let json = [];
 			let data;
 			if (typeof result !== "undefined") {
-				for (let i = 0; i < result.columns.length; i++) {
-					data = [];
-					for (let j = 0; j < result.data.length; j++) {
-						data.push(result.data[j].row[i]);
+				for (let i = 0; i < result.data.length; i++) {
+					data = {};
+					for (let j = 0; j < result.columns.length; j++) {
+						data[result.columns[j]] = result.data[i].row[j];
 					}
-					json[result.columns[i]] = data;
+					json.push(data);
 				}
-
-				result.data.forEach((item) => {
-					data.push(item.row[0]);
-				});
-				console.log("data : ", data);
-				if (data.length > 0)
-					resolve(data);
+				if (!_.isEmpty(json)) {
+					resolve({
+						results: json
+					});
+				}
 			}
 			reject({
 				status: 404,

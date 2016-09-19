@@ -90,11 +90,14 @@ exports.signIn = (req, res) => {
     const validate  = new UserValidator(req.body);
 
     const comparePass = (data) => {
-        console.log(data);
       return new Promise((resolve, reject) => {
-          if (bcrypt.compareSync(req.body.password, data.password))
-              resolve(data);
-          reject(err.status = 403);
+          if (bcrypt.compareSync(req.body.password, data.results[0].password)) {
+              resolve(data.results[0].id);
+          } else {
+              reject({
+                  status: 403
+              });
+          }
       });
     };
     const showSuccess = (data) => {
@@ -104,10 +107,10 @@ exports.signIn = (req, res) => {
                 err: "Vous êtes déjà connecté"
             });
         } else {
-            req.session.userId = data.id[0];
+            req.session.userId = data;
             res.json({
                 success: true,
-                id: data.id[0]
+                id: data
             });
         }
     };
@@ -117,6 +120,7 @@ exports.signIn = (req, res) => {
             err.status = 401;
             err.error = "Login et/ou mot de passe incorrect"
         }
+        console.log("err: ", err);
         res.status(err.status).json({
             success: false,
             err: err.error

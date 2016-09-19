@@ -1,7 +1,7 @@
 "use strict";
 
 const bcrypt        = require('bcrypt');
-const saltRounds    = 7;
+const saltRounds    = 10;
 
 function hash(password) {
     return bcrypt.hashSync(password, saltRounds);
