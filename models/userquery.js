@@ -48,7 +48,7 @@ module.exports = class UserQuery {
            const query =
                `MATCH (u: User)
                 WHERE u.email = {email}
-                RETURN u;`;
+                RETURN id(u) as id;`;
             db.doDatabaseOperation(query, data)
                 .then((data) => {
                     resolve(data);
@@ -64,7 +64,7 @@ module.exports = class UserQuery {
             const query =
                 `MATCH (u: User)
                 WHERE u.login = {login}
-                RETURN u;`;
+                RETURN id(u) as id;`;
             db.doDatabaseOperation(query, data)
                 .then((data) => {
                     resolve(data);
@@ -80,7 +80,7 @@ module.exports = class UserQuery {
             const query =
                 `MATCH (u: User)
                 WHERE id(u) = {id}
-                RETURN u;`;
+                RETURN id(u) as id, u as all;`;
             db.doDatabaseOperation(query, data)
                 .then((data) => {
                     resolve(data);
