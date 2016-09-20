@@ -190,19 +190,25 @@ exports.logout = (req, res) => {
 }
 
 exports.setLogin = (req, res) => {
-    const id 	= req.session.userId;
-    const login	= req.body.login;
-    const query	=
-        `MATCH (u:User)
-        WHERE id(u) = {id}
-        SET u.name = {login}
-        RETURN u;`;
-    const params	= {
-        'id': id,
-        'login': login
-    };
+    const validate = new UserValidator(req.body);
 
-    reqDatabase(query, params, parser.getDebug, res);
+    const showSuccess = () => {
+        res.json({
+            success: true
+        });
+    };
+    const showError = (err) => {
+        res.status(err.status).json({
+            success: false,
+            err: err.error
+        });
+    };
+//CheckAuth
+    validate.ParserEmail()
+        .then(Query.SetLogin)
+        .then(Parser.GetTrue)
+        .then(showSuccess)
+        .catch(showError);
 };
 
 exports.setEmail = (req, res) => {

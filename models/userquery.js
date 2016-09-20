@@ -75,6 +75,23 @@ module.exports = class UserQuery {
         });
     }
 
+    SetLogin(data) {
+        return new Promise((resolve, reject) => {
+            const query =
+                `MATCH (u:User)
+                WHERE id(u) = {id}
+                SET u.name = {login}
+                RETURN *;`;
+            db.doDatabaseOperation(query, data)
+                .then((data) => {
+                    resolve(data);
+                })
+                .catch((err) => {
+                    reject(err);
+                })
+        });
+    }
+
     GetById(data) {
         return new Promise((resolve, reject) => {
             const query =
