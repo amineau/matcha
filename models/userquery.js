@@ -80,7 +80,58 @@ module.exports = class UserQuery {
             const query =
                 `MATCH (u:User)
                 WHERE id(u) = {id}
-                SET u.name = {login}
+                SET u.login = {login}
+                RETURN *;`;
+            db.doDatabaseOperation(query, data)
+                .then((data) => {
+                    resolve(data);
+                })
+                .catch((err) => {
+                    reject(err);
+                })
+        });
+    }
+
+    SetEmail(data) {
+        return new Promise((resolve, reject) => {
+            const query =
+                `MATCH (u:User)
+                WHERE id(u) = {id}
+                SET u.email = {email}
+                RETURN *;`;
+            db.doDatabaseOperation(query, data)
+                .then((data) => {
+                    resolve(data);
+                })
+                .catch((err) => {
+                    reject(err);
+                })
+        });
+    }
+
+    SetFirstName(data) {
+        return new Promise((resolve, reject) => {
+            const query =
+                `MATCH (u:User)
+                WHERE id(u) = {id}
+                SET u.firstName = {firstName}
+                RETURN *;`;
+            db.doDatabaseOperation(query, data)
+                .then((data) => {
+                    resolve(data);
+                })
+                .catch((err) => {
+                    reject(err);
+                })
+        });
+    }
+
+    SetLastName(data) {
+        return new Promise((resolve, reject) => {
+            const query =
+                `MATCH (u:User)
+                WHERE id(u) = {id}
+                SET u.lastName = {lastName}
                 RETURN *;`;
             db.doDatabaseOperation(query, data)
                 .then((data) => {

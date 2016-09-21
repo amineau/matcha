@@ -70,9 +70,37 @@ module.exports = class UserValidator {
             .then(() => this.GetResult());
     }
 
+    ParseAuth() {
+        return Promise.resolve()
+            .then(() => this.ParserLogin())
+            .then(() => this.GetResult());
+    }
+
     ParseLogin() {
         return Promise.resolve()
             .then(() => this.ParserLogin())
+            .then(() => this.ParserId())
+            .then(() => this.GetResult());
+    }
+
+    ParseEmail() {
+        return Promise.resolve()
+            .then(() => this.ParserEmail())
+            .then(() => this.ParserId())
+            .then(() => this.GetResult());
+    }
+
+    ParseFirstName() {
+        return Promise.resolve()
+            .then(() => this.ParserFirstName())
+            .then(() => this.ParserId())
+            .then(() => this.GetResult());
+    }
+
+    ParseLastName() {
+        return Promise.resolve()
+            .then(() => this.ParserLastName())
+            .then(() => this.ParserId())
             .then(() => this.GetResult());
     }
 
@@ -153,6 +181,7 @@ module.exports = class UserValidator {
     ParserId() {
         return new Promise((resolve) => {
             const id = this._toParse.id;
+            console.log(id.match(this._parser.id.match));
             if (id && id.match(this._parser.id.match))
                 this._parsed.id = Number(id);
             else

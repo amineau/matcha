@@ -2,16 +2,23 @@
 
 const _ = require('underscore');
 
+function merge_options(obj1,obj2){
+	var obj3 = {};
+	for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
+	for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+	return obj3;
+}
+
 module.exports = class ParseDatabase {
-	
-	
+
 	GetTrue(body) {
 		return new Promise((resolve, reject) => {
-			if (typeof body.results[0].data[0] === "undefined")
+			console.log(body.results[0].data);
+			if (typeof body.results[0].data[0] !== "undefined")
 				resolve();
 			reject({
 					status: 403,
-					error: "Aucune donnée trouvée"
+					error: "Echec de connection avec la base de donnée"
 				});
 		});
 	}
@@ -65,11 +72,7 @@ module.exports = class ParseDatabase {
 					}
 					json.push(data);
 				}
-				if (!_.isEmpty(json)) {
-					resolve({
-						results: json
-					});
-				}
+					resolve(json);
 			}
 			reject({
 				status: 404,
