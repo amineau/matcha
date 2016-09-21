@@ -13,7 +13,10 @@ const Query  = new UserQuery();
 exports.getById = (req, res) => {
     const validate = new UserValidator(req.params);
     const showSuccess = (data) => {
-        res.json(data);
+        res.json({
+            success: true,
+            results: data.results
+        });
     };
     const showError = (err) => {
         res.status(err.status).json({
@@ -32,7 +35,10 @@ exports.getById = (req, res) => {
 exports.getIdByLogin = (req, res) => {
     const validate = new UserValidator(req.params);
     const showSuccess = (data) => {
-        res.json(data);
+        res.json({
+            success: true,
+            results: data.results
+        });
     };
     const showError = (err) => {
         res.status(err.status).json({
@@ -43,7 +49,7 @@ exports.getIdByLogin = (req, res) => {
 
     validate.ParserLogin()
         .then(Query.GetByLogin)
-        .then(Parser.GetId)
+        .then(Parser.GetData)
         .then(showSuccess)
         .catch(showError);
 };
@@ -51,7 +57,10 @@ exports.getIdByLogin = (req, res) => {
 exports.getIdByEmail = (req, res) => {
     const validate = new UserValidator(req.params);
     const showSuccess = (data) => {
-        res.json(data);
+        res.json({
+            success: true,
+            results: data.results
+        });
     };
     const showError = (err) => {
         res.status(err.status).json({
@@ -62,15 +71,17 @@ exports.getIdByEmail = (req, res) => {
 
     validate.ParserEmail()
         .then(Query.GetByEmail)
-        .then(Parser.GetId)
+        .then(Parser.GetData)
         .then(showSuccess)
         .catch(showError);
 };
 
 exports.signUp = (req, res) => {
     const validate  = new UserValidator(req.body);
-    const showSuccess = (data) => {
-        res.json(data);
+    const showSuccess = () => {
+        res.json({
+            success: true
+        });
     };
     const showError = (err) => {
         res.status(err.status).json({
@@ -101,6 +112,10 @@ exports.signIn = (req, res) => {
         });
     };
 
+    const ParseLogin = () => {
+        return validate.ParseLogin();
+    };
+
     const comparePass = (data) => {
       return new Promise((resolve, reject) => {
           if (bcrypt.compareSync(req.body.password, data.results[0].password)) {
@@ -122,7 +137,6 @@ exports.signIn = (req, res) => {
     };
 
     const showError = (err) => {
-        console.log("err: ", err);
         if (err.status == 403 || err.status == 404) {
             err.status = 401;
             err.error = "Login et/ou mot de passe incorrect"
@@ -133,9 +147,8 @@ exports.signIn = (req, res) => {
         });
     };
 
-
     checkAuth()
-        .then(validate.ParseLogin)
+        .then(ParseLogin)
         .then(Query.GetPassword)
         .then(Parser.GetData)
         .then(comparePass)
@@ -177,19 +190,25 @@ exports.logout = (req, res) => {
 }
 
 exports.setLogin = (req, res) => {
-    const id 	= req.session.userId;
-    const login	= req.body.login;
-    const query	=
-        `MATCH (u:User)
-        WHERE id(u) = {id}
-        SET u.name = {login}
-        RETURN u;`;
-    const params	= {
-        'id': id,
-        'login': login
-    };
+    const validate = new UserValidator(req.body);
 
-    reqDatabase(query, params, parser.getDebug, res);
+    const showSuccess = () => {
+        res.json({
+            success: true
+        });
+    };
+    const showError = (err) => {
+        res.status(err.status).json({
+            success: false,
+            err: err.error
+        });
+    };
+//CheckAuth
+    validate.ParserEmail()
+        .then(Query.SetLogin)
+        .then(Parser.GetTrue)
+        .then(showSuccess)
+        .catch(showError);
 };
 
 exports.setEmail = (req, res) => {

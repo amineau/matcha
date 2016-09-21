@@ -6,8 +6,13 @@ module.exports = class ParseDatabase {
 	
 	
 	GetTrue(body) {
-		return new Promise((resolve) => {
-			resolve({success: typeof body.results[0].data[0] !== "undefined"});
+		return new Promise((resolve, reject) => {
+			if (typeof body.results[0].data[0] === "undefined")
+				resolve();
+			reject({
+					status: 403,
+					error: "Aucune donnée trouvée"
+				});
 		});
 	}
 
@@ -20,7 +25,7 @@ module.exports = class ParseDatabase {
 				resolve({"id": id});
 			reject({
 				status: 403,
-				error: "Aucun utilisateur trouvé"
+				error: "Aucune donnée trouvée"
 			});
 		})
 	}
@@ -46,11 +51,17 @@ module.exports = class ParseDatabase {
 			const result = body.results[0];
 			let json = [];
 			let data;
+			let index;
+
 			if (typeof result !== "undefined") {
 				for (let i = 0; i < result.data.length; i++) {
-					data = {};
+					if ((index = result.columns.indexOf("all")) != -1)
+						data = result.data[i].row[index];
+					else
+						data = {};
 					for (let j = 0; j < result.columns.length; j++) {
-						data[result.columns[j]] = result.data[i].row[j];
+						if (j != index)
+							data[result.columns[j]] = result.data[i].row[j];
 					}
 					json.push(data);
 				}
