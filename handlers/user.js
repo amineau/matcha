@@ -3,9 +3,9 @@
 const DbParser	 	= require("../models/dbparser");
 const UserValidator = require("../models/uservalidator");
 const UserQuery     = require("../models/userquery");
+const Auth          = require("../models/auth");
 const db			= require("../db");
 const bcrypt        = require('bcrypt');
-
 
 const Parser = new DbParser();
 const Query  = new UserQuery();
@@ -13,10 +13,7 @@ const Query  = new UserQuery();
 exports.getById = (req, res) => {
     const validate = new UserValidator(req.params);
     const showSuccess = (data) => {
-        res.json({
-            success: true,
-            results: data.results
-        });
+        res.json(data);
     };
     const showError = (err) => {
         res.status(err.status).json({
@@ -35,10 +32,7 @@ exports.getById = (req, res) => {
 exports.getIdByLogin = (req, res) => {
     const validate = new UserValidator(req.params);
     const showSuccess = (data) => {
-        res.json({
-            success: true,
-            results: data.results
-        });
+        res.json(data);
     };
     const showError = (err) => {
         res.status(err.status).json({
@@ -57,10 +51,7 @@ exports.getIdByLogin = (req, res) => {
 exports.getIdByEmail = (req, res) => {
     const validate = new UserValidator(req.params);
     const showSuccess = (data) => {
-        res.json({
-            success: true,
-            results: data.results
-        });
+        res.json(data);
     };
     const showError = (err) => {
         res.status(err.status).json({
@@ -99,27 +90,17 @@ exports.signUp = (req, res) => {
 
 exports.signIn = (req, res) => {
     const validate  = new UserValidator(req.body);
+    const auth      = new Auth(req.session);
 
-    const checkAuth = () => {
-        return new Promise((resolve, reject) => {
-            if (req.session.userId) {
-                reject({
-                    status: 401,
-                    error: "Vous êtes déjà connecté"
-                });
-            }
-            resolve();
-        });
-    };
-
-    const ParseLogin = () => {
-        return validate.ParseLogin();
+    const ParseAuth = () => {
+        return validate.ParseAuth();
     };
 
     const comparePass = (data) => {
       return new Promise((resolve, reject) => {
-          if (bcrypt.compareSync(req.body.password, data.results[0].password)) {
-              resolve(data.results[0].id);
+          if (bcrypt.compareSync(req.body.password, data[0].password)) {
+              let id = data[0].id;
+              resolve({id});
           } else {
               reject({
                   status: 403
@@ -129,14 +110,12 @@ exports.signIn = (req, res) => {
     };
 
     const showSuccess = (data) => {
-        req.session.userId = data;
-        res.json({
-            success: true,
-            id: data
-        });
+        req.session.userId = data.id;
+        res.json(data);
     };
 
     const showError = (err) => {
+        console.log(err);
         if (err.status == 403 || err.status == 404) {
             err.status = 401;
             err.error = "Login et/ou mot de passe incorrect"
@@ -147,8 +126,8 @@ exports.signIn = (req, res) => {
         });
     };
 
-    checkAuth()
-        .then(ParseLogin)
+    auth.CheckAuth()
+        .then(ParseAuth)
         .then(Query.GetPassword)
         .then(Parser.GetData)
         .then(comparePass)
@@ -157,40 +136,44 @@ exports.signIn = (req, res) => {
 };
 
 exports.logout = (req, res) => {
+    const auth = new Auth (req.session);
+
     const sessionDestroy = () => {
         return new Promise((resolve, reject) => {
-            if (req.session.userId) {
-                req.session.destroy((err) => {
-                    if (err)
-                        reject(err);
-                    else
-                        resolve({success: true});
-                })
-            } else {
-                reject({
-                    status: 401,
-                    error: "Déconnexion impossible, vous n'êtes pas connecté."
-                });
-            }
+            req.session.destroy((err) => {
+                if (err)
+                    reject(err);
+                else
+                    resolve({success: true});
+            });
         });
     };
 
     const showSuccess = (data) => {
         res.json(data);
     };
+
     const showError = (err) => {
         res.status(err.status).json({
             success: false,
             err: err.error
         });
     };
-    sessionDestroy()
+
+    auth.CheckNoAuth()
+        .then(sessionDestroy)
         .then(showSuccess)
         .catch(showError);
-}
+};
 
 exports.setLogin = (req, res) => {
+    req.body.id = req.session.userId.toString();
     const validate = new UserValidator(req.body);
+    const auth = new Auth (req.session);
+
+    const ParseLogin = () => {
+        return validate.ParseLogin();
+    };
 
     const showSuccess = () => {
         res.json({
@@ -203,8 +186,8 @@ exports.setLogin = (req, res) => {
             err: err.error
         });
     };
-//CheckAuth
-    validate.ParserEmail()
+    auth.CheckNoAuth()
+        .then(ParseLogin)
         .then(Query.SetLogin)
         .then(Parser.GetTrue)
         .then(showSuccess)
@@ -212,19 +195,31 @@ exports.setLogin = (req, res) => {
 };
 
 exports.setEmail = (req, res) => {
-  const id 	  = req.session.userId;
-  const email = req.body.email;
-  const query =
-      `MATCH (u:User)
-        WHERE id(u) = {id}
-        SET u.email = {email}
-        RETURN u;`;
-  const params	= {
-    'id': req.session.userId,
-    'email': email
-  };
+    req.body.id = req.session.userId.toString();
+    const validate = new UserValidator(req.body);
+    const auth = new Auth (req.session);
 
-  reqDatabase(query, params, parser.getDebug, res);
+    const ParseEmail = () => {
+        return validate.ParseEmail();
+    };
+
+    const showSuccess = () => {
+        res.json({
+            success: true
+        });
+    };
+    const showError = (err) => {
+        res.status(err.status).json({
+            success: false,
+            err: err.error
+        });
+    };
+    auth.CheckNoAuth()
+        .then(ParseEmail)
+        .then(Query.SetEmail)
+        .then(Parser.GetTrue)
+        .then(showSuccess)
+        .catch(showError);
 };
 
 exports.setPassword = (req, res) => {
@@ -245,35 +240,59 @@ exports.setPassword = (req, res) => {
 };
 
 exports.setFirstName = (req, res) => {
-    const id 	    = req.session.userId;
-    const firstName = req.body.firstName;
-    const query =
-        `MATCH (u:User)
-        WHERE id(u) = {id}
-        SET u.firstName = {firstName}
-        RETURN u;`;
-    const params	= {
-        'id': req.session.userId,
-        'firstName': firstName
+    req.body.id = req.session.userId.toString();
+    const validate = new UserValidator(req.body);
+    const auth = new Auth (req.session);
+
+    const ParseFirstName = () => {
+        return validate.ParseFirstName();
     };
 
-    reqDatabase(query, params, parser.getDebug, res);
+    const showSuccess = () => {
+        res.json({
+            success: true
+        });
+    };
+    const showError = (err) => {
+        res.status(err.status).json({
+            success: false,
+            err: err.error
+        });
+    };
+    auth.CheckNoAuth()
+        .then(ParseFirstName)
+        .then(Query.SetFirstName)
+        .then(Parser.GetTrue)
+        .then(showSuccess)
+        .catch(showError);
 };
 
 exports.setLastName = (req, res) => {
-    const id 	    = req.session.userId;
-    const lastName = req.body.lastName;
-    const query =
-        `MATCH (u:User)
-        WHERE id(u) = {id}
-        SET u.firstName = {firstName}
-        RETURN u;`;
-    const params	= {
-        'id': req.session.userId,
-        'lastName': lastName
+    req.body.id = req.session.userId.toString();
+    const validate = new UserValidator(req.body);
+    const auth = new Auth (req.session);
+
+    const ParseLastName = () => {
+        return validate.ParseLastName();
     };
 
-    reqDatabase(query, params, parser.getDebug, res);
+    const showSuccess = () => {
+        res.json({
+            success: true
+        });
+    };
+    const showError = (err) => {
+        res.status(err.status).json({
+            success: false,
+            err: err.error
+        });
+    };
+    auth.CheckNoAuth()
+        .then(ParseLastName)
+        .then(Query.SetLastName)
+        .then(Parser.GetTrue)
+        .then(showSuccess)
+        .catch(showError);
 };
 
 exports.setSex = (req, res) => {
