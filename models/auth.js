@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 module.exports = class Auth {
 
@@ -14,7 +14,7 @@ module.exports = class Auth {
 
     CheckAuth () {
         return new Promise((resolve, reject) => {
-            if (this._session.userId) {
+            if (this._session.userId != null) {
                 reject({
                     status: this._status,
                     error: this._isAuthErr
@@ -26,7 +26,7 @@ module.exports = class Auth {
 
     CheckNoAuth () {
         return new Promise((resolve, reject) => {
-            if (!this._session.userId) {
+            if (this._session.userId == null) {
                 reject({
                     status: this._status,
                     error: this._isNotAuthErr
