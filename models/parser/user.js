@@ -51,6 +51,18 @@ module.exports = class UserValidator {
             id: {
                 match: /^[0-9]+$/,
                 message: 'Id invalide'
+            },
+            sex: {
+                match: /^[MF]$/,
+                message: 'Sexe invalide'
+            },
+            prefer: {
+                match: /^[MFB]$/,
+                message: 'Préférence invalide'
+            },
+            bio: {
+                maxLength: 5000,
+                message: "Message trop long"
             }
         };
     }
@@ -60,6 +72,7 @@ module.exports = class UserValidator {
      * @public
      * @return {Promise}
      */
+
     ParseRegister() {
         return Promise.resolve()
             .then(() => this.ParserLogin())
@@ -90,6 +103,13 @@ module.exports = class UserValidator {
             .then(() => this.GetResult());
     }
 
+    ParsePassword() {
+        return Promise.resolve()
+            .then(() => this.ParserPassword())
+            .then(() => this.ParserId())
+            .then(() => this.GetResult());
+    }
+
     ParseFirstName() {
         return Promise.resolve()
             .then(() => this.ParserFirstName())
@@ -100,6 +120,27 @@ module.exports = class UserValidator {
     ParseLastName() {
         return Promise.resolve()
             .then(() => this.ParserLastName())
+            .then(() => this.ParserId())
+            .then(() => this.GetResult());
+    }
+
+    ParseSex() {
+        return Promise.resolve()
+            .then(() => this.ParserSex())
+            .then(() => this.ParserId())
+            .then(() => this.GetResult());
+    }
+
+    ParsePrefer() {
+        return Promise.resolve()
+            .then(() => this.ParserPrefer())
+            .then(() => this.ParserId())
+            .then(() => this.GetResult());
+    }
+
+    ParseBio() {
+        return Promise.resolve()
+            .then(() => this.ParserBio())
             .then(() => this.ParserId())
             .then(() => this.GetResult());
     }
@@ -129,7 +170,7 @@ module.exports = class UserValidator {
                 if (login && login.match(this._parser.login.match))
                     this._parsed.login = login;
                 else
-                    this._errors.push({key: "login", message: this._parser.login.message})
+                    this._errors.push({key: "login", message: this._parser.login.message});
             resolve(this._parsed);
         });
     }
@@ -140,7 +181,7 @@ module.exports = class UserValidator {
                 if (email && email.match(this._parser.email.match))
                     this._parsed.email = email;
                 else
-                    this._errors.push({key: "email", message: this._parser.email.message})
+                    this._errors.push({key: "email", message: this._parser.email.message});
             resolve(this._parsed);
         });
     }
@@ -151,7 +192,7 @@ module.exports = class UserValidator {
                 if (firstName && firstName.match(this._parser.firstName.match))
                     this._parsed.firstName = parseName(firstName);
                 else
-                    this._errors.push({key: "firstName", message: this._parser.firstName.message})
+                    this._errors.push({key: "firstName", message: this._parser.firstName.message});
             resolve(this._parsed);
         });
     }
@@ -162,7 +203,7 @@ module.exports = class UserValidator {
                 if (lastName && lastName.match(this._parser.lastName.match))
                     this._parsed.lastName = parseName(lastName);
                 else
-                    this._errors.push({key: "lastName", message: this._parser.lastName.message})
+                    this._errors.push({key: "lastName", message: this._parser.lastName.message});
             resolve(this._parsed);
         });
     }
@@ -173,7 +214,40 @@ module.exports = class UserValidator {
                 if (password && password.match(this._parser.password.match))
                     this._parsed.password = hash(password);
                 else
-                    this._errors.push({key: "password", message: this._parser.password.message})
+                    this._errors.push({key: "password", message: this._parser.password.message});
+            resolve(this._parsed);
+        });
+    }
+
+    ParserSex() {
+        return new Promise((resolve) => {
+            const sex = this._toParse.sex;
+            if (sex && sex.match(this._parser.sex.match))
+                this._parsed.sex = sex;
+            else
+                this._errors.push({key: "sex", message: this._parser.sex.message});
+            resolve(this._parsed);
+        });
+    }
+
+    ParserPrefer() {
+        return new Promise((resolve) => {
+            const prefer = this._toParse.prefer;
+            if (prefer && prefer.match(this._parser.prefer.match))
+                this._parsed.prefer = prefer;
+            else
+                this._errors.push({key: "prefer", message: this._parser.prefer.message});
+            resolve(this._parsed);
+        });
+    }
+
+    ParserBio() {
+        return new Promise((resolve) => {
+            const bio = this._toParse.bio;
+            if (bio && bio.length <= this._parser.bio.maxLength)
+                this._parsed.bio = bio;
+            else
+                this._errors.push({key: "bio", message: this._parser.bio.message});
             resolve(this._parsed);
         });
     }
@@ -181,9 +255,8 @@ module.exports = class UserValidator {
     ParserId() {
         return new Promise((resolve) => {
             const id = this._toParse.id;
-            console.log(id.match(this._parser.id.match));
-            if (id && id.match(this._parser.id.match))
-                this._parsed.id = Number(id);
+            if (id != null && id.toString().match(this._parser.id.match))
+                this._parsed.id = id;
             else
                 this._errors.push(this._parser.id.message);
             resolve(this._parsed);

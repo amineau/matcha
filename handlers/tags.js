@@ -1,66 +1,120 @@
 'use strict';
 
-const ParserDb	 	= require("../models/dbparser");
-const db			= require("../db");
-const crypto 		= require("crypto");
+const ParserDb	 	= require("../models/parser/db");
+const TagsValidator = require("../models/parser/tags");
+const TagsQuery     = require("../models/shema/tags");
+const Auth          = require("../models/auth");
 
-const parser = new ParserDb();
+const Parser = new ParserDb();
+const Query = new TagsQuery();
 
-function reqDatabase(query, params, parser, res) {
-  const showSucces = (data) => {
-    // console.log(data);
+exports.search = (req, res) => {
+  req.body.id = req.session.userId;
+  const validate = new TagsValidator(req.body);
+  const auth = new Auth (req.session);
+
+  const ParseTag = () => {
+    return validate.ParseTag();
+  };
+
+  const showSuccess = (data) => {
     res.json(data);
   };
   const showError = (err) => {
-    res.json(err);
+    res.status(err.status).json({
+      success: false,
+      err: err.error
+    });
   };
 
-  return db.doDatabaseOperation(query, params, parser)
-      .then(showSucces)
+  auth.CheckNoAuth()
+      .then(ParseTag)
+      .then(Query.Search)
+      .then(Parser.GetData)
+      .then(showSuccess)
       .catch(showError);
-}
+};
 
-exports.search = (req, res) => {
-  const id = req.session.userId;
-  const search 	= req.body.tag;
-  const query 	=
-      `MATCH(t: Tag), (u: User)
-      WHERE id(u) = {id}
-      AND t.name CONTAINS {search}
-      AND NOT (u)-[:LIKED]->(t)
-      RETURN t.name;`;
-  const params 	= {
-    id: id,
-    search: search
+exports.get = (req, res) => {
+  req.body.id = req.session.userId;
+  const validate = new TagsValidator(req.body);
+  const auth = new Auth (req.session);
+
+  const ParseId = () => {
+    return validate.ParseId();
   };
 
-  reqDatabase(query, params, parser.getDebug, res);
+  const showSuccess = (data) => {
+    res.json(data);
+  };
+  const showError = (err) => {
+    res.status(err.status).json({
+      success: false,
+      err: err.error
+    });
+  };
+
+  auth.CheckNoAuth()
+      .then(ParseId)
+      .then(Query.Get)
+      .then(Parser.GetData)
+      .then(showSuccess)
+      .catch(showError);
 };
 
 exports.add = (req, res) => {
+  req.body.id = req.session.userId;
+  const validate = new TagsValidator(req.body);
+  const auth = new Auth (req.session);
 
-  /*  In Promise in each function   */
-  const id = req.session.userId;
-  if (!id) {
-    res.json({
-      success: false,
-      err: "Opération impossible, vous n'êtes pas connecté."
-    });
-  }
-
-  const tag 	= req.body.tag;
-  const query 	=
-      `MATCH (u: User)
-      WHERE id(u) = {id}
-      MERGE (t:Tag {name: {tag}})
-      CREATE UNIQUE (u)-[:LIKED]->(t)
-      RETURN t;`;
-  const params 	= {
-    id : id,
-    tag: tag
+  const ParseTag = () => {
+    return validate.ParseTag();
   };
-  console.log(tag);
 
-  reqDatabase(query, params, parser.getDebug, res);
+  const showSuccess = () => {
+    res.json({
+      success: true
+    });
+  };
+  const showError = (err) => {
+    res.status(err.status).json({
+      success: false,
+      err: err.error
+    });
+  };
+  auth.CheckNoAuth()
+      .then(ParseTag)
+      .then(Query.Add)
+      .then(Parser.GetTrue)
+      .then(showSuccess)
+      .catch(showError);
 };
 
+exports.remove = (req, res) => {
+  req.body.id = req.session.userId;
+  const validate = new TagsValidator(req.body);
+  const auth = new Auth (req.session);
+
+  const ParseTag = () => {
+    return validate.ParseTag();
+  };
+
+  const showSuccess = () => {
+    res.json({
+      success: true
+    });
+  };
+  const showError = (err) => {
+    res.status(err.status).json({
+      success: false,
+      err: err.error
+    });
+  };
+  auth.CheckNoAuth()
+      .then(ParseTag)
+      .then(Query.Remove)
+      .then(Parser.GetTrue)
+      .then(Query.Delete)
+      .then(showSuccess)
+      .catch(showError);
+};

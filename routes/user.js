@@ -15,6 +15,7 @@ module.exports = (app) => {
 	app.put('/user/lastName', user.setLastName);
 	app.put('/user/sex', user.setSex);
 	app.put('/user/prefer', user.setPrefer);
+	app.put('/user/bio', user.setBio);
 
 	app.get('/user/email/:email', user.getIdByEmail);
 	app.get('/user/login/:login', user.getIdByLogin);

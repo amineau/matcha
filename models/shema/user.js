@@ -1,6 +1,6 @@
 "use strict";
 
-const db = require("../db");
+const db = require("../../db");
 
 module.exports = class UserQuery {
 
@@ -109,6 +109,23 @@ module.exports = class UserQuery {
         });
     }
 
+    SetPassword(data) {
+        return new Promise((resolve, reject) => {
+            const query =
+                `MATCH (u:User)
+                WHERE id(u) = {id}
+                SET u.password = {password}
+                RETURN *;`;
+            db.doDatabaseOperation(query, data)
+                .then((data) => {
+                    resolve(data);
+                })
+                .catch((err) => {
+                    reject(err);
+                })
+        });
+    }
+
     SetFirstName(data) {
         return new Promise((resolve, reject) => {
             const query =
@@ -132,6 +149,57 @@ module.exports = class UserQuery {
                 `MATCH (u:User)
                 WHERE id(u) = {id}
                 SET u.lastName = {lastName}
+                RETURN *;`;
+            db.doDatabaseOperation(query, data)
+                .then((data) => {
+                    resolve(data);
+                })
+                .catch((err) => {
+                    reject(err);
+                })
+        });
+    }
+
+    SetSex(data) {
+        return new Promise((resolve, reject) => {
+            const query =
+                `MATCH (u:User)
+                WHERE id(u) = {id}
+                SET u.sex = {sex}
+                RETURN *;`;
+            db.doDatabaseOperation(query, data)
+                .then((data) => {
+                    resolve(data);
+                })
+                .catch((err) => {
+                    reject(err);
+                })
+        });
+    }
+
+    SetPrefer(data) {
+        return new Promise((resolve, reject) => {
+            const query =
+                `MATCH (u:User)
+                WHERE id(u) = {id}
+                SET u.prefer = {prefer}
+                RETURN *;`;
+            db.doDatabaseOperation(query, data)
+                .then((data) => {
+                    resolve(data);
+                })
+                .catch((err) => {
+                    reject(err);
+                })
+        });
+    }
+
+    SetBio(data) {
+        return new Promise((resolve, reject) => {
+            const query =
+                `MATCH (u:User)
+                WHERE id(u) = {id}
+                SET u.bio = {bio}
                 RETURN *;`;
             db.doDatabaseOperation(query, data)
                 .then((data) => {

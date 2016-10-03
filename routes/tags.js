@@ -6,7 +6,9 @@ const tag = require('../handlers/tags');
 
 module.exports = (app) => {
 
-  app.post('/tags/search', tag.search);
-  app.post('/tags/add', tag.add);
+  app.get('/tags', tag.get);
+  app.post('/tags', tag.search);
+  app.put('/tags', tag.add);
+  app.delete('/tags', tag.remove);
 
 };

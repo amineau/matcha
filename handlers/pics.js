@@ -1,6 +1,6 @@
 'use strict';
 
-const ParserDb	 	= require("../models/dbparser");
+const ParserDb	 	= require("../models/parser/db");
 const db			= require("../db");
 const crypto 		= require("crypto");
 
@@ -8,7 +8,6 @@ const parser = new ParserDb();
 
 function reqDatabase(query, params, parser, res) {
     const showSuccess = (data) => {
-        // console.log(data);
         res.json(data);
     };
     const showError = (err) => {

@@ -1,7 +1,5 @@
 "use strict";
 
-const _ = require('underscore');
-
 function merge_options(obj1,obj2){
 	var obj3 = {};
 	for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
@@ -13,7 +11,7 @@ module.exports = class ParseDatabase {
 
 	GetTrue(body) {
 		return new Promise((resolve, reject) => {
-			console.log(body.results[0].data);
+			console.log(body.results[0]);
 			if (typeof body.results[0].data[0] !== "undefined")
 				resolve();
 			reject({
