@@ -89,59 +89,75 @@ module.exports = class UserValidator {
             .then(() => this.GetResult());
     }
 
-    ParseLogin() {
-        return Promise.resolve()
+    ParseLogin(data) {
+        return new Promise((resolve) => {
+            this._parsed.id = data.id;
+            resolve();
+        })
             .then(() => this.ParserLogin())
-            .then(() => this.ParserId())
             .then(() => this.GetResult());
     }
 
-    ParseEmail() {
-        return Promise.resolve()
+    ParseEmail(data) {
+        return new Promise((resolve) => {
+            this._parsed.id = data.id;
+            resolve();
+        })
             .then(() => this.ParserEmail())
-            .then(() => this.ParserId())
             .then(() => this.GetResult());
     }
 
-    ParsePassword() {
-        return Promise.resolve()
+    ParsePassword(data) {
+        return new Promise((resolve) => {
+            this._parsed.id = data.id;
+            resolve();
+        })
             .then(() => this.ParserPassword())
-            .then(() => this.ParserId())
             .then(() => this.GetResult());
     }
 
-    ParseFirstName() {
-        return Promise.resolve()
+    ParseFirstName(data) {
+        return new Promise((resolve) => {
+            this._parsed.id = data.id;
+            resolve();
+        })
             .then(() => this.ParserFirstName())
-            .then(() => this.ParserId())
             .then(() => this.GetResult());
     }
 
-    ParseLastName() {
-        return Promise.resolve()
+    ParseLastName(data) {
+        return new Promise((resolve) => {
+            this._parsed.id = data.id;
+            resolve();
+        })
             .then(() => this.ParserLastName())
-            .then(() => this.ParserId())
             .then(() => this.GetResult());
     }
 
-    ParseSex() {
-        return Promise.resolve()
+    ParseSex(data) {
+        return new Promise((resolve) => {
+            this._parsed.id = data.id;
+            resolve();
+        })
             .then(() => this.ParserSex())
-            .then(() => this.ParserId())
             .then(() => this.GetResult());
     }
 
-    ParsePrefer() {
-        return Promise.resolve()
+    ParsePrefer(data) {
+        return new Promise((resolve) => {
+            this._parsed.id = data.id;
+            resolve();
+        })
             .then(() => this.ParserPrefer())
-            .then(() => this.ParserId())
             .then(() => this.GetResult());
     }
 
-    ParseBio() {
-        return Promise.resolve()
+    ParseBio(data) {
+        return new Promise((resolve) => {
+            this._parsed.id = data.id;
+            resolve();
+        })
             .then(() => this.ParserBio())
-            .then(() => this.ParserId())
             .then(() => this.GetResult());
     }
 

@@ -1,12 +1,16 @@
 'use strict';
 
-const ParserDb	 	= require("../models/parser/db");
+const DbParser	 	= require("../models/parser/db");
+const PicValidator  = require("../models/parser/pic");
+const PicQuery      = require("../models/shema/pic");
+const Auth          = require("../models/auth");
+
 const db			= require("../db");
-const crypto 		= require("crypto");
 
-const parser = new ParserDb();
+const Parser = new DbParser();
+const Query  = new PicQuery();
 
-function reqDatabase(query, params, parser, res) {
+/*function reqDatabase(query, params, parser, res) {
     const showSuccess = (data) => {
         res.json(data);
     };
@@ -60,25 +64,49 @@ exports.getPicsByUser = (req, res) => {
     const params = {'id': id};
 
     reqDatabase(query, params, parser.getDebug, res);
-};
+};*/
+
+function PositionPicture(ret) {
+    console.log(ret);
+    const showSuccess = (data) => {
+        ret.index = data[0].count;
+        return ret;
+    };
+    const showError = (err) => {
+        return err;
+    };
+    return Query.Count(ret)
+        .then(Parser.GetData)
+        .then(showSuccess)
+        .catch(showError);
+}
 
 exports.add = (req, res) => {
-    const id    = req.session.userId;
-    const pic   = req.body.pic;
-    var profile = countPicture(id) ? false : true;
-    const query =
-        `MATCH (u: User)
-        WHERE id(u) = {id}
-        CREATE(new: Img {name: {pic}})
-        CREATE(u)-[p:OWNER {profile: {profile}}]->(new)
-        RETURN id(new);`;
-    const params = {
-        'id': id,
-        'pic': pic,
-        'profile': profile
+    const validate = new PicValidator(req.body);
+    const auth = new Auth (req.session);
+
+    const ParsePic = (data) => {
+        return validate.ParsePic(data);
     };
 
-    reqDatabase(query, params, parser.getDebug, res);
+    const showSuccess = () => {
+        res.json({
+            success: true
+        });
+    };
+    const showError = (err) => {
+        res.status(err.status).json({
+            success: false,
+            err: err.error
+        });
+    };
+    auth.CheckNoAuth()
+        .then(ParsePic)
+        .then(PositionPicture)
+        .then(Query.Add)
+        .then(Parser.GetTrue)
+        .then(showSuccess)
+        .catch(showError);
 };
 
 exports.profile = (req, res) => {
@@ -98,10 +126,43 @@ exports.profile = (req, res) => {
         'idPic': idPic
     };
 
-    reqDatabase(query, params, parser.getDebug, res);
+    reqDatabase(query, params, Parser.getDebug, res);
 };
 
 exports.delete = (req, res) => {
+    const auth = new Auth (req.session);
+
+    const ParseId = (data) => {
+        return new Promise((resolve, reject) => {
+            if (req.params.id != null && Number.isInteger(req.params.id)) {
+                data.id = req.params.id;
+                resolve(data);
+            } else
+                reject({
+                    status: 401,
+                    error: "Id incorrect"
+                });
+        });
+    };
+
+    const showSuccess = () => {
+        res.json({
+            success: true
+        });
+    };
+    const showError = (err) => {
+        res.status(err.status).json({
+            success: false,
+            err: err.error
+        });
+    };
+    auth.CheckNoAuth()
+        .then(ParseId)
+        .then(Query.Delete)
+        .then(Parser.GetTrue)
+        .then(showSuccess)
+        .catch(showError);
+
     const idUser  = req.session.userId;
     const idPic   = req.params.id;
     const query   =
@@ -109,11 +170,11 @@ exports.delete = (req, res) => {
         WHERE id(u) = {idUser}
         AND id(i) = {idPic}
         DELETE (r)
-        RETURN i, u;`;
+        RETURN *;`;
     const params = {
         'idUser': idUser,
         'idPic': idPic
     };
 
-    reqDatabase(query, params, parser.getDebug, res);
+    reqDatabase(query, params, Parser.getDebug, res);
 };

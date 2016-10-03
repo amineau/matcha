@@ -4,7 +4,6 @@ const DbParser	 	= require("../models/parser/db");
 const UserValidator = require("../models/parser/user");
 const UserQuery     = require("../models/shema/user");
 const Auth          = require("../models/auth");
-const db			= require("../db");
 const bcrypt        = require('bcrypt');
 
 const Parser = new DbParser();
@@ -75,7 +74,6 @@ exports.signUp = (req, res) => {
         });
     };
     const showError = (err) => {
-        console.log(err);
         res.status(err.status).json({
             success: false,
             err: err.error
@@ -112,12 +110,10 @@ exports.signIn = (req, res) => {
 
     const showSuccess = (data) => {
         req.session.userId = data.id;
-        console.log(req.session);
         res.json(data);
     };
 
     const showError = (err) => {
-        console.log(err);
         if (err.status == 403 || err.status == 404) {
             err.status = 401;
             err.error = "Login et/ou mot de passe incorrect"
@@ -169,12 +165,11 @@ exports.logout = (req, res) => {
 };
 
 exports.setLogin = (req, res) => {
-    req.body.id = req.session.userId;
     const validate = new UserValidator(req.body);
     const auth = new Auth (req.session);
 
-    const ParseLogin = () => {
-        return validate.ParseLogin();
+    const ParseLogin = (data) => {
+        return validate.ParseLogin(data);
     };
 
     const showSuccess = () => {
@@ -197,12 +192,11 @@ exports.setLogin = (req, res) => {
 };
 
 exports.setEmail = (req, res) => {
-    req.body.id = req.session.userId;
     const validate = new UserValidator(req.body);
     const auth = new Auth (req.session);
 
-    const ParseEmail = () => {
-        return validate.ParseEmail();
+    const ParseEmail = (data) => {
+        return validate.ParseEmail(data);
     };
 
     const showSuccess = () => {
@@ -225,12 +219,11 @@ exports.setEmail = (req, res) => {
 };
 
 exports.setPassword = (req, res) => {
-    req.body.id = req.session.userId;
     const validate = new UserValidator(req.body);
     const auth = new Auth (req.session);
 
-    const ParsePassword = () => {
-        return validate.ParsePassword();
+    const ParsePassword = (data) => {
+        return validate.ParsePassword(data);
     };
 
     const showSuccess = () => {
@@ -253,12 +246,11 @@ exports.setPassword = (req, res) => {
 };
 
 exports.setFirstName = (req, res) => {
-    req.body.id = req.session.userId;
     const validate = new UserValidator(req.body);
     const auth = new Auth (req.session);
 
-    const ParseFirstName = () => {
-        return validate.ParseFirstName();
+    const ParseFirstName = (data) => {
+        return validate.ParseFirstName(data);
     };
 
     const showSuccess = () => {
@@ -281,12 +273,11 @@ exports.setFirstName = (req, res) => {
 };
 
 exports.setLastName = (req, res) => {
-    req.body.id = req.session.userId;
     const validate = new UserValidator(req.body);
     const auth = new Auth (req.session);
 
-    const ParseLastName = () => {
-        return validate.ParseLastName();
+    const ParseLastName = (data) => {
+        return validate.ParseLastName(data);
     };
 
     const showSuccess = () => {
@@ -309,12 +300,11 @@ exports.setLastName = (req, res) => {
 };
 
 exports.setSex = (req, res) => {
-    req.body.id = req.session.userId;
     const validate = new UserValidator(req.body);
     const auth = new Auth (req.session);
 
-    const ParseSex = () => {
-        return validate.ParseSex();
+    const ParseSex = (data) => {
+        return validate.ParseSex(data);
     };
 
     const showSuccess = () => {
@@ -337,12 +327,11 @@ exports.setSex = (req, res) => {
 };
 
 exports.setPrefer = (req, res) => {
-    req.body.id = req.session.userId;
     const validate = new UserValidator(req.body);
     const auth = new Auth (req.session);
 
-    const ParsePrefer = () => {
-        return validate.ParsePrefer();
+    const ParsePrefer = (data) => {
+        return validate.ParsePrefer(data);
     };
 
     const showSuccess = () => {
@@ -365,12 +354,11 @@ exports.setPrefer = (req, res) => {
 };
 
 exports.setBio = (req, res) => {
-    req.body.id = req.session.userId;
     const validate = new UserValidator(req.body);
     const auth = new Auth (req.session);
 
-    const ParseBio = () => {
-        return validate.ParseBio();
+    const ParseBio = (data) => {
+        return validate.ParseBio(data);
     };
 
     const showSuccess = () => {

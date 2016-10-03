@@ -1,20 +1,19 @@
 'use strict';
 
-const ParserDb	 	= require("../models/parser/db");
+const DbParser	 	= require("../models/parser/db");
 const TagsValidator = require("../models/parser/tags");
 const TagsQuery     = require("../models/shema/tags");
 const Auth          = require("../models/auth");
 
-const Parser = new ParserDb();
+const Parser = new DbParser();
 const Query = new TagsQuery();
 
 exports.search = (req, res) => {
-  req.body.id = req.session.userId;
   const validate = new TagsValidator(req.body);
   const auth = new Auth (req.session);
 
-  const ParseTag = () => {
-    return validate.ParseTag();
+  const ParseTag = (data) => {
+    return validate.ParseTag(data);
   };
 
   const showSuccess = (data) => {
@@ -36,13 +35,7 @@ exports.search = (req, res) => {
 };
 
 exports.get = (req, res) => {
-  req.body.id = req.session.userId;
-  const validate = new TagsValidator(req.body);
   const auth = new Auth (req.session);
-
-  const ParseId = () => {
-    return validate.ParseId();
-  };
 
   const showSuccess = (data) => {
     res.json(data);
@@ -55,7 +48,6 @@ exports.get = (req, res) => {
   };
 
   auth.CheckNoAuth()
-      .then(ParseId)
       .then(Query.Get)
       .then(Parser.GetData)
       .then(showSuccess)
@@ -63,12 +55,11 @@ exports.get = (req, res) => {
 };
 
 exports.add = (req, res) => {
-  req.body.id = req.session.userId;
   const validate = new TagsValidator(req.body);
   const auth = new Auth (req.session);
 
-  const ParseTag = () => {
-    return validate.ParseTag();
+  const ParseTag = (data) => {
+    return validate.ParseTag(data);
   };
 
   const showSuccess = () => {
@@ -91,12 +82,11 @@ exports.add = (req, res) => {
 };
 
 exports.remove = (req, res) => {
-  req.body.id = req.session.userId;
   const validate = new TagsValidator(req.body);
   const auth = new Auth (req.session);
 
-  const ParseTag = () => {
-    return validate.ParseTag();
+  const ParseTag = (data) => {
+    return validate.ParseTag(data);
   };
 
   const showSuccess = () => {

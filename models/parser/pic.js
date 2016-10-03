@@ -10,19 +10,19 @@ module.exports = class TagsValidator {
         this._parsed = {};
         this._errors = [];
         this._parser = {
-            tag: {
+            pic: {
                 maxLength: 30,
                 message: "Tag invalide"
             }
         };
     }
 
-    ParseTag(data) {
+    ParsePic(data) {
         return new Promise((resolve) => {
             this._parsed.id = data.id;
             resolve();
         })
-            .then(() => this.ParserTag())
+            .then(() => this.ParserPic())
             .then(() => this.GetResult());
     }
 
@@ -38,13 +38,13 @@ module.exports = class TagsValidator {
         })
     }
 
-    ParserTag() {
+    ParserPic() {
         return new Promise((resolve) => {
-            const tag = this._toParse.tag;
-            if (tag && tag.length <= this._parser.tag.maxLength)
-                this._parsed.tag = tag;
+            const pic = this._toParse.pic;
+            if (pic) //&& pic.length <= this._parser.pic.maxLength)
+                this._parsed.pic = pic;
             else
-                this._errors.push({key: "tag", message: this._parser.tag.message});
+                this._errors.push({key: "pic", message: this._parser.pic.message});
             resolve(this._parsed);
         });
     }
