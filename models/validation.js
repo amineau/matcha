@@ -1,5 +1,3 @@
-/*jshint node:true */
-
 "use strict";
 
 const regLog 	= /^[a-zA-Z0-9'àâéèêôùûçÀÂÉÈÔÙÛÇ\s_-]{1,50}$/;

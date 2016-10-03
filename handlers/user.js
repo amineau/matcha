@@ -1,8 +1,8 @@
 'use strict';
 
-const DbParser	 	= require("../models/dbparser");
-const UserValidator = require("../models/uservalidator");
-const UserQuery     = require("../models/userquery");
+const DbParser	 	= require("../models/parser/db");
+const UserValidator = require("../models/parser/user");
+const UserQuery     = require("../models/shema/user");
 const Auth          = require("../models/auth");
 const db			= require("../db");
 const bcrypt        = require('bcrypt');

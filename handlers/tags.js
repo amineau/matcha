@@ -1,8 +1,8 @@
 'use strict';
 
-const ParserDb	 	= require("../models/dbparser");
-const TagsValidator = require("../models/tagsvalidator");
-const TagsQuery     = require("../models/tagsquery");
+const ParserDb	 	= require("../models/parser/db");
+const TagsValidator = require("../models/parser/tags");
+const TagsQuery     = require("../models/shema/tags");
 const Auth          = require("../models/auth");
 
 const Parser = new ParserDb();
