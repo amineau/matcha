@@ -2,19 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d9e260ed-96ac-4bfd-88f8-c82e112bfe51" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/._matcha_node_modules.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/matcha_node_modules.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/deployment.xml" afterPath="$PROJECT_DIR$/.idea/deployment.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/matcha.iml" afterPath="$PROJECT_DIR$/.idea/matcha.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db.js" afterPath="$PROJECT_DIR$/db.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/handlers/pics.js" afterPath="$PROJECT_DIR$/handlers/pics.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/handlers/tags.js" afterPath="$PROJECT_DIR$/handlers/tags.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/handlers/user.js" afterPath="$PROJECT_DIR$/handlers/user.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/auth.js" afterPath="$PROJECT_DIR$/models/auth.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/parser/tags.js" afterPath="$PROJECT_DIR$/models/parser/tags.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/parser/user.js" afterPath="$PROJECT_DIR$/models/parser/user.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/parser/pic.js" afterPath="$PROJECT_DIR$/models/parser/pic.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/shema/pic.js" afterPath="$PROJECT_DIR$/models/shema/pic.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/pics.js" afterPath="$PROJECT_DIR$/routes/pics.js" />
     </list>
     <ignored path="matcha.iws" />
@@ -74,31 +66,31 @@
             <entry file="file://$PROJECT_DIR$/routes/pics.js">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="180">
-                  <caret line="10" column="7" selection-start-line="10" selection-start-column="7" selection-end-line="10" selection-end-column="7" />
+                  <caret line="10" column="34" selection-start-line="10" selection-start-column="34" selection-end-line="10" selection-end-column="34" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="pics.js" pinned="false" current-in-tab="false">
+          <file leaf-file-name="pics.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/handlers/pics.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="496">
-                  <caret line="168" column="8" selection-start-line="168" selection-start-column="8" selection-end-line="172" selection-end-column="19" />
+                <state relative-caret-position="533">
+                  <caret line="151" column="27" selection-start-line="151" selection-start-column="27" selection-end-line="151" selection-end-column="27" />
                   <folding>
                     <element signature="e#320#1611#0" expanded="false" />
-                    <element signature="e#2606#3136#0" expanded="false" />
-                    <marker date="1475527228721" expanded="false" signature="1118:1331" ph="{...}" />
+                    <element signature="e#2584#3114#0" expanded="false" />
+                    <marker date="1475566406854" expanded="false" signature="1118:1331" ph="{...}" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="pic.js" pinned="false" current-in-tab="true">
+          <file leaf-file-name="pic.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/models/shema/pic.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="442">
-                  <caret line="50" column="26" selection-start-line="50" selection-start-column="26" selection-end-line="50" selection-end-column="26" />
+                <state relative-caret-position="441">
+                  <caret line="50" column="27" selection-start-line="50" selection-start-column="27" selection-end-line="50" selection-end-column="27" />
                   <folding />
                 </state>
               </provider>
@@ -107,8 +99,8 @@
           <file leaf-file-name="pic.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/models/parser/pic.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="299">
-                  <caret line="22" column="22" selection-start-line="22" selection-start-column="22" selection-end-line="22" selection-end-column="22" />
+                <state relative-caret-position="182">
+                  <caret line="36" column="10" selection-start-line="36" selection-start-column="10" selection-end-line="36" selection-end-column="10" />
                   <folding />
                 </state>
               </provider>
@@ -118,11 +110,11 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="user.js" pinned="false" current-in-tab="true">
+          <file leaf-file-name="user.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/handlers/user.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1136">
-                  <caret line="208" column="22" selection-start-line="208" selection-start-column="22" selection-end-line="208" selection-end-column="22" />
+                <state relative-caret-position="236">
+                  <caret line="104" column="23" selection-start-line="104" selection-start-column="23" selection-end-line="104" selection-end-column="23" />
                   <folding>
                     <element signature="e#364#768#0" expanded="false" />
                     <element signature="e#808#1219#0" expanded="false" />
@@ -151,11 +143,21 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="user.js" pinned="false" current-in-tab="false">
+          <file leaf-file-name="db.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/db.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="126">
+                  <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="user.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/models/parser/user.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-891">
-                  <caret line="93" column="22" selection-start-line="93" selection-start-column="22" selection-end-line="93" selection-end-column="22" />
+                <state relative-caret-position="276">
+                  <caret line="53" column="0" selection-start-line="51" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -195,17 +197,17 @@
         <option value="$PROJECT_DIR$/models/parser/uservalidator.js" />
         <option value="$PROJECT_DIR$/models/parser/tagsvalidator.js" />
         <option value="$PROJECT_DIR$/app.js" />
-        <option value="$PROJECT_DIR$/db.js" />
         <option value="$PROJECT_DIR$/models/shema/user.js" />
         <option value="$PROJECT_DIR$/handlers/user.js" />
         <option value="$PROJECT_DIR$/models/parser/user.js" />
         <option value="$PROJECT_DIR$/handlers/tags.js" />
-        <option value="$PROJECT_DIR$/models/parser/pic.js" />
         <option value="$PROJECT_DIR$/models/parser/tags.js" />
-        <option value="$PROJECT_DIR$/routes/pics.js" />
         <option value="$PROJECT_DIR$/models/auth.js" />
-        <option value="$PROJECT_DIR$/handlers/pics.js" />
+        <option value="$PROJECT_DIR$/db.js" />
+        <option value="$PROJECT_DIR$/routes/pics.js" />
+        <option value="$PROJECT_DIR$/models/parser/pic.js" />
         <option value="$PROJECT_DIR$/models/shema/pic.js" />
+        <option value="$PROJECT_DIR$/handlers/pics.js" />
       </list>
     </option>
   </component>
@@ -510,12 +512,12 @@
       <workItem from="1475392899769" duration="2733000" />
       <workItem from="1475422261786" duration="14085000" />
       <workItem from="1475486405436" duration="1081000" />
-      <workItem from="1475514343896" duration="11172000" />
+      <workItem from="1475514343896" duration="13776000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="75456000" />
+    <option name="totallyTimeSpent" value="78060000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -786,42 +788,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/db.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="3" column="19" selection-start-line="3" selection-start-column="19" selection-end-line="3" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/server.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="12" selection-start-line="0" selection-start-column="12" selection-end-line="0" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/db.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="7" column="50" selection-start-line="7" selection-start-column="50" selection-end-line="7" selection-end-column="50" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -842,26 +812,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/parser/pic.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="22" column="22" selection-start-line="22" selection-start-column="22" selection-end-line="22" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/handlers/tags.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-459">
           <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/parser/user.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-891">
-          <caret line="93" column="22" selection-start-line="93" selection-start-column="22" selection-end-line="93" selection-end-column="22" />
           <folding />
         </state>
       </provider>
@@ -874,14 +828,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/shema/user.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="30" column="22" selection-start-line="30" selection-start-column="22" selection-end-line="30" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/models/parser/db.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -890,26 +836,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/auth.js">
+    <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="586">
-          <caret line="35" column="40" selection-start-line="35" selection-start-column="40" selection-end-line="35" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/pics.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="10" column="7" selection-start-line="10" selection-start-column="7" selection-end-line="10" selection-end-column="7" />
+        <state relative-caret-position="486">
+          <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/handlers/user.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1136">
-          <caret line="208" column="22" selection-start-line="208" selection-start-column="22" selection-end-line="208" selection-end-column="22" />
+        <state relative-caret-position="236">
+          <caret line="104" column="23" selection-start-line="104" selection-start-column="23" selection-end-line="104" selection-end-column="23" />
           <folding>
             <element signature="e#364#768#0" expanded="false" />
             <element signature="e#808#1219#0" expanded="false" />
@@ -927,23 +865,87 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/handlers/pics.js">
+    <entry file="file://$PROJECT_DIR$/config/server.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="496">
-          <caret line="168" column="8" selection-start-line="168" selection-start-column="8" selection-end-line="172" selection-end-column="19" />
-          <folding>
-            <element signature="e#320#1611#0" expanded="false" />
-            <element signature="e#2606#3136#0" expanded="false" />
-            <marker date="1475527228721" expanded="false" signature="1118:1331" ph="{...}" />
-          </folding>
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/db.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="19" selection-start-line="3" selection-start-column="19" selection-end-line="3" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/shema/user.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="30" column="22" selection-start-line="30" selection-start-column="22" selection-end-line="30" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/parser/user.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="276">
+          <caret line="53" column="0" selection-start-line="51" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/auth.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="586">
+          <caret line="35" column="40" selection-start-line="35" selection-start-column="40" selection-end-line="35" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/pics.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="10" column="34" selection-start-line="10" selection-start-column="34" selection-end-line="10" selection-end-column="34" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/models/shema/pic.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="50" column="26" selection-start-line="50" selection-start-column="26" selection-end-line="50" selection-end-column="26" />
+        <state relative-caret-position="441">
+          <caret line="50" column="27" selection-start-line="50" selection-start-column="27" selection-end-line="50" selection-end-column="27" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/parser/pic.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="182">
+          <caret line="36" column="10" selection-start-line="36" selection-start-column="10" selection-end-line="36" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/handlers/pics.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="533">
+          <caret line="151" column="27" selection-start-line="151" selection-start-column="27" selection-end-line="151" selection-end-column="27" />
+          <folding>
+            <element signature="e#320#1611#0" expanded="false" />
+            <element signature="e#2584#3114#0" expanded="false" />
+            <marker date="1475566406854" expanded="false" signature="1118:1331" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>

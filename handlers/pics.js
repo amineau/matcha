@@ -67,7 +67,6 @@ exports.getPicsByUser = (req, res) => {
 };*/
 
 function PositionPicture(ret) {
-    console.log(ret);
     const showSuccess = (data) => {
         ret.index = data[0].count;
         return ret;
@@ -132,17 +131,8 @@ exports.profile = (req, res) => {
 exports.delete = (req, res) => {
     const auth = new Auth (req.session);
 
-    const ParseId = (data) => {
-        return new Promise((resolve, reject) => {
-            if (req.params.id != null && Number.isInteger(req.params.id)) {
-                data.id = req.params.id;
-                resolve(data);
-            } else
-                reject({
-                    status: 401,
-                    error: "Id incorrect"
-                });
-        });
+    const ParseIdPic = (data) => {
+        return validate.ParseIdPic(data);
     };
 
     const showSuccess = () => {
@@ -156,25 +146,11 @@ exports.delete = (req, res) => {
             err: err.error
         });
     };
+
     auth.CheckNoAuth()
-        .then(ParseId)
+        .then(ParseIdPic) //Change index
         .then(Query.Delete)
         .then(Parser.GetTrue)
         .then(showSuccess)
         .catch(showError);
-
-    const idUser  = req.session.userId;
-    const idPic   = req.params.id;
-    const query   =
-        `MATCH (u: User)-[r:OWNER]->(i: Img)
-        WHERE id(u) = {idUser}
-        AND id(i) = {idPic}
-        DELETE (r)
-        RETURN *;`;
-    const params = {
-        'idUser': idUser,
-        'idPic': idPic
-    };
-
-    reqDatabase(query, params, Parser.getDebug, res);
 };

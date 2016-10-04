@@ -13,6 +13,10 @@ module.exports = class TagsValidator {
             pic: {
                 maxLength: 30,
                 message: "Tag invalide"
+            },
+            idPic: {
+                match: /^[0-9]+$/,
+                message: 'Id invalide'
             }
         };
     }
@@ -23,6 +27,15 @@ module.exports = class TagsValidator {
             resolve();
         })
             .then(() => this.ParserPic())
+            .then(() => this.GetResult());
+    }
+
+    ParseIdPic(data) {
+        return new Promise((resolve) => {
+            this._parsed.id = data.id;
+            resolve();
+        })
+            .then(() => this.ParserIdPic())
             .then(() => this.GetResult());
     }
 
@@ -45,6 +58,17 @@ module.exports = class TagsValidator {
                 this._parsed.pic = pic;
             else
                 this._errors.push({key: "pic", message: this._parser.pic.message});
+            resolve(this._parsed);
+        });
+    }
+
+    ParserIdPic() {
+        return new Promise((resolve) => {
+            const idPic = this._toParse.idPic;
+            if (idPic != null && idPic.toString().match(this._parser.idPic.match))
+                this._parsed.idPic = idPic;
+            else
+                this._errors.push(this._parser.idPic.message);
             resolve(this._parsed);
         });
     }

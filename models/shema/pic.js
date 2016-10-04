@@ -44,9 +44,10 @@ module.exports = class PicQuery {
         return new Promise((resolve, reject) => {
             const query =
                 `MATCH (u: User)-[r:OWNER]->(i: Img)
-                WHERE id(u) = {idUser}
+                WHERE id(u) = {id}
                 AND id(i) = {idPic}
                 DELETE (r)
+                DELETE (i)
                 RETURN *;`;
             db.doDatabaseOperation(query, data)
                 .then((data) => {

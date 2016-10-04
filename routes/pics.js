@@ -8,5 +8,5 @@ module.exports = (app) => {
     // app.get('/pic/user/:idUser', pics.getPicsByUser);
     app.post('/pic', pics.add);
     // app.put('/pic/:id', pics.profile);
-    // app.delete('/pic/:id', pics.delete);
+    app.delete('/pic/:id', pics.delete);
 };
