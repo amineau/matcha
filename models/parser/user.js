@@ -227,7 +227,7 @@ module.exports = class UserValidator {
     ParserPassword() {
         return new Promise((resolve) => {
             const password = this._toParse.password;
-                if (password && password.match(this._parser.password.match))
+            if (password && password.match(this._parser.password.match))
                     this._parsed.password = hash(password);
                 else
                     this._errors.push({key: "password", message: this._parser.password.message});
