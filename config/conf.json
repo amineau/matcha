@@ -1,0 +1,18 @@
+{
+  "db": {
+    "host": "localhost",
+    "port": "7474",
+    "user": "neo4j",
+    "pass": "94gV9FNjmS3q5V6v"
+  },
+  "server": {
+    "host": "localhost",
+    "port": "4242"
+  },
+  "session": {
+    "secret": "h6Oo6sNvmpJI1PU"
+  },
+  "bcrypt": {
+    "saltRounds": 10
+  }
+}

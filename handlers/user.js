@@ -1,91 +1,105 @@
 'use strict';
 
-const DbParser	 	= require("../models/parser/db");
-const UserValidator = require("../models/parser/user");
-const UserQuery     = require("../models/shema/user");
-const Auth          = require("../models/auth");
-const bcrypt        = require('bcrypt');
+const DbParser	 	= require("../models/parser/db")
+const UserValidator = require("../models/parser/user")
+const UserQuery     = require("../models/shema/user")
+const Auth          = require("../models/auth")
+const bcrypt        = require('bcrypt')
 
-const Parser = new DbParser();
-const Query  = new UserQuery();
+const Parser = new DbParser()
+const Query  = new UserQuery()
 
 exports.getById = (req, res) => {
-    const validate = new UserValidator(req.params);
+    const validate = new UserValidator(req.params)
     const showSuccess = (data) => {
-        res.json(data);
+        res.json(data)
     };
     const showError = (err) => {
         res.status(err.status).json({
             success: false,
             err: err.error
-        });
-    };
+        })
+    }
 
     validate.ParseId()
         .then(Query.GetById)
         .then(Parser.GetData)
         .then(showSuccess)
-        .catch(showError);
-};
+        .catch(showError)
+}
 
 exports.getIdByLogin = (req, res) => {
-    const validate = new UserValidator(req.params);
+    const validate = new UserValidator(req.params)
     const showSuccess = (data) => {
-        res.json(data);
+        res.json(data)
     };
     const showError = (err) => {
         res.status(err.status).json({
             success: false,
             err: err.error
-        });
-    };
+        })
+    }
 
     validate.ParserLogin()
         .then(Query.GetByLogin)
         .then(Parser.GetData)
         .then(showSuccess)
-        .catch(showError);
-};
+        .catch(showError)
+}
 
 exports.getIdByEmail = (req, res) => {
-    const validate = new UserValidator(req.params);
+    const validate = new UserValidator(req.params)
     const showSuccess = (data) => {
-        res.json(data);
+        res.json(data)
     };
     const showError = (err) => {
         res.status(err.status).json({
             success: false,
             err: err.error
-        });
-    };
+        })
+    }
 
     validate.ParserEmail()
         .then(Query.GetByEmail)
         .then(Parser.GetData)
         .then(showSuccess)
-        .catch(showError);
-};
+        .catch(showError)
+}
 
 exports.signUp = (req, res) => {
-    const validate  = new UserValidator(req.body);
+    const validate  = {
+        user: new UserValidator(req.body)
+    }
     const showSuccess = () => {
         res.json({
             success: true
-        });
-    };
+        })
+    }
     const showError = (err) => {
-        res.status(err.status).json({
+        console.log(err)
+        res.status(err.status || 500).json({
             success: false,
             err: err.error
-        });
-    };
+        })
+    }
 
-    validate.ParseRegister()
+    const champs = [
+        {name: 'login'},
+        {name: 'firstName'},
+        {name: 'lastName'},
+        {name: 'email'},
+        {name: 'password'},
+        {name: 'sex'},
+        {name: 'prefer'},
+        {name: 'bio', noReq: true}
+    ]
+
+    validate.user.Parse(champs)
         .then(Query.AddUser)
         .then(Parser.GetTrue)
         .then(showSuccess)
-        .catch(showError);
-};
+        .catch(showError)
+}
 
 exports.signIn = (req, res) => {
     const validate  = new UserValidator(req.body);

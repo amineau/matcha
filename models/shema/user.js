@@ -6,23 +6,18 @@ module.exports = class UserQuery {
 
     AddUser(data) {
         return new Promise((resolve, reject) => {
+            var set = []
+
+            for (var key in data) {
+                set.push(`${key}: {${key}}`)
+            }
             const query =
-                `CREATE(user: User {
-                    login: {login},
-                    email: {email},
-                    firstName: {firstName},
-                    lastName: {lastName},
-                    password: {password}
-                })
+                `CREATE(user: User {${set.join(',\n')}})
                 RETURN *;`;
 
             db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
+                .then(data => resolve(data))
+                .catch(err => reject(err))
         });
     }
 
