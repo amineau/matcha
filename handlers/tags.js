@@ -18,7 +18,10 @@ exports.search = (req, res) => {
   };
 
   const showSuccess = (data) => {
-    res.json(data);
+    res.json({
+      success: true,
+      data
+    });
   };
   const showError = (err) => {
     res.status(err.status).json({
@@ -45,7 +48,10 @@ exports.get = (req, res) => {
   };
 
   const showSuccess = (data) => {
-    res.json(data);
+    res.json({
+      success: true,
+      data
+    });
   };
   const showError = (err) => {
     res.status(err.status).json({

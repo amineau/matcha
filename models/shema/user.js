@@ -1,229 +1,76 @@
 "use strict";
 
-const db = require("../../db");
+const db = require("../../db")
+const _  = require('lodash')
 
 module.exports = class UserQuery {
 
-    AddUser(data) {
+    Create(data) {
         return new Promise((resolve, reject) => {
-            const query =
-                `CREATE(user: User {
-                    login: {login},
-                    email: {email},
-                    firstName: {firstName},
-                    lastName: {lastName},
-                    password: {password}
-                })
-                RETURN *;`;
+          let tab = ''
+          for (let key in data)
+            tab += `${key}:{${key}},`
+          const query =
+            `CREATE(user:user{${tab.slice(0, -1)}})
+            RETURN *;`
 
-            db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
+          db.doDatabaseOperation(query, data)
+            .then(data => resolve(data))
+            .catch((err) => reject(err))
+        })
     }
 
-    GetPassword(data) {
-        return new Promise((resolve, reject) => {
-            const query 	=
-                `MATCH (u:User)
-                WHERE u.login = {login}
-                RETURN id(u) as id, u.password as password`;
+    Get(where) {
+      return new Promise((resolve, reject) => {
+        let toWhere = ''
+        for (let key in where)
+          toWhere += key === 'id' ? `${key}(u)={${key}}AND` : `u.${key}={${key}}AND`
+       const query =
+           `MATCH (u: User)
+            WHERE ${toWhere.slice(0, -3)}
+            RETURN id(u) as id, u as all;`;
 
-            db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
+        db.doDatabaseOperation(query, where)
+          .then(data => resolve(data))
+          .catch((err) => reject(err))
+      })
     }
 
-    GetByEmail(data) {
+    Set(where, set) {
         return new Promise((resolve, reject) => {
-           const query =
-               `MATCH (u: User)
-                WHERE u.email = {email}
-                RETURN id(u) as id;`;
-            db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
+          if (_.isEmpty(where) || _.isEmpty(set)) {
+            return reject({
+              status: 404, // A modifier
+              error: 'Aucun champs de correspond à la base de donnée'
+            })
+          }
+          let toWhere = ''
+          let toSet = ''
+          for (let key in where)
+            toWhere += key === 'id' ? `${key}(u)={${key}}AND` : `u.${key}={${key}}AND`
+          for (let key in set)
+            toSet += `u.${key}={${key}},`
+          const query =
+              `MATCH (u:User)
+              WHERE ${toWhere.slice(0, -3)}
+              SET ${toSet.slice(0, -1)}
+              RETURN *;`;
+
+          db.doDatabaseOperation(query, _.merge(where, set))
+            .then(data => resolve(data))
+            .catch((err) => reject(err))
+      })
     }
 
-    GetByLogin(data) {
-        return new Promise((resolve, reject) => {
-            const query =
-                `MATCH (u: User)
-                WHERE u.login = {login}
-                RETURN id(u) as id;`;
-            db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
-    }
+    Delete(id) {
+      return new Promise((resolve, reject) => {
+        const query =
+        `MATCH (u:User {id: {id}})
+        DETACH DELETE u`
 
-    SetLogin(data) {
-        return new Promise((resolve, reject) => {
-            const query =
-                `MATCH (u:User)
-                WHERE id(u) = {id}
-                SET u.login = {login}
-                RETURN *;`;
-            db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
-    }
-
-    SetEmail(data) {
-        return new Promise((resolve, reject) => {
-            const query =
-                `MATCH (u:User)
-                WHERE id(u) = {id}
-                SET u.email = {email}
-                RETURN *;`;
-            db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
-    }
-
-    SetPassword(data) {
-        return new Promise((resolve, reject) => {
-            const query =
-                `MATCH (u:User)
-                WHERE id(u) = {id}
-                SET u.password = {password}
-                RETURN *;`;
-            db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
-    }
-
-    SetFirstName(data) {
-        return new Promise((resolve, reject) => {
-            const query =
-                `MATCH (u:User)
-                WHERE id(u) = {id}
-                SET u.firstName = {firstName}
-                RETURN *;`;
-            db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
-    }
-
-    SetLastName(data) {
-        return new Promise((resolve, reject) => {
-            const query =
-                `MATCH (u:User)
-                WHERE id(u) = {id}
-                SET u.lastName = {lastName}
-                RETURN *;`;
-            db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
-    }
-
-    SetSex(data) {
-        return new Promise((resolve, reject) => {
-            const query =
-                `MATCH (u:User)
-                WHERE id(u) = {id}
-                SET u.sex = {sex}
-                RETURN *;`;
-            db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
-    }
-
-    SetPrefer(data) {
-        return new Promise((resolve, reject) => {
-            const query =
-                `MATCH (u:User)
-                WHERE id(u) = {id}
-                SET u.prefer = {prefer}
-                RETURN *;`;
-            db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
-    }
-
-    SetBio(data) {
-        return new Promise((resolve, reject) => {
-            const query =
-                `MATCH (u:User)
-                WHERE id(u) = {id}
-                SET u.bio = {bio}
-                RETURN *;`;
-            db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
-    }
-
-    GetById(data) {
-        return new Promise((resolve, reject) => {
-            const query =
-                `MATCH (u: User)
-                WHERE id(u) = {id}
-                RETURN id(u) as id, u as all;`;
-            db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        });
-    }
-};
+      db.doDatabaseOperation(query, {id})
+        .then(data => resolve(data))
+        .catch((err) => reject(err))
+    })
+  }
+}

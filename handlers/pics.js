@@ -8,10 +8,13 @@ const parser = new ParserDb();
 
 function reqDatabase(query, params, parser, res) {
     const showSuccess = (data) => {
-        res.json(data);
+      res.json({
+        success: true,
+        data
+      });
     };
     const showError = (err) => {
-        res.json(err);
+      res.json(err);
     };
 
     return db.doDatabaseOperation(query, params, parser)

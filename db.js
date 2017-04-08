@@ -7,6 +7,7 @@ const txUrl = "http://" + confDb.user + ":" + confDb.pass + "@" + confDb.host + 
 
 exports.doDatabaseOperation = (query, params) => {
 	return new Promise(function (resolve, reject) {
+		console.log('params :', params, '\nquery :', query)
 		request.post({
 			uri: txUrl,
 			json: {
@@ -16,6 +17,7 @@ exports.doDatabaseOperation = (query, params) => {
 				}]
 			}
 		}, (err, res) => {
+			console.log("err :", err, '\nres :', res.body)
 	    	if (err)
 	    		reject({
 	    			status: 500,

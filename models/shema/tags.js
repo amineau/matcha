@@ -14,12 +14,8 @@ module.exports = class TagsQuery {
                 RETURN t.name as tag;`;
 
             db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
+              .then(data => resolve(data))
+              .catch((err) => reject(err))
         });
     };
 
@@ -31,12 +27,8 @@ module.exports = class TagsQuery {
                 RETURN t.name as tag;`;
 
             db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
+              .then(data => resolve(data))
+              .catch((err) => reject(err))
         });
     };
 
@@ -50,12 +42,8 @@ module.exports = class TagsQuery {
                 RETURN *;`;
 
             db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
+              .then(data => resolve(data))
+              .catch((err) => reject(err))
         });
     };
 
@@ -69,12 +57,8 @@ module.exports = class TagsQuery {
                 RETURN *;`;
 
             db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
+              .then(data => resolve(data))
+              .catch((err) => reject(err))
         });
     };
 
@@ -86,12 +70,8 @@ module.exports = class TagsQuery {
                 DELETE (t)`;
 
             db.doDatabaseOperation(query, data)
-                .then((data) => {
-                    resolve(data);
-                })
-                .catch((err) => {
-                    reject(err);
-                })
+              .then(data => resolve(data))
+              .catch((err) => reject(err))
         });
     };
 };

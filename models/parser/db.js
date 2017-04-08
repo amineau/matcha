@@ -53,6 +53,7 @@ module.exports = class ParseDatabase {
 
 	GetData(body) {
 		return new Promise((resolve, reject) => {
+			console.log('___***___', body,'___***___')
 			const result = body.results[0];
 			let json = [];
 			let data;
