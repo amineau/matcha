@@ -1,116 +1,108 @@
 'use strict';
 
-const DbParser	 	= require("../models/parser/db");
-const TagsValidator = require("../models/parser/tags");
-const TagsQuery     = require("../models/shema/tags");
-const Auth          = require("../models/auth");
+const DbParser	 	= require("../models/parser/db")
+const TagsValidator = require("../models/parser/tags")
+const TagsQuery     = require("../models/shema/tags")
+const Auth          = require("../models/auth")
+const _             = require('lodash')
 
-const Parser = new DbParser();
-const Query = new TagsQuery();
+const Parser = new DbParser()
+const Query = new TagsQuery()
 
 exports.search = (req, res) => {
-  const validate = new TagsValidator(req.body);
-  const auth = new Auth (req.session);
-
-  const ParseTag = (data) => {
-    return validate.ParseTag(data);
-  };
+  const validate = {tags: new TagsValidator(req.params)}
+  const auth = new Auth (req.session)
+  const id = req.session.userId
 
   const showSuccess = (data) => {
     res.json({
       success: true,
       data
-    });
-  };
+    })
+  }
   const showError = (err) => {
-    res.status(err.status).json({
+    console.log(err)
+    res.status(err.status || 500).json({
       success: false,
       err: err.error
-    });
-  };
+    })
+  }
 
   auth.CheckNoAuth()
-      .then(ParseTag)
-      .then(Query.Search)
+      .then(() => validate.tags.Parse([{name: 'tag'}]))
+      .then((data) => Query.Search(_.merge(data, {id})))
       .then(Parser.GetData)
       .then(showSuccess)
-      .catch(showError);
-};
+      .catch(showError)
+}
 
 exports.get = (req, res) => {
-  const auth = new Auth (req.session);
-
+  const auth = new Auth (req.session)
+  const id = req.params.id
   const showSuccess = (data) => {
     res.json({
       success: true,
       data
-    });
-  };
+    })
+  }
   const showError = (err) => {
-    res.status(err.status).json({
+    res.status(err.status || 500).json({
       success: false,
       err: err.error
-    });
-  };
+    })
+  }
 
   auth.CheckNoAuth()
-      .then(Query.Get)
+      .then(() => Query.Get({id}))
       .then(Parser.GetData)
       .then(showSuccess)
       .catch(showError);
-};
+}
 
 exports.add = (req, res) => {
-  const validate = new TagsValidator(req.body);
-  const auth = new Auth (req.session);
-
-  const ParseTag = (data) => {
-    return validate.ParseTag(data);
-  };
+  const validate = {tags: new TagsValidator(req.body)}
+  const auth = new Auth (req.session)
+  const id = req.session.userId
 
   const showSuccess = () => {
     res.json({
       success: true
-    });
-  };
+    })
+  }
   const showError = (err) => {
-    res.status(err.status).json({
+    console.log(err)
+    res.status(err.status || 500).json({
       success: false,
       err: err.error
-    });
-  };
+    })
+  }
   auth.CheckNoAuth()
-      .then(ParseTag)
-      .then(Query.Add)
+      .then(() => validate.tags.Parse([{name: 'tag'}]))
+      .then((data) => Query.Add(_.merge(data, {id})))
       .then(Parser.GetTrue)
       .then(showSuccess)
       .catch(showError);
-};
+}
 
 exports.remove = (req, res) => {
-  const validate = new TagsValidator(req.body);
-  const auth = new Auth (req.session);
-
-  const ParseTag = (data) => {
-    return validate.ParseTag(data);
-  };
+  const validate = {tags: new TagsValidator(req.body)}
+  const auth = new Auth (req.session)
 
   const showSuccess = () => {
     res.json({
       success: true
-    });
-  };
+    })
+  }
   const showError = (err) => {
-    res.status(err.status).json({
+    res.status(err.status || 500).json({
       success: false,
       err: err.error
-    });
-  };
+    })
+  }
   auth.CheckNoAuth()
-      .then(ParseTag)
+      .then(() => validate.tags.Parse([{name: 'tag'}]))
       .then(Query.Remove)
       .then(Parser.GetTrue)
-      .then(Query.Delete)
       .then(showSuccess)
-      .catch(showError);
-};
+      .catch(showError)
+}

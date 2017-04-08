@@ -12,4 +12,5 @@ module.exports = (app) => {
 	app.put('/user/', user.set)
 
 	app.get('/user/:by/:data', user.get)
+	app.delete('/user/', user.delete)
 }

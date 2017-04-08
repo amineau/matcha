@@ -27,12 +27,12 @@ module.exports = class UserValidator extends Validator {
     constructor(toParse) {
       super(toParse, {
         login: {
-          funct: (e) => e,
+          funct: e => e,
           match: /^[a-z0-9'àâéèêôùûç\s_-]{1,50}$/i,
           message: 'Login incorrect'
         },
         email: {
-          funct: (e) => e,
+          funct: e => e,
           match: /^[A-Z0-9._%+-]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i,
           message: 'Email incorrect'
         },
@@ -52,22 +52,22 @@ module.exports = class UserValidator extends Validator {
           message: 'Mot de passe invalide'
         },
         id: {
-          funct: (e) => e,
+          funct: e => e,
           match: /^[0-9]+$/,
           message: 'Id invalide'
         },
         sex: {
-          funct: (e) => e,
+          funct: e => e,
           match: /^[MF]$/,
           message: 'Sexe invalide'
         },
         prefer: {
-          funct: (e) => e,
+          funct: e => e,
           match: /^[MFB]$/,
           message: 'Préférence invalide'
         },
         bio: {
-          funct: (e) => e,
+          funct: e => e,
           maxLength: 5000,
           message: "Message trop long"
         }

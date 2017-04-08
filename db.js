@@ -8,6 +8,8 @@ const txUrl = `http://${db.user}:${db.pass}@${db.host}:${db.port}/db/data/transa
 exports.doDatabaseOperation = (query, params) => {
 	return new Promise(function (resolve, reject) {
 		console.log('params :', params, '\nquery :', query)
+		if (params.id)
+			params.id = Number(params.id)
 		request.post({
 			uri: txUrl,
 			json: {

@@ -11,12 +11,12 @@ module.exports = class UserQuery {
           for (let key in data)
             tab += `${key}:{${key}},`
           const query =
-            `CREATE(user:user{${tab.slice(0, -1)}})
+            `CREATE(u: User{${tab.slice(0, -1)}})
             RETURN *;`
 
           db.doDatabaseOperation(query, data)
             .then(data => resolve(data))
-            .catch((err) => reject(err))
+            .catch(err => reject(err))
         })
     }
 
@@ -32,7 +32,7 @@ module.exports = class UserQuery {
 
         db.doDatabaseOperation(query, where)
           .then(data => resolve(data))
-          .catch((err) => reject(err))
+          .catch(err => reject(err))
       })
     }
 
@@ -58,19 +58,20 @@ module.exports = class UserQuery {
 
           db.doDatabaseOperation(query, _.merge(where, set))
             .then(data => resolve(data))
-            .catch((err) => reject(err))
+            .catch(err => reject(err))
       })
     }
 
     Delete(id) {
       return new Promise((resolve, reject) => {
         const query =
-        `MATCH (u:User {id: {id}})
+        `MATCH (u:User)
+        WHERE id(u) = {id}
         DETACH DELETE u`
 
       db.doDatabaseOperation(query, {id})
         .then(data => resolve(data))
-        .catch((err) => reject(err))
+        .catch(err => reject(err))
     })
   }
 }

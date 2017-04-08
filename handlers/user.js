@@ -1,11 +1,12 @@
 'use strict'
 
-const DbParser	 	  = require("../models/parser/db");
-const UserValidator = require("../models/parser/user");
-const UserQuery     = require("../models/shema/user");
-const Auth          = require("../models/auth");
-const db			      = require("../db");
-const bcrypt        = require('bcrypt');
+const DbParser	 	  = require("../models/parser/db")
+const UserValidator = require("../models/parser/user")
+const UserQuery     = require("../models/shema/user")
+const Auth          = require("../models/auth")
+const db			      = require("../db")
+const bcrypt        = require('bcrypt')
+const _             = require('lodash')
 
 const Parser = new DbParser()
 const Query  = new UserQuery()
@@ -39,9 +40,9 @@ exports.get = (req, res) => {
 exports.signUp = (req, res) => {
     const validate  = {user: new UserValidator(req.body)}
     const showSuccess = () => {
-        res.json({
-            success: true
-        })
+      res.json({
+        success: true
+      })
     }
     const showError = (err) => {
         console.log(err)
@@ -58,6 +59,27 @@ exports.signUp = (req, res) => {
       {name: 'firstName'},
       {name: 'lastName'}
     ])
+      .then(data => {
+        return new Promise((resolve, reject) => {
+          Promise.all([
+            Query.Get({email: data.email}),
+            Query.Get({login: data.login}),
+          ])
+            .then(result => {
+              if (!_.isEmpty(result[0].results[0].data[0]))
+                return reject({
+                  status: 404,
+                  error: 'L\'email existe déjà'
+                })
+              else if (!_.isEmpty(result[1].results[0].data[0]))
+                return reject({
+                status: 404,
+                error: 'Le login existe déjà'
+              })
+              resolve(data)
+            })
+          })
+      })
         .then(Query.Create)
         .then(Parser.GetTrue)
         .then(showSuccess)
@@ -70,6 +92,8 @@ exports.signIn = (req, res) => {
 
     const comparePass = (data) => {
       return new Promise((resolve, reject) => {
+        if (!data.length)
+          return reject({status: 404})
           if (bcrypt.compareSync(req.body.password, data[0].password)) {
               let id = data[0].id;
               resolve({id})
@@ -95,7 +119,7 @@ exports.signIn = (req, res) => {
             err.status = 401;
             err.error = "Login et/ou mot de passe incorrect"
         }
-        res.status(err.status).json({
+        res.status(err.status || 500).json({
             success: false,
             err: err.error
         })
@@ -121,30 +145,29 @@ exports.logout = (req, res) => {
                 if (err)
                     reject(err);
                 else
-                    resolve({success: true});
+                    resolve();
             });
         });
     };
 
-    const showSuccess = (data) => {
+    const showSuccess = () => {
       res.json({
-        success: true,
-        data
-      });
-    };
+        success: true
+      })
+    }
 
     const showError = (err) => {
-        res.status(err.status).json({
+        res.status(err.status || 500).json({
             success: false,
             err: err.error
-        });
-    };
+        })
+    }
 
     auth.CheckNoAuth()
         .then(sessionDestroy)
         .then(showSuccess)
         .catch(showError);
-};
+}
 
 exports.set = (req, res) => {
     const id = req.session.userId
@@ -178,4 +201,38 @@ exports.set = (req, res) => {
         .then(Parser.GetTrue)
         .then(showSuccess)
         .catch(showError)
+}
+
+exports.delete = (req, res) => {
+  const id = req.session.userId
+  const auth = new Auth (req.session);
+  const showSuccess = () => {
+      res.json({
+        success: true
+      })
+  }
+  const showError = (err) => {
+    console.log(err)
+      res.status(err.status || 500).json({
+          success: false,
+          err: err.error
+      })
+  }
+  const sessionDestroy = () => {
+      return new Promise((resolve, reject) => {
+          req.session.destroy((err) => {
+              if (err)
+                  reject(err);
+              else
+                  resolve({success: true});
+          });
+      });
+  };
+
+  auth.CheckNoAuth()
+    .then(() => Query.Delete(id))
+    .then(Parser.GetTrue)
+    .then(sessionDestroy)
+    .then(showSuccess)
+    .catch(showError)
 }

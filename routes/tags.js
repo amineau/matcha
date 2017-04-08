@@ -2,13 +2,13 @@
 
 "use strict";
 
-const tag = require('../handlers/tags');
+const tag = require('../handlers/tags')
 
 module.exports = (app) => {
 
-  app.get('/tags', tag.get);
-  app.post('/tags', tag.search);
-  app.put('/tags', tag.add);
-  app.delete('/tags', tag.remove);
+  app.post('/tags', tag.add)
+  app.get('/tags/:id', tag.get)
+  app.get('/tags/search/:tag', tag.search)
+  app.delete('/tags', tag.remove)
 
-};
+}

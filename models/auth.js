@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 module.exports = class Auth {
 
@@ -6,10 +6,10 @@ module.exports = class Auth {
      * Constructor
      */
     constructor(session) {
-        this._session = session;
-        this._status = 401;
-        this._isAuthErr = "Vous êtes déjà connecté";
-        this._isNotAuthErr = "Vous n'êtes pas connecté";
+        this._session = session
+        this._status = 401
+        this._isAuthErr = "Vous êtes déjà connecté"
+        this._isNotAuthErr = "Vous n'êtes pas connecté"
     }
 
     CheckAuth () {
@@ -18,10 +18,10 @@ module.exports = class Auth {
                 reject({
                     status: this._status,
                     error: this._isAuthErr
-                });
+                })
             }
-            resolve();
-        });
+            resolve()
+        })
     }
 
     CheckNoAuth () {
@@ -30,11 +30,11 @@ module.exports = class Auth {
                 reject({
                     status: this._status,
                     error: this._isNotAuthErr
-                });
+                })
             }
             resolve({
                 id: this._session.userId
-            });
-        });
+            })
+        })
     }
-};
+}
