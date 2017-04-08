@@ -7,8 +7,8 @@ const Auth          = require("../models/auth");
 const db			      = require("../db");
 const bcrypt        = require('bcrypt');
 
-const Parser = new DbParser();
-const Query  = new UserQuery();
+const Parser = new DbParser()
+const Query  = new UserQuery()
 
 exports.get = (req, res) => {
   const {by, data} = req.params
@@ -44,12 +44,12 @@ exports.signUp = (req, res) => {
         })
     }
     const showError = (err) => {
-        console.log(err);
-        res.status(err.status).json({
+        console.log(err)
+        res.status(err.status || 500).json({
             success: false,
             err: err.error
-        });
-    };
+        })
+    }
 
     validate.user.Parse([
       {name: 'login'},
@@ -61,8 +61,8 @@ exports.signUp = (req, res) => {
         .then(Query.Create)
         .then(Parser.GetTrue)
         .then(showSuccess)
-        .catch(showError);
-};
+        .catch(showError)
+}
 
 exports.signIn = (req, res) => {
     const validate  = {user: new UserValidator(req.body)}
@@ -91,7 +91,6 @@ exports.signIn = (req, res) => {
     }
 
     const showError = (err) => {
-        console.log(err);
         if (err.status == 403 || err.status == 404) {
             err.status = 401;
             err.error = "Login et/ou mot de passe incorrect"

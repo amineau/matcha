@@ -10,10 +10,6 @@ module.exports = class TagsValidator {
         this._parsed = {};
         this._errors = [];
         this._parser = {
-            id: {
-                match: /^[0-9]+$/,
-                message: 'Id invalide'
-            },
             tag: {
                 maxLength: 30,
                 message: "Tag invalide"
@@ -21,16 +17,12 @@ module.exports = class TagsValidator {
         };
     }
 
-    ParseTag() {
-        return Promise.resolve()
+    ParseTag(data) {
+        return new Promise((resolve) => {
+            this._parsed.id = data.id;
+            resolve();
+        })
             .then(() => this.ParserTag())
-            .then(() => this.ParserId())
-            .then(() => this.GetResult());
-    }
-
-    ParseId() {
-        return Promise.resolve()
-            .then(() => this.ParserId())
             .then(() => this.GetResult());
     }
 
@@ -55,16 +47,5 @@ module.exports = class TagsValidator {
                 this._errors.push({key: "tag", message: this._parser.tag.message});
             resolve(this._parsed);
         });
-    }
-
-    ParserId() {
-        return new Promise((resolve) => {
-            const id = this._toParse.id;
-            if (id != null && id.toString().match(this._parser.id.match))
-                this._parsed.id = id;
-            else
-                this._errors.push(this._parser.id.message);
-            resolve(this._parsed);
-        })
     }
 };

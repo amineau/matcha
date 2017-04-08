@@ -32,7 +32,9 @@ module.exports = class Auth {
                     error: this._isNotAuthErr
                 });
             }
-            resolve();
+            resolve({
+                id: this._session.userId
+            });
         });
     }
 };

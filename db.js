@@ -1,9 +1,9 @@
 "use strict";
 
-const request	= require('request');
-const confDb	= require('./config/db');
+const request = require('request');
+const db = require('./config/conf').db;
 
-const txUrl = "http://" + confDb.user + ":" + confDb.pass + "@" + confDb.host + ":" + confDb.port + "/db/data/transaction/commit";
+const txUrl = `http://${db.user}:${db.pass}@${db.host}:${db.port}/db/data/transaction/commit`
 
 exports.doDatabaseOperation = (query, params) => {
 	return new Promise(function (resolve, reject) {
@@ -22,9 +22,9 @@ exports.doDatabaseOperation = (query, params) => {
 	    		reject({
 	    			status: 500,
 	    			error: err
-	    		});
+	    		})
 	    	else
-		    	resolve(res.body);
-	    });
-	});
-};
+		    	resolve(res.body)
+	    })
+	})
+}
