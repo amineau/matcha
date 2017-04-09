@@ -1,14 +1,15 @@
 'use strict';
 
-const DbParser	 	= require("../models/parser/db");
-const PicValidator  = require("../models/parser/pic");
-const PicQuery      = require("../models/shema/pic");
-const Auth          = require("../models/auth");
+const DbParser	 	= require("../models/parser/db")
+const PicValidator  = require("../models/parser/pic")
+const PicQuery      = require("../models/shema/pic")
+const Auth          = require("../models/auth")
+const _             = require('lodash')
 
-const db			= require("../db");
+const db			= require("../db")
 
-const Parser = new DbParser();
-const Query  = new PicQuery();
+const Parser = new DbParser()
+const Query  = new PicQuery()
 
 /*function reqDatabase(query, params, parser, res) {
     const showSuccess = (data) => {
@@ -69,86 +70,105 @@ exports.getPicsByUser = (req, res) => {
     reqDatabase(query, params, parser.getDebug, res);
 };*/
 
-function PositionPicture(ret) {
-    const showSuccess = (data) => {
-        ret.index = data[0].count;
-        return ret;
-    };
-    const showError = (err) => {
-        return err;
-    };
-    return Query.Count(ret)
-        .then(Parser.GetData)
-        .then(showSuccess)
-        .catch(showError);
-}
+
 
 exports.add = (req, res) => {
-    const validate = new PicValidator(req.body);
-    const auth = new Auth (req.session);
+  const validate = {pic: new PicValidator(req.body)}
+  const auth = new Auth (req.session)
+  const id = req.session.userId
 
-    const ParsePic = (data) => {
-        return validate.ParsePic(data);
-    };
+  const showSuccess = () => {
+    res.json({
+      success: true
+    })
+  }
+  const showError = (err) => {
+    console.log(err)
+    res.status(err.status || 500).json({
+      success: false,
+      err: err.error
+    })
+  }
+  const isHead = (data) => {
+    if (data.head)
+      return Query.Clear({id})
+        .then(() => Promise.resolve(data))
+        .catch(err => Promise.reject(err))
+    data.head = 0
+    return Promise.resolve(data)
+  }
 
-    const showSuccess = () => {
-        res.json({
-            success: true
-        });
-    };
-    const showError = (err) => {
-        res.status(err.status).json({
-            success: false,
-            err: err.error
-        });
-    };
-    auth.CheckNoAuth()
-        .then(ParsePic)
-        .then(PositionPicture)
-        .then(Query.Add)
-        .then(Parser.GetTrue)
-        .then(showSuccess)
-        .catch(showError);
-};
+  auth.CheckNoAuth()
+    .then(() => {
+      return Promise.all([
+        validate.pic.Parse([
+          {name: 'pic'},
+          {name: 'head', noReq: true}
+        ]),
+        Query.Count({id})
+          .then(Parser.GetData)
+      ])
+    })
+    .then(data => {
+      if (data[1][0].count >= 5) {
+        return Promise.reject({
+          status: 400,
+          error: "Vous ne pouvez pas charger plus de 5 photos"
+        })
+      } else if (data[1][0].count === 0) {
+        data[0].head = 1
+      }
+      return Promise.resolve(data[0])
+    })
+    .then(data => isHead(data))
+    .then(data => Query.Add(_.merge(data, {id})))
+    .then(Parser.GetTrue)
+    .then(showSuccess)
+    .catch(showError)
+}
 
 exports.profile = (req, res) => {
-    const idUser  = req.session.userId;
-    const idPic   = req.params.id;
-    const query =
-        `MATCH (u: User)-[f:OWNER]->(l: Img)
-        WHERE id(u) = {idUser} AND f.profile = true
-        SET f.profile = false
-        WITH 1 AS dummy
-        MATCH (u:User)-[t:OWNER]->(i: Img)
-        WHERE id(u) = {idUser} AND id(i) = {idPic}
-        SET t.profile = true
-        RETURN t.profile;`;
-    const params = {
-        'idUser': idUser,
-        'idPic': idPic
-    };
+  const auth = new Auth (req.session)
+  const userId  = req.session.userId;
+  const picId   = req.params.id;
 
-    reqDatabase(query, params, Parser.getDebug, res);
+  const showSuccess = () => {
+      res.json({
+          success: true
+      })
+  }
+  const showError = (err) => {
+      res.status(err.status).json({
+          success: false,
+          err: err.error
+      })
+  }
+
+  auth.CheckNoAuth()
+      .then(() => Query.Profile({userId, picId}))
+      .then(Parser.GetTrue)
+      .then(showSuccess)
+      .catch(showError);
 };
 
 exports.delete = (req, res) => {
-    const auth = new Auth (req.session);
+    const auth = new Auth (req.session)
 
     const ParseIdPic = (data) => {
         return validate.ParseIdPic(data);
-    };
+    }
 
     const showSuccess = () => {
         res.json({
             success: true
-        });
-    };
+        })
+    }
     const showError = (err) => {
         res.status(err.status).json({
             success: false,
             err: err.error
-        });
-    };
+        })
+    }
 
     auth.CheckNoAuth()
         .then(ParseIdPic) //Change index
