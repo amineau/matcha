@@ -1,9 +1,8 @@
-'use strict';
+'use strict'
 
-const user = require('../handlers/user');
+const user = require('../handlers/user')
 
 module.exports = (app) => {
-
 
 	app.post('/auth/signup', user.signUp)
 	app.post('/auth/signin', user.signIn)
@@ -13,4 +12,5 @@ module.exports = (app) => {
 
 	app.get('/user/:by/:data', user.get)
 	app.delete('/user/', user.delete)
+
 }

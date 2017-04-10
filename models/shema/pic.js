@@ -24,7 +24,7 @@ module.exports = class PicQuery {
             WHERE id(u) = {id}
             CREATE(new: Img {name: {pic}})
             CREATE(u)-[p:OWNER {head: {head}}]->(new)
-            RETURN id(new) as id;`
+            RETURN id(new) as id`
 
           db.doDatabaseOperation(query, data)
             .then((data) => resolve(data))
@@ -32,15 +32,41 @@ module.exports = class PicQuery {
       })
     }
 
+    GetProfil(data) {
+      return new Promise((resolve, reject) => {
+        const query =
+          `MATCH (u: User)-[r: OWNER]->(i: Img)
+          WHERE id(u) = {id}
+          AND r.head = true
+          RETURN i as photo`
+
+        db.doDatabaseOperation(query, data)
+          .then((data) => resolve(data))
+          .catch((err) => reject(err))
+      })
+    }
+
+    Get(data) {
+      return new Promise((resolve, reject) => {
+        const query =
+          `MATCH (u: User)-[]->(i: Img)
+          WHERE id(u) = {id}
+          RETURN i as photo`
+
+        db.doDatabaseOperation(query, data)
+          .then((data) => resolve(data))
+          .catch((err) => reject(err))
+      })
+    }
+
     Delete(data) {
       return new Promise((resolve, reject) => {
         const query =
             `MATCH (u: User)-[r:OWNER]->(i: Img)
-            WHERE id(u) = {id}
-            AND id(i) = {idPic}
-            DELETE (r)
-            DELETE (i)
-            RETURN *;`
+            WHERE id(u) = {userId}
+            AND id(i) = {picId}
+            AND r.head = false
+            DETACH DELETE i`
 
           db.doDatabaseOperation(query, data)
             .then((data) => resolve(data))
@@ -53,8 +79,8 @@ module.exports = class PicQuery {
         const query =
         `MATCH (u: User)-[r:OWNER]->(i: Img)
         WHERE id(u) = {id}
-        SET r.head = 0
-        RETURN *`
+        AND r.head = true
+        SET r.head = false`
 
         db.doDatabaseOperation(query, data)
           .then((data) => resolve(data))
@@ -67,12 +93,15 @@ module.exports = class PicQuery {
         const query =
         `MATCH (u: User)-[f:OWNER]->(l: Img)
         WHERE id(u) = {userId}
-        SET f.head = 0
+        AND f.head = true
+        AND id(l) <> {picId}
+        SET f.head = false
         WITH 1 AS dummy
         MATCH (u:User)-[t:OWNER]->(i: Img)
-        WHERE id(u) = {userId} AND id(i) = {picId}
-        SET t.head = 1
-        RETURN *;`
+        WHERE id(u) = {userId}
+        AND t.head = false
+        AND id(i) = {picId}
+        SET t.head = true`
 
         db.doDatabaseOperation(query, data)
           .then((data) => resolve(data))

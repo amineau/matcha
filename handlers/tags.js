@@ -60,7 +60,7 @@ exports.get = (req, res) => {
 }
 
 exports.add = (req, res) => {
-  const validate = {tags: new TagsValidator(req.body)}
+  const validate = {tags: new TagsValidator(req.params)}
   const auth = new Auth (req.session)
   const id = req.session.userId
 

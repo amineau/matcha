@@ -1,20 +1,21 @@
-"use strict";
-
-function merge_options(obj1,obj2){
-	var obj3 = {};
-	for (var attrname in obj1) { obj3[attrname] = obj1[attrname] }
-	for (var attrname in obj2) { obj3[attrname] = obj2[attrname] }
-	return obj3
-}
+'use strict'
 
 module.exports = class ParseDatabase {
 
 	GetTrue(body) {
 		return new Promise((resolve, reject) => {
-			if (!body.errors.length)
-				resolve()
-			reject({
-					status: 403,
+			if (!body.errors.length){
+				if (body.results[0].stats.contains_updates){
+					return resolve()
+				} else {
+					return reject({
+						status: 403,
+						error: "Les données d'entrées ne permettent pas d'effectuer l'opération"
+					})
+				}
+			}
+			return reject({
+					status: 400,
 					error: "Echec de connection avec la base de donnée"
 				})
 		})
@@ -28,7 +29,7 @@ module.exports = class ParseDatabase {
 			if (typeof result !== "undefined" && (id = result.meta[0].id))
 				resolve({"id": id})
 			reject({
-				status: 403,
+				status: 404,
 				error: "Aucune donnée trouvée"
 			})
 		})
@@ -37,16 +38,14 @@ module.exports = class ParseDatabase {
 	GetIds(body) {
 		return new Promise((resolve) => {
 			const result = body.results[0]
-			let ids = []
+			let id = []
 
 			if (typeof result !== "undefined") {
 				result.data.forEach((item) => {
-					ids.push(item.meta[0].id)
+					id.push(item.meta[0].id)
 				})
 			}
-			resolve({
-				"id": ids
-			})
+			resolve({id})
 		})
 	}
 
@@ -80,6 +79,6 @@ module.exports = class ParseDatabase {
 
 	getDebug(body) {
 		console.log(body)
-		return body
+		return Promise.resolve(body)
 	}
 }

@@ -15,7 +15,8 @@ exports.doDatabaseOperation = (query, params) => {
 			json: {
 				statements: [{
 					statement: query,
-					parameters: params
+					parameters: params,
+					includeStats: true
 				}]
 			}
 		}, (err, res) => {

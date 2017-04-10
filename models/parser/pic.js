@@ -12,12 +12,12 @@ module.exports = class TagsValidator extends Validator {
             pic: {
               funct: e => e,
               maxLength: 30,
-              message: "Tag invalide"
+              message: "Pic invalide"
             },
             head: {
-              funct: e => e,
-              match: /^[01]$/,
-              message: 'Id invalide'
+              funct: e => e === 'true' ? true : false,
+              match: /^(true|false)$/,
+              message: 'Head accepte les valeurs "true" et "false" uniquement'
             }
         })
     }
