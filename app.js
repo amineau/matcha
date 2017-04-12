@@ -27,6 +27,21 @@ require('./routes/tags')(app)
 require('./routes/pics')(app)
 require('./routes/connexion')(app)
 require('./routes/notif')(app)
+// require('./routes/chat')(app)
+
+// (:User)--------	<= Dernier message lu
+// 	 			        \
+//	 		(:Chat)->(:Chat)->(:Chat)
+//	 												/
+// (:User) ----------------
+
+// OU
+
+// (:User1)
+// 	 		\ <= notif = true lorsque User2 écrit
+//	 		(:Chat)->(:Chat)->(:Chat)
+//	 		/
+// (:User2)
 
 app.listen(conf.server.port)
 console.log(`Server starting in ${conf.server.host} ${conf.server.port}`)

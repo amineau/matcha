@@ -22,7 +22,6 @@ exports.notif = (req, res) => {
     })
   }
   const showError = (err) => {
-    console.log(err)
     res.status(err.status || 500).json({
       success: false,
       err: err.error
@@ -30,8 +29,13 @@ exports.notif = (req, res) => {
   }
 
   auth.CheckNoAuth()
-    .then(() => Query.Notif({userId}))
+    .then(() => Query.ReadNotif({userId}))
     .then(Parser.GetData)
+    .then((data) => {
+      return Query.NotifToFalse({userId})
+        .then(() => Promise.resolve(data))
+        .catch(err => Promise.reject(err))
+    })
     .then(showSuccess)
     .catch(showError)
 }
