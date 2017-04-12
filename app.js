@@ -15,8 +15,8 @@ app.use(morgan('dev'))
 	.use(session({
 		secret: conf.session.secret,
 		resave: "true",
-		saveUninitialized: "true"
-		// cookie: {}
+		saveUninitialized: "true",
+		cookie: {}
 	}))
 	.use(express.static(__dirname + '/public'))
 
@@ -26,6 +26,7 @@ require('./routes/user')(app)
 require('./routes/tags')(app)
 require('./routes/pics')(app)
 require('./routes/connexion')(app)
+require('./routes/notif')(app)
 
 app.listen(conf.server.port)
 console.log(`Server starting in ${conf.server.host} ${conf.server.port}`)

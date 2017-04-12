@@ -10,6 +10,7 @@ exports.doDatabaseOperation = (query, params) => {
 		console.log('params :', params, '\nquery :', query)
 		if (params.id)
 			params.id = Number(params.id)
+		params.now = Date.now()
 		request.post({
 			uri: txUrl,
 			json: {

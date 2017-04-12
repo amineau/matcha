@@ -11,7 +11,7 @@ module.exports = class UserQuery {
           for (let key in data)
             tab += `${key}:{${key}},`
           const query =
-            `CREATE(u: User{${tab.slice(0, -1)}})
+            `CREATE(u: User{${tab}, score: 0})
             RETURN *;`
 
           db.doDatabaseOperation(query, data)

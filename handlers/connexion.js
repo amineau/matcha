@@ -144,6 +144,32 @@ exports.report = (req, res) => {
     .catch(showError)
 }
 
+exports.visite = (req, res) => {
+  const auth = new Auth (req.session)
+  const id = req.params.id
+  const userId = req.session.userId
+
+  const showSuccess = (data) => {
+    res.json({
+      data,
+      success: true
+    })
+  }
+  const showError = (err) => {
+    console.log(err)
+    res.status(err.status || 500).json({
+      success: false,
+      err: err.error
+    })
+  }
+
+  auth.CheckNoAuth()
+    .then(() => Query.Visite(_.merge({id, userId})))
+    .then(Parser.GetTrue)
+    .then(showSuccess)
+    .catch(showError)
+}
+
 exports.likedBy = (req, res) => {
   const auth = new Auth (req.session)
   const id = req.session.userId
@@ -189,6 +215,31 @@ exports.liked = (req, res) => {
 
   auth.CheckNoAuth()
     .then(() => Query.Liked({id}))
+    .then(Parser.GetIds)
+    .then(showSuccess)
+    .catch(showError)
+}
+
+exports.blocked = (req, res) => {
+  const auth = new Auth (req.session)
+  const id = req.session.userId
+
+  const showSuccess = (data) => {
+    res.json({
+      data,
+      success: true
+    })
+  }
+  const showError = (err) => {
+    console.log(err)
+    res.status(err.status || 500).json({
+      success: false,
+      err: err.error
+    })
+  }
+
+  auth.CheckNoAuth()
+    .then(() => Query.Blocked({id}))
     .then(Parser.GetIds)
     .then(showSuccess)
     .catch(showError)

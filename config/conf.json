@@ -14,5 +14,13 @@
   },
   "bcrypt": {
     "saltRounds": 10
+  },
+  "score": {
+    "validate": 100,
+    "like": 50,
+    "photo": 20,
+    "visite": 10,
+    "block": -100,
+    "report": -200
   }
 }
