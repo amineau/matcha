@@ -5,33 +5,10 @@ const Auth           = require("../models/auth")
 const _              = require('lodash')
 
 exports.get = (req, res) => {
-  const auth    = new Auth (req.session)
-  const id  = req.params.id
-
-  const showSuccess = (data) => {
-    res.json({
-      data,
-      success: true
-    })
-  }
-  const showError = (err) => {
-    res.status(err.status || 500).json({
-      success: false,
-      err: err.error
-    })
-  }
-
-  auth.CheckNoAuth()
-    .then(() => Query.Get({id}))
-    .then(Parser.GetData)
-    .then(showSuccess)
-    .catch(showError)
-}
-
-exports.add = (req, res) => {
-  const validate = {pic: new ChatValidator(req.body)}
   const auth = new Auth (req.session)
-  const id = req.session.userId
+  const senderId = req.session.userId
+  const recipientId = req.params.id
+  const query = req.app.get('query')
 
   const showSuccess = (data) => {
     res.json({
@@ -48,30 +25,35 @@ exports.add = (req, res) => {
   }
 
   auth.CheckNoAuth()
-    .then(() => {
-      return Promise.all([
-        validate.pic.Parse([
-          {name: 'pic'},
-          {name: 'head', noReq: true}
-        ]),
-        Query.Count({id})
-          .then(Parser.GetData)
-      ])
+    .then(() => query.FindComments([senderId, recipientId]))
+    .then(showSuccess)
+    .catch(showError)
+}
+
+exports.add = (req, res) => {
+  const validate = {chat: new ChatValidator(req.body)}
+  const auth = new Auth (req.session)
+  const senderId = req.session.userId
+  const recipientId = req.params.id
+  const query = req.app.get('query')
+
+  const showSuccess = (data) => {
+    res.json({
+      data,
+      success: true
     })
-    .then(data => {
-      if (data[1][0].count >= 5) {
-        return Promise.reject({
-          status: 403,
-          error: "Vous ne pouvez pas charger plus de 5 photos"
-        })
-      } else if (data[1][0].count === 0) {
-        data[0].head = true
-      }
-      return Promise.resolve(data[0])
+  }
+  const showError = (err) => {
+    console.log(err)
+    res.status(err.status || 500).json({
+      success: false,
+      err: err.error
     })
-    .then(data => isHead(data))
-    .then(data => Query.Add(_.merge(data, {id})))
-    .then(Parser.GetDebug)
+  }
+
+  auth.CheckNoAuth()
+    .then(() => validate.chat.Parse([{name: 'comment'}]))
+    .then(comment => query.AddComment([senderId, recipientId], comment))
     .then(showSuccess)
     .catch(showError)
 }

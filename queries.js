@@ -9,7 +9,7 @@ module.exports = class Queries {
 
   constructor () {
     this._txUrl = `mongodb://${host}:${port}/${table}`
-    this._collection = this.Connect()
+    this.Connect().then(collec => this._collection = collec)
     this._db = null
   }
 

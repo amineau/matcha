@@ -30,6 +30,7 @@ require('./routes/tags')(app)
 require('./routes/pics')(app)
 require('./routes/connexion')(app)
 require('./routes/notif')(app)
+require('./routes/chat')(app)
 // require('./routes/chat')(app)
 
 // (:User)--------	<= Dernier message lu
