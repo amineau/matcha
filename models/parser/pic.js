@@ -2,7 +2,7 @@
 
 const Validator = require('./validator')
 
-module.exports = class TagsValidator extends Validator {
+module.exports = class PicValidator extends Validator {
 
     /**
      * Constructor

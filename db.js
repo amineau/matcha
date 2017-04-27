@@ -1,7 +1,7 @@
-"use strict";
+'use strict'
 
-const request = require('request');
-const db = require('./config/conf').neo4j;
+const request = require('request')
+const db = require('./config/conf').neo4j
 
 const txUrl = `http://${db.user}:${db.pass}@${db.host}:${db.port}/db/data/transaction/commit`
 
