@@ -1,9 +1,14 @@
 {
-  "db": {
+  "neo4j": {
     "host": "localhost",
     "port": "7474",
     "user": "neo4j",
     "pass": "94gV9FNjmS3q5V6v"
+  },
+  "mongo": {
+    "host": "localhost",
+    "port": "27017",
+    "table": "matcha"
   },
   "server": {
     "host": "localhost",
