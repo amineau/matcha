@@ -1,55 +1,13 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<% include ../partials/head %>
-		<script type="text/javascript" src="/js/signUp.js"></script>
+		<!-- <% include ../partials/head %> -->
+		<!-- <script type="text/javascript" src="../../public/js/signUp.js"></script> -->
 	</head>
 	<body>
-		<header>
-			<% include ../partials/header %>
-		</header>
-		<% if (typeof error !== "undefined") { %>
-		<div class="error"><%= error %></div>
-		<% } %>
-		<form method="post" action='/createAccount' onsubmit="return verifForm(this)">
-			<input type="text" id="login" name="login" onblur="verifLogin(this)" placeholder="Login" required autofocus>
-			<input type="mail" id="email" name="email" onblur="verifEmail(this)" placeholder="Email" required>
-			<input type="text" id="firstName" name="firstName" onblur="verifName(this)" placeholder="Prénom" required>
-			<input type="text" id="lastName" name="lastName" onblur="verifName(this)" placeholder="Nom" required>
-			<input type="password" id="password" name="password" onkeyup="verifPass(this)" placeholder="Mot de passe" required>
-			<input type="submit" value="OK">
-		</form>
-
-		<!-- <script src="/socket.io/socket.io.js"></script> -->
-        <script type="text/javascript">
-
-        	
-
-
-            // var socket = io.connect('http://localhost:8080');
-            // socket.on('error', function(error) {
-            //     if (error.val)
-            //         $('#' + error.id).addClass("error")
-            //     else
-            //         $('#' + error.id).removeClass("error")
-            //     if ($("#" + error.id + "Err"))
-            //         $("#" + error.id + "Err").remove()
-            //     if (error.message)
-            //         $('#' + error.id).after("<div id='" + error.id + "Err'>" + error.message + "<div>")
-            // })
-
-            // $('input[type!="submit"]').blur(function () {
-            //     socket.emit("sign", {
-            //         "id": $(this).attr("id"), 
-            //         "val": $(this).val(),
-            //     });
-            // })
-        
-        </script>
-
-
-		<footer>
-			<% include ../partials/footer %>
-		</footer>
+		<section>
+			<app></app>
+		</section>
+		<script async src="../../dist/build.js"></script>
 	</body>
 </html>
