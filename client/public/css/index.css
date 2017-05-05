@@ -1,0 +1,25 @@
+/*.btn, .btn-large {
+  background-color: #aaaaff
+}
+
+.btn:focus, .btn-large:focus {
+  background-color: #ffaaaa
+}
+
+.btn:hover, .btn-large:hover {
+  background-color: #ffaaaa
+}*/
+
+body, #default-layout {
+   display: flex;
+   min-height: 100vh;
+   flex-direction: column;
+ }
+
+ /*html {
+   font-family:  Calibri, Trebuchet, sans-serif;
+ }*/
+
+ main {
+   flex: 1 0 auto;
+ }

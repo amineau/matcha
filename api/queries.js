@@ -1,7 +1,7 @@
 'use strict'
 
 const assert = require('assert')
-const {host, port, table} = require('./config/conf').mongo
+const {host, port, table} = require('../config/conf').mongo
 const MongoClient = require('mongodb').MongoClient
 const _ = require('lodash')
 

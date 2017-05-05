@@ -1,12 +1,10 @@
 'use strict';
 
 const ChatValidator  = require("../models/parser/chat")
-const Auth           = require("../models/auth")
 const _              = require('lodash')
 
 exports.get = (req, res) => {
-  const auth = new Auth (req.session)
-  const senderId = req.session.userId
+  const senderId = req.decoded.id
   const recipientId = req.params.id
   const query = req.app.get('query')
 
@@ -24,16 +22,14 @@ exports.get = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-    .then(() => query.FindComments([senderId, recipientId]))
+  query.FindComments([senderId, recipientId])
     .then(showSuccess)
     .catch(showError)
 }
 
 exports.add = (req, res) => {
   const validate = {chat: new ChatValidator(req.body)}
-  const auth = new Auth (req.session)
-  const senderId = req.session.userId
+  const senderId = req.decoded.id
   const recipientId = req.params.id
   const query = req.app.get('query')
 
@@ -51,8 +47,7 @@ exports.add = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-    .then(() => validate.chat.Parse([{name: 'comment'}]))
+  validate.chat.Parse([{name: 'comment'}])
     .then(comment => query.AddComment([senderId, recipientId], comment))
     .then(showSuccess)
     .catch(showError)

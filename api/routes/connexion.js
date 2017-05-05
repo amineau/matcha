@@ -1,20 +1,21 @@
 'use strict'
 
 const connexion = require('../handlers/connexion')
+const restrict = require('../models/restrict')
 
 module.exports = (app) => {
 
-    app.post('/like/:id', connexion.like)
-    app.post('/block/:id', connexion.block)
-    app.post('/report/:id', connexion.report)
-    app.post('/visite/:id', connexion.visite)
+    app.post('/like/:id', restrict, connexion.like)
+    app.post('/block/:id', restrict, connexion.block)
+    app.post('/report/:id', restrict, connexion.report)
+    app.post('/visite/:id', restrict, connexion.visite)
 
-    app.get('/likeby', connexion.likedBy)
-    app.get('/like', connexion.liked)
-    app.get('/block', connexion.blocked)
+    app.get('/likeby', restrict, connexion.likedBy)
+    app.get('/like', restrict, connexion.liked)
+    app.get('/block', restrict, connexion.blocked)
     // app.get('/connected', connexion.connected)
 
-    app.delete('/like/:id', connexion.unlike)
-    app.delete('/block/:id', connexion.unblock)
+    app.delete('/like/:id', restrict, connexion.unlike)
+    app.delete('/block/:id', restrict, connexion.unblock)
 
 }

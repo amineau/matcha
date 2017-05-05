@@ -1,8 +1,12 @@
 {
+  "api": {
+    "host": "localhost",
+    "port": "4242"
+  },
   "neo4j": {
     "host": "localhost",
     "port": "7474",
-    "user": "neo4j",
+    "user": "amineau",
     "pass": "94gV9FNjmS3q5V6v"
   },
   "mongo": {
@@ -14,8 +18,9 @@
     "host": "localhost",
     "port": "4242"
   },
-  "session": {
-    "secret": "h6Oo6sNvmpJI1PU"
+  "token": {
+    "secret": "h6Oo6sNvmpJI1PU",
+    "expires": 3600
   },
   "bcrypt": {
     "saltRounds": 10

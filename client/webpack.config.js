@@ -1,13 +1,18 @@
+var path = require('path')
+
 module.exports = {
   // This is the "main" file which should include all other modules
-  entry: './public/js/main.js',
+  entry: [
+    './src/main.js'
+  ],
   // Where should the compiled file go?
   output: {
     path: __dirname + '/dist',
-    publicPath: 'dist/',
     filename: 'build.js'
   },
   module: {
+    unknownContextCritical: false,
+    exprContextCritical: false,
     // Special compilation rules
     loaders: [
       {
@@ -20,6 +25,11 @@ module.exports = {
        loader: 'vue-loader'
       }
     ]
+  },
+  node: {
+    net: 'empty',
+    tls: 'empty',
+    dns: 'empty'
   },
   // vue: {
   //   loaders: {

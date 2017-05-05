@@ -2,7 +2,6 @@
 
 const DbParser	 	        = require("../models/parser/db")
 const NotifQuery          = require("../models/shema/notif")
-const Auth                = require("../models/auth")
 const _                   = require('lodash')
 
 const db		  = require("../db")
@@ -12,8 +11,7 @@ const Query   = new NotifQuery()
 
 
 exports.notif = (req, res) => {
-  const auth = new Auth (req.session)
-  const userId = req.session.userId
+  const userId = req.decoded.id
 
   const showSuccess = (data) => {
     res.json({
@@ -28,8 +26,7 @@ exports.notif = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-    .then(() => Query.ReadNotif({userId}))
+  Query.ReadNotif({userId})
     .then(Parser.GetData)
     .then((data) => {
       return Query.NotifToFalse({userId})

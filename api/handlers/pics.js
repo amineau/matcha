@@ -3,7 +3,6 @@
 const DbParser	 	= require("../models/parser/db")
 const PicValidator  = require("../models/parser/pic")
 const PicQuery      = require("../models/shema/pic")
-const Auth          = require("../models/auth")
 const _             = require('lodash')
 
 const db			= require("../db")
@@ -12,7 +11,6 @@ const Parser = new DbParser()
 const Query  = new PicQuery()
 
 exports.get = (req, res) => {
-  const auth    = new Auth (req.session)
   const id  = req.params.id
 
   const showSuccess = (data) => {
@@ -28,15 +26,13 @@ exports.get = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-    .then(() => Query.Get({id}))
+  Query.Get({id})
     .then(Parser.GetData)
     .then(showSuccess)
     .catch(showError)
 }
 
 exports.getProfil = (req, res) => {
-  const auth    = new Auth (req.session)
   const id  = req.params.id
 
   const showSuccess = (data) => {
@@ -52,8 +48,7 @@ exports.getProfil = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-    .then(() => Query.GetProfil({id}))
+  Query.GetProfil({id})
     .then(Parser.GetData)
     .then(showSuccess)
     .catch(showError)
@@ -61,8 +56,7 @@ exports.getProfil = (req, res) => {
 
 exports.add = (req, res) => {
   const validate = {pic: new PicValidator(req.body)}
-  const auth = new Auth (req.session)
-  const id = req.session.userId
+  const id = req.decoded.id
 
   const showSuccess = (data) => {
     res.json({
@@ -86,17 +80,14 @@ exports.add = (req, res) => {
     return Promise.resolve(data)
   }
 
-  auth.CheckNoAuth()
-    .then(() => {
-      return Promise.all([
-        validate.pic.Parse([
-          {name: 'pic'},
-          {name: 'head', noReq: true}
-        ]),
-        Query.Count({id})
-          .then(Parser.GetData)
-      ])
-    })
+  Promise.all([
+    validate.pic.Parse([
+      {name: 'pic'},
+      {name: 'head', noReq: true}
+    ]),
+    Query.Count({id})
+      .then(Parser.GetData)
+  ])
     .then(data => {
       if (data[1][0].count >= 5) {
         return Promise.reject({
@@ -116,8 +107,7 @@ exports.add = (req, res) => {
 }
 
 exports.profile = (req, res) => {
-  const auth = new Auth (req.session)
-  const userId  = req.session.userId
+  const userId  = req.decoded.id
   const picId   = Number(req.params.id)
 
   const showSuccess = (data) => {
@@ -133,17 +123,15 @@ exports.profile = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-    .then(() => Query.Profile({userId, picId}))
+  Query.Profile({userId, picId})
     .then(Parser.GetTrue)
     .then(showSuccess)
     .catch(showError)
 }
 
 exports.delete = (req, res) => {
-    const auth    = new Auth (req.session)
     const picId   = Number(req.params.id)
-    const userId  = req.session.userId
+    const userId  = req.decoded.id
 
     const showSuccess = (data) => {
       res.json({
@@ -158,8 +146,7 @@ exports.delete = (req, res) => {
       })
     }
 
-    auth.CheckNoAuth()
-      .then(() => Query.Delete({picId, userId}))
+    Query.Delete({picId, userId})
       .then(Parser.GetTrue)
       .then(showSuccess)
       .catch(showError)

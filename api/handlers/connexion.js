@@ -3,7 +3,6 @@
 const DbParser	 	        = require("../models/parser/db")
 const ConnexionValidator  = require("../models/parser/connexion")
 const ConnexionQuery      = require("../models/shema/connexion")
-const Auth                = require("../models/auth")
 const _                   = require('lodash')
 
 const db		  = require("../db")
@@ -13,9 +12,8 @@ const Query   = new ConnexionQuery()
 
 
 exports.like = (req, res) => {
-  const auth = new Auth (req.session)
   const id = Number(req.params.id)
-  const userId = Number(req.session.userId)
+  const userId = req.decoded.id
   const mongo = req.app.get('query')
 
   const showSuccess = (data) => {
@@ -32,8 +30,7 @@ exports.like = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-    .then(() => Query.Like({id, userId}))
+  Query.Like({id, userId})
     .then(Parser.GetTrue)
     .then(() => Query.Connected({id, userId}))
     .then(Parser.GetData)
@@ -44,9 +41,8 @@ exports.like = (req, res) => {
 }
 
 exports.unlike = (req, res) => {
-  const auth = new Auth (req.session)
   const id = Number(req.params.id)
-  const userId = Number(req.session.userId)
+  const userId = req.decoded.id
   const mongo = req.app.get('query')
 
   const showSuccess = (data) => {
@@ -63,8 +59,7 @@ exports.unlike = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-    .then(() => Query.Unlike({id, userId}))
+  Query.Unlike({id, userId})
     .then(Parser.GetTrue)
     .then(() => mongo.Delete([id, userId]))
     .then(() => mongo.FindAll())
@@ -73,9 +68,8 @@ exports.unlike = (req, res) => {
 }
 
 exports.block = (req, res) => {
-  const auth = new Auth (req.session)
   const id = Number(req.params.id)
-  const userId = Number(req.session.userId)
+  const userId = req.decoded.id
 
   const showSuccess = (data) => {
     res.json({
@@ -91,17 +85,15 @@ exports.block = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-    .then(() => Query.Block({id, userId}))
+  Query.Block({id, userId})
     .then(Parser.GetTrue)
     .then(showSuccess)
     .catch(showError)
 }
 
 exports.unblock = (req, res) => {
-  const auth = new Auth (req.session)
   const id = Number(req.params.id)
-  const userId = Number(req.session.userId)
+  const userId = req.decoded.id
 
   const showSuccess = (data) => {
     res.json({
@@ -117,17 +109,15 @@ exports.unblock = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-    .then(() => Query.Unblock({id, userId}))
+  Query.Unblock({id, userId})
     .then(Parser.GetTrue)
     .then(showSuccess)
     .catch(showError)
 }
 
 exports.report = (req, res) => {
-  const auth = new Auth (req.session)
   const id = Number(req.params.id)
-  const userId = Number(req.session.userId)
+  const userId = req.decoded.id
   const validate = {connexion: new ConnexionValidator(req.body)}
 
   const showSuccess = (data) => {
@@ -144,8 +134,7 @@ exports.report = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-    .then(() => validate.connexion.Parse([{name: 'message'}]))
+  validate.connexion.Parse([{name: 'message'}])
     .then((data) => Query.Report(_.merge({id, userId}, data)))
     .then(Parser.GetTrue)
     .then(showSuccess)
@@ -153,9 +142,8 @@ exports.report = (req, res) => {
 }
 
 exports.visite = (req, res) => {
-  const auth = new Auth (req.session)
   const id = Number(req.params.id)
-  const userId = Number(req.session.userId)
+  const userId = req.decoded.id
 
   const showSuccess = (data) => {
     res.json({
@@ -171,16 +159,14 @@ exports.visite = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-    .then(() => Query.Visite(_.merge({id, userId})))
+  Query.Visite(_.merge({id, userId}))
     .then(Parser.GetTrue)
     .then(showSuccess)
     .catch(showError)
 }
 
 exports.likedBy = (req, res) => {
-  const auth = new Auth (req.session)
-  const id = Number(req.session.userId)
+  const id = req.decoded.id
 
   const showSuccess = (data) => {
     res.json({
@@ -196,16 +182,14 @@ exports.likedBy = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-    .then(() => Query.LikedBy({id}))
+  Query.LikedBy({id})
     .then(Parser.GetIds)
     .then(showSuccess)
     .catch(showError)
 }
 
 exports.liked = (req, res) => {
-  const auth = new Auth (req.session)
-  const id = Number(req.session.userId)
+  const id = req.decoded.id
 
   const showSuccess = (data) => {
     res.json({
@@ -221,16 +205,14 @@ exports.liked = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-    .then(() => Query.Liked({id}))
+  Query.Liked({id})
     .then(Parser.GetIds)
     .then(showSuccess)
     .catch(showError)
 }
 
 exports.blocked = (req, res) => {
-  const auth = new Auth (req.session)
-  const id = Number(req.session.userId)
+  const id = req.decoded.id
 
   const showSuccess = (data) => {
     res.json({
@@ -246,8 +228,7 @@ exports.blocked = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-    .then(() => Query.Blocked({id}))
+  Query.Blocked({id})
     .then(Parser.GetIds)
     .then(showSuccess)
     .catch(showError)

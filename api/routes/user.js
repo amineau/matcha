@@ -1,16 +1,16 @@
 'use strict'
 
 const user = require('../handlers/user')
+const restrict = require('../models/restrict')
 
 module.exports = (app) => {
 
 	app.post('/auth/signup', user.signUp)
 	app.post('/auth/signin', user.signIn)
-	app.post('/auth/logout', user.logout)
 
-	app.put('/user/', user.set)
+	app.put('/user/', restrict, user.set)
 
-	app.get('/user/:by/:data', user.get)
-	app.delete('/user/', user.delete)
+	app.get('/user/:by/:data', restrict, user.get)
+	app.delete('/user/', restrict, user.delete)
 
 }

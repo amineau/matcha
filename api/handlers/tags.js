@@ -3,7 +3,6 @@
 const DbParser	 	= require("../models/parser/db")
 const TagsValidator = require("../models/parser/tags")
 const TagsQuery     = require("../models/shema/tags")
-const Auth          = require("../models/auth")
 const _             = require('lodash')
 
 const Parser = new DbParser()
@@ -11,8 +10,7 @@ const Query = new TagsQuery()
 
 exports.search = (req, res) => {
   const validate = {tags: new TagsValidator(req.params)}
-  const auth = new Auth (req.session)
-  const id = req.session.userId
+  const id = req.decoded.id
 
   const showSuccess = (data) => {
     res.json({
@@ -28,8 +26,7 @@ exports.search = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-      .then(() => validate.tags.Parse([{name: 'tag'}]))
+  validate.tags.Parse([{name: 'tag'}])
       .then((data) => Query.Search(_.merge(data, {id})))
       .then(Parser.GetData)
       .then(showSuccess)
@@ -37,7 +34,6 @@ exports.search = (req, res) => {
 }
 
 exports.get = (req, res) => {
-  const auth = new Auth (req.session)
   const id = req.params.id
   const showSuccess = (data) => {
     res.json({
@@ -52,8 +48,7 @@ exports.get = (req, res) => {
     })
   }
 
-  auth.CheckNoAuth()
-      .then(() => Query.Get({id}))
+  Query.Get({id})
       .then(Parser.GetData)
       .then(showSuccess)
       .catch(showError);
@@ -61,8 +56,7 @@ exports.get = (req, res) => {
 
 exports.add = (req, res) => {
   const validate = {tags: new TagsValidator(req.params)}
-  const auth = new Auth (req.session)
-  const id = req.session.userId
+  const id = req.decoded.id
 
   const showSuccess = () => {
     res.json({
@@ -76,8 +70,7 @@ exports.add = (req, res) => {
       err: err.error
     })
   }
-  auth.CheckNoAuth()
-      .then(() => validate.tags.Parse([{name: 'tag'}]))
+  validate.tags.Parse([{name: 'tag'}])
       .then((data) => Query.Add(_.merge(data, {id})))
       .then(Parser.GetTrue)
       .then(showSuccess)
@@ -86,7 +79,6 @@ exports.add = (req, res) => {
 
 exports.remove = (req, res) => {
   const validate = {tags: new TagsValidator(req.body)}
-  const auth = new Auth (req.session)
 
   const showSuccess = () => {
     res.json({
@@ -99,8 +91,7 @@ exports.remove = (req, res) => {
       err: err.error
     })
   }
-  auth.CheckNoAuth()
-      .then(() => validate.tags.Parse([{name: 'tag'}]))
+  validate.tags.Parse([{name: 'tag'}])
       .then(Query.Remove)
       .then(Parser.GetTrue)
       .then(showSuccess)
