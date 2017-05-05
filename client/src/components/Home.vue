@@ -1,13 +1,15 @@
 <template>
-  <div id="home">
+  <homeLayout>
 
     <p>Bienvenue sur DoubleMatching</p>
-    <a href="#/dash" class="waves-effect waves-light btn">DashBoard</a>
+    <router-link to="/dash" class="waves-effect waves-light btn">DashBoard</router-link>
 
-  </div>
+  </homeLayout>
 </template>
 
 <script>
+
+  import homeLayout from './layout/Home.vue'
 
   export default {
     name: 'home',
@@ -15,6 +17,9 @@
       return {
         msg: ''
       }
+    },
+    components: {
+      homeLayout
     }
   }
 

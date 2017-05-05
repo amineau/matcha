@@ -10,7 +10,7 @@
   background-color: #ffaaaa
 }*/
 
-body, #default-layout {
+body, .layout {
    display: flex;
    min-height: 100vh;
    flex-direction: column;
