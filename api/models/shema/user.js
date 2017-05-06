@@ -39,10 +39,7 @@ module.exports = class UserQuery {
     Set(where, set) {
         return new Promise((resolve, reject) => {
           if (_.isEmpty(where) || _.isEmpty(set)) {
-            return reject({
-              status: 404, // A modifier
-              error: 'Aucun champs de correspond à la base de donnée'
-            })
+            return reject({error: 'Aucun champs de correspond à la base de donnée'})
           }
           let toWhere = ''
           let toSet = ''

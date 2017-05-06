@@ -1,27 +1,8 @@
 <template>
-  <div id="default-layout">
+  <div id="default-layout" class="layout" v-show="ready">
     <header>
-      <div v-if="ready" class="row">
-        <div v-if="user" class="col s6 m4">
-          <div>Salut {{user.login}}</div>
+          <!-- <div>Salut {{user.login}}</div> -->
           <a v-on:click="logout" class="btn waves-effect waves-light">Deconnexion</a>
-        </div>
-        <form v-else class="col s6 m4">
-          <div v-if="connectionError" class="error">{{connectionError}}</div>
-          <div class="row">
-            <div class="input-field col s12 m6">
-              <input id="login" v-model.lazy="login" type="text" class="validate">
-              <label for="login">Login</label>
-            </div>
-            <div class="input-field col s12 m6">
-              <input id="password" v-model.lazy="password" type="password"class="validate">
-              <label for="password">Mot de passe</label>
-            </div>
-            <button v-on:click.prevent="signin" class="btn waves-effect waves-light" type="submit">Connexion</button>
-          </div>
-          <a class="btn waves-effect waves-light">Inscription</a>
-        </form>
-      </div>
       <h1>Header</h1>
     </header>
 
@@ -60,67 +41,26 @@
 
 <script>
 
-  import conf from '../../../../config/conf.json'
-  import jwt from 'jsonwebtoken'
-
-  const checkToken = (token, callback) => {
-    jwt.verify(token, conf.token.secret, (err, decoded) => {
-      if (!err) {
-        delete decoded.iat
-        delete decoded.exp
-      }
-      callback(decoded)
-    })
-  }
-
   export default {
     name: 'layout',
     data () {
       return {
-        ready: false,
-        user: null,
-        login: null,
-        password: null,
-        connectionError: null
+        ready: false
       }
     },
+    props: ['auth'],
     created () {
-      const token = this.$cookie.get('token')
-
-      if (!token) {
-        return this.ready = true
-      }
-      checkToken(token, (u) => {
-        this.user = u
+      this.auth(data => {
+        if (!data.success) return this.$router.replace('/')
         this.ready = true
       })
     },
     methods: {
-      signin () {
-        this.$http.post(`http://${conf.api.host}:${conf.api.port}/auth/signin`, {
-          login: this.login,
-          password: this.password
-        },{
-          responseType: 'json'
-        }).then(res => {
-          if (res.body.success) {
-            checkToken(res.body.token, (u) => this.user = u)
-            this.$cookie.set('token', res.body.token)
-            this.connectionError = null
-            this.login = null
-          } else {
-            console.log(res.body)
-            this.connectionError = res.body.err.error
-          }
-          this.password = null
-        })
-      },
       logout () {
         this.$cookie.delete('token')
-        this.user = false
+        this.$router.replace('/')
       }
     }
-
   }
 
 </script>

@@ -12,7 +12,7 @@ const jwt           = require('jsonwebtoken')
 const Parser = new DbParser()
 const Query  = new UserQuery()
 
-exports.get = (req, res) => {
+exports.getByData = (req, res) => {
   const {by, data} = req.params
   const validate = {
     user: new UserValidator({[by]: data})
@@ -25,7 +25,7 @@ exports.get = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-      res.status(err.status || 500).json({
+      res.json({
           success: false,
           err: err.error || err
       })
@@ -33,6 +33,50 @@ exports.get = (req, res) => {
 
   validate.user.Parse([{ name: by }])
       .then(Query.Get)
+      .then(Parser.GetData)
+      .then(showSuccess)
+      .catch(showError);
+}
+
+exports.get = (req, res) => {
+  const id = req.decoded.id
+  const showSuccess = (data) => {
+    res.json({
+      success: true,
+      data
+    })
+  }
+  const showError = (err) => {
+    console.log(err)
+      res.json({
+          success: false,
+          err: err.error || err
+      })
+  }
+
+    Query.Get({id})
+      .then(Parser.GetData)
+      .then(showSuccess)
+      .catch(showError);
+}
+
+exports.get = (req, res) => {
+  const id = req.params.id
+  const showSuccess = (data) => {
+    res.json({
+      success: true,
+      data
+    })
+  }
+  const showError = (err) => {
+    console.log(err)
+      res.json({
+          success: false,
+          err: err.error || err
+      })
+  }
+
+    Query.GetPrivate({id})
       .then(Parser.GetData)
       .then(showSuccess)
       .catch(showError);
@@ -47,7 +91,7 @@ exports.signUp = (req, res) => {
     }
     const showError = (err) => {
         console.log(err)
-        res.status(err.status || 500).json({
+        res.json({
             success: false,
             err: err.error
         })
@@ -68,15 +112,9 @@ exports.signUp = (req, res) => {
           ])
             .then(result => {
               if (!_.isEmpty(result[0].results[0].data[0]))
-                return reject({
-                  status: 404,
-                  error: 'L\'email existe déjà'
-                })
+                return reject({error: 'L\'email existe déjà'})
               else if (!_.isEmpty(result[1].results[0].data[0]))
-                return reject({
-                status: 404,
-                error: 'Le login existe déjà'
-              })
+                return reject({error: 'Le login existe déjà'})
               resolve(data)
             })
           })
@@ -125,7 +163,7 @@ exports.set = (req, res) => {
     }
     const showError = (err) => {
       console.log(err)
-        res.status(err.status || 500).json({
+        res.json({
             success: false,
             err: err.error
         })
@@ -153,7 +191,7 @@ exports.delete = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-      res.status(err.status || 500).json({
+      res.json({
           success: false,
           err: err.error
       })

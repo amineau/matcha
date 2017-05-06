@@ -8,16 +8,10 @@ module.exports = class ParseDatabase {
 				if (body.results[0].stats.contains_updates){
 					return resolve()
 				} else {
-					return reject({
-						status: 403,
-						error: "Les données d'entrées ne permettent pas d'effectuer l'opération"
-					})
+					return reject({error: "Les données d'entrées ne permettent pas d'effectuer l'opération"})
 				}
 			}
-			return reject({
-					status: 400,
-					error: "Echec de connection avec la base de donnée"
-				})
+			return reject({error: "Echec de connection avec la base de donnée"})
 		})
 	}
 
@@ -28,10 +22,7 @@ module.exports = class ParseDatabase {
 
 			if (typeof result !== "undefined" && (id = result.meta[0].id))
 				resolve({"id": id})
-			reject({
-				status: 404,
-				error: "Aucune donnée trouvée"
-			})
+			reject({error: "Aucune donnée trouvée"})
 		})
 	}
 
@@ -46,6 +37,23 @@ module.exports = class ParseDatabase {
 				})
 			}
 			resolve({id})
+		})
+	}
+
+	GetList(body) {
+		return new Promise((resolve, reject) => {
+			const result = body.results[0]
+			let json = []
+			let data
+			let index
+
+			if (typeof result !== "undefined" && result.columns.length === 1) {
+				for (let i = 0; i < result.data.length; i++) {
+					json.push(result.data[i].row[0])
+				}
+				resolve(json)
+			}
+			reject({error: "Ressource non trouvée"})
 		})
 	}
 
@@ -70,10 +78,7 @@ module.exports = class ParseDatabase {
 				}
 				resolve(json)
 			}
-			reject({
-				status: 404,
-				error: "Ressource non trouvée"
-			})
+			reject({error: "Ressource non trouvée"})
 		})
 	}
 

@@ -58,12 +58,12 @@ module.exports = class UserValidator extends Validator {
         },
         sex: {
           funct: e => e,
-          match: /^[MF]$/,
+          match: /^[MWT]$/,
           message: 'Sexe invalide'
         },
         prefer: {
           funct: e => e,
-          match: /^[MFB]$/,
+          match: /^[MWB]$/,
           message: 'Préférence invalide'
         },
         bio: {

@@ -13,7 +13,7 @@ const Queries = require('./queries')
 let app = express()
 
 nconf.env()
-nconf.file({file: path.join(__dirname, '../config/conf.json')})
+nconf.file({file: path.join(__dirname, 'config/conf.json')})
 
 app.set('query', new Queries())
 app.set('nconf', nconf)

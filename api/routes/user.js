@@ -9,8 +9,10 @@ module.exports = (app) => {
 	app.post('/auth/signin', user.signIn)
 
 	app.put('/user/', restrict, user.set)
+	// app.get('/user/', restrict, user.getPrivate)
+	// app.get('/user/:id', restrict, user.get)
 
-	app.get('/user/:by/:data', restrict, user.get)
+	app.get('/user/:by/:data', restrict, user.getByData)
 	app.delete('/user/', restrict, user.delete)
 
 }

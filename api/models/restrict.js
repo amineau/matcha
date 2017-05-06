@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
   const token = req.headers['matcha-token']
   jwt.verify(token, nconf.get('token:secret'), (err, decoded) => {
     if (err) {
-      return res.status(403).json({
+      return res.json({
         success: false,
         err
       })

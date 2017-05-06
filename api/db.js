@@ -1,7 +1,7 @@
 'use strict'
 
 const request = require('request')
-const db = require('../config/conf').neo4j
+const db = require('./config/conf').neo4j
 
 const txUrl = `http://${db.user}:${db.pass}@${db.host}:${db.port}/db/data/transaction/commit`
 
@@ -23,10 +23,7 @@ exports.doDatabaseOperation = (query, params) => {
 		}, (err, res) => {
 			console.log("err :", err, '\nres :', res.body)
 	    	if (err)
-	    		reject({
-	    			status: 500,
-	    			error: err
-	    		})
+	    		reject({error: err})
 	    	else
 		    	resolve(res.body)
 	    })

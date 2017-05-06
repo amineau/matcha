@@ -24,7 +24,7 @@ exports.like = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
@@ -53,7 +53,7 @@ exports.unlike = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
@@ -79,7 +79,7 @@ exports.block = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
@@ -103,7 +103,7 @@ exports.unblock = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
@@ -128,7 +128,7 @@ exports.report = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
@@ -153,7 +153,7 @@ exports.visite = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
@@ -176,7 +176,7 @@ exports.likedBy = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
@@ -199,7 +199,7 @@ exports.liked = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
@@ -222,7 +222,7 @@ exports.blocked = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })

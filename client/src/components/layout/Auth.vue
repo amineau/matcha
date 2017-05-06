@@ -1,5 +1,5 @@
 <template>
-  <div id="authLayout" class='layout'>
+  <div v-show='ready' id="authLayout" class='layout'>
     <header>
       <!-- <img src='../../assets/logo.png'> -->
       <router-link :to='linkBtn' class="waves-effect waves-light btn">{{nameBtn}}</router-link>
@@ -14,17 +14,23 @@
 
 <script>
 
-  import conf from '../../../../config/conf.json'
+  import CONFIG from '../../../config/conf.json'
   import jwt from 'jsonwebtoken'
 
   export default {
     name: 'authLayout',
-    props: ['linkBtn', 'nameBtn'],
+    props: ['linkBtn', 'nameBtn', 'auth'],
     data () {
       return {
-
+        ready: false
       }
-    }
+    },
+    created () {
+      this.auth(data => {
+        if (data.success) return this.$router.replace('/dash')
+        this.ready = true
+      })
+    },
   }
 
 </script>

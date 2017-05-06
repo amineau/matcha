@@ -32,6 +32,18 @@ module.exports = class TagsQuery {
     })
   }
 
+    GetAll(data) {
+      return new Promise((resolve, reject) => {
+        const query =
+          `MATCH (t: Tag)
+          RETURN t.name as tag;`
+
+        db.doDatabaseOperation(query, data)
+          .then(data => resolve(data))
+          .catch((err) => reject(err))
+      })
+    }
+
   Add(data) {
     return new Promise((resolve, reject) => {
       const query =

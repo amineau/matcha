@@ -1,5 +1,5 @@
 <template>
-  <homeLayout>
+  <homeLayout v-show='ready'>
 
     <p>Bienvenue sur DoubleMatching</p>
     <router-link to="/dash" class="waves-effect waves-light btn">DashBoard</router-link>
@@ -15,8 +15,15 @@
     name: 'home',
     data () {
       return {
-        msg: ''
+        ready: false
       }
+    },
+    props: ['auth'],
+    created () {
+      this.auth(data => {
+        if (data.success) return this.$router.replace('/dash')
+        this.ready = true
+      })
     },
     components: {
       homeLayout

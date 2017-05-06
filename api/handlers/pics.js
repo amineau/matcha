@@ -20,7 +20,7 @@ exports.get = (req, res) => {
     })
   }
   const showError = (err) => {
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
@@ -42,7 +42,7 @@ exports.getProfil = (req, res) => {
     })
   }
   const showError = (err) => {
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
@@ -66,7 +66,7 @@ exports.add = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
@@ -90,10 +90,7 @@ exports.add = (req, res) => {
   ])
     .then(data => {
       if (data[1][0].count >= 5) {
-        return Promise.reject({
-          status: 403,
-          error: "Vous ne pouvez pas charger plus de 5 photos"
-        })
+        return Promise.reject({error: "Vous ne pouvez pas charger plus de 5 photos"})
       } else if (data[1][0].count === 0) {
         data[0].head = true
       }
@@ -117,7 +114,7 @@ exports.profile = (req, res) => {
     })
   }
   const showError = (err) => {
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
@@ -140,7 +137,7 @@ exports.delete = (req, res) => {
       })
     }
     const showError = (err) => {
-      res.status(err.status || 500).json({
+      res.json({
         success: false,
         err: err.error
       })

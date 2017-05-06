@@ -1,7 +1,7 @@
 'use strict'
 
 const assert = require('assert')
-const {host, port, table} = require('../config/conf').mongo
+const {host, port, table} = require('./config/conf').mongo
 const MongoClient = require('mongodb').MongoClient
 const _ = require('lodash')
 
@@ -37,14 +37,14 @@ module.exports = class Queries {
     // Insert some documents
     return new Promise ((resolve, reject) => {
       if (typeof users !== 'object' || users.length !== 2)
-        return reject({status: 401, error: 'Parameters incompatible'})
+        return reject({error: 'Parameters incompatible'})
       this._collection.updateOne({users: {"$in": users}, users: {"$size": users.length}}, {
         $set: {
           users,
           visible: true
         },
       }, {upsert: true}, (err, result) => {
-        if (err) return reject({status: 403, error: err})
+        if (err) return reject({error: err})
         console.log(`Inserted ${users} into the chat collection`)
         console.log('*****', result, '*************')
         resolve(result)
@@ -56,8 +56,8 @@ module.exports = class Queries {
     // Find some documents
     return new Promise ((resolve, reject) => {
       this._collection.findOne({users: {"$in": users}, users: {"$size": users.length}}, (err, docs) => {
-        if (err) return reject({status: 403, error: err})
-        if (!docs) return reject({status: 401, error: 'No resources found'})
+        if (err) return reject({error: err})
+        if (!docs) return reject({error: 'No resources found'})
         console.log(`Found the following records where users is ${users}`)
         docs.chat.sort((a, b) => b.timestamp - a.timestamp)
         resolve(docs.chat)
@@ -69,7 +69,7 @@ module.exports = class Queries {
     const comment = message.comment
     return new Promise ((resolve, reject) => {
       if (typeof users !== 'object' || users.length !== 2 || !comment)
-        return reject({status: 401, error: 'Parameters incompatible'})
+        return reject({error: 'Parameters incompatible'})
       this._collection.update({users: {"$in": users}, users: {"$size": users.length}}, {
         $push: {
           chat: {
@@ -79,7 +79,7 @@ module.exports = class Queries {
           }
         }
       }, (err, result) => {
-        if (err) return reject({status: 403, error: err})
+        if (err) return reject({error: err})
         console.log("Updating the following records")
         resolve(result)
       })
@@ -101,8 +101,8 @@ module.exports = class Queries {
           visible: false
         }
       }, (err, result) => {
-        if (err) return reject({status: 403, error: err})
-        if (result.result.n !== 1) return reject({status: 400, error: 'Opération impossible'})
+        if (err) return reject({error: err})
+        if (result.result.n !== 1) return reject({error: 'Opération impossible'})
         console.log("Removed the chat")
         resolve(result)
       })
@@ -113,7 +113,7 @@ module.exports = class Queries {
     // Find some documents
     return new Promise ((resolve, reject) => {
       this._collection.find().toArray((err, docs) => {
-        if (err) return reject({status: 403, error: err})
+        if (err) return reject({error: err})
         console.log(`Found the following records :`)
         console.log(docs)
         resolve(docs)
@@ -124,7 +124,7 @@ module.exports = class Queries {
   DeleteAll () {
     return new Promise ((resolve, reject) => {
       this._collection.deleteMany({}, (err, result) => {
-        if (err) return reject({status: 403, error: err})
+        if (err) return reject({error: err})
         console.log('Removing Ok')
         resolve('Ok')
       })

@@ -20,7 +20,7 @@ exports.notif = (req, res) => {
     })
   }
   const showError = (err) => {
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })

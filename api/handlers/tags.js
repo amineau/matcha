@@ -20,7 +20,7 @@ exports.search = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
@@ -42,14 +42,35 @@ exports.get = (req, res) => {
     })
   }
   const showError = (err) => {
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
   }
 
   Query.Get({id})
-      .then(Parser.GetData)
+      .then(Parser.GetList)
+      .then(showSuccess)
+      .catch(showError);
+}
+
+exports.getAll = (req, res) => {
+  const showSuccess = (data) => {
+    res.json({
+      success: true,
+      data
+    })
+  }
+  const showError = (err) => {
+    console.log(err)
+    res.json({
+      success: false,
+      err: err.error
+    })
+  }
+
+  Query.GetAll({})
+      .then(Parser.GetList)
       .then(showSuccess)
       .catch(showError);
 }
@@ -65,7 +86,7 @@ exports.add = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
@@ -86,7 +107,7 @@ exports.remove = (req, res) => {
     })
   }
   const showError = (err) => {
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })

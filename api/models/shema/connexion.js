@@ -2,7 +2,7 @@
 
 const _  = require('lodash')
 const db = require("../../db")
-const conf = require("../../../config/conf.json")
+const conf = require("../../config/conf.json")
 
 module.exports = class ConnexionQuery {
 

@@ -16,7 +16,7 @@ exports.get = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })
@@ -41,7 +41,7 @@ exports.add = (req, res) => {
   }
   const showError = (err) => {
     console.log(err)
-    res.status(err.status || 500).json({
+    res.json({
       success: false,
       err: err.error
     })

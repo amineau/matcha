@@ -1,5 +1,5 @@
 <template>
-  <div id="dashboard">
+  <defaultLayout :auth="auth">
 
     <p>Personnes à proximitées</p>
     <div class="row">
@@ -14,10 +14,12 @@
        </div>
      </div>
 
-  </div>
+  </defaultLayout>
 </template>
 
 <script>
+
+  import defaultLayout from './layout/Default.vue'
 
   export default {
     name: 'DashBoard',
@@ -25,6 +27,10 @@
       return {
         peoples: ['Magalie', 'Sonia', 'Ernest', 'Jacques']
       }
+    },
+    props: ['auth'],
+    components: {
+      defaultLayout
     }
   }
 
