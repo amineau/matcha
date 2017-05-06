@@ -2,7 +2,10 @@
   <div id="default-layout" class="layout" v-show="ready">
     <header>
           <!-- <div>Salut {{user.login}}</div> -->
-          <a v-on:click="logout" class="btn waves-effect waves-light">Deconnexion</a>
+          <button @click="logout" class="btn waves-effect waves-light">Deconnexion</button>
+
+          <dropdown :httpOption="httpOption" :notifs="notifs"></dropdown>
+
       <h1>Header</h1>
     </header>
 
@@ -41,11 +44,16 @@
 
 <script>
 
+  import dropdown from '../Dropdown.vue'
+  import CONFIG from '../../../config/conf.json'
+
   export default {
     name: 'layout',
     data () {
       return {
-        ready: false
+        ready: false,
+        notifs: [],
+        httpOption: null
       }
     },
     props: ['auth'],
@@ -53,6 +61,18 @@
       this.auth(data => {
         if (!data.success) return this.$router.replace('/')
         this.ready = true
+        this.httpOption = {
+          responseType: 'json',
+          headers: {
+            "matcha-token": data.token
+          }
+        }
+        this.$http.get(`${CONFIG.BASEURL_API}notif`, this.httpOption)
+          .then(res => {
+            if (!res.body.success) return console.log(res.body.err)
+            res.body.data.forEach(e => e.link.notif ? this.notifCount++ : null)
+            this.notifs = res.body.data
+          })
       })
     },
     methods: {
@@ -60,6 +80,9 @@
         this.$cookie.delete('token')
         this.$router.replace('/')
       }
+    },
+    components: {
+      dropdown
     }
   }
 

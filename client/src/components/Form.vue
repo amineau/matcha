@@ -14,6 +14,8 @@
 
 <script>
 
+  require('materialize-css/js/forms')
+
   export default {
     name: 'formInputs',
     props: {
@@ -33,6 +35,10 @@
       }
     }
   }
+
+  $(function() {
+    Materialize.updateTextFields()
+  })
 
 </script>
 

@@ -15,7 +15,7 @@
 
 <script>
 
-  require("materialize-css/js/chips.js");
+  require("materialize-css/js/chips.js")
 
   import defaultLayout from './layout/Default.vue'
   import formInputs from './Form.vue'
@@ -82,7 +82,18 @@
             "matcha-token": data.token
           }
         }
-
+        vNotify.info({
+          text:'This is anotification.',
+          title:'.',
+          fadeInDuration: 1000,
+          fadeOutDuration: 1000,
+          fadeInterval: 50,
+          visibleDuration: 5000, // auto close after 5 seconds
+          postHoverVisibleDuration: 500,
+          position: "topRight", // topLeft, bottomLeft, bottomRight, center
+          sticky: false, // is sticky
+          showClose: true // show close button
+          })
         Promise.all([
           this.$http.get(`${CONFIG.BASEURL_API}user/id/${data.decoded.id}`, option),
           this.$http.get(`${CONFIG.BASEURL_API}tags/${data.decoded.id}`, option),
@@ -101,15 +112,26 @@
               $(function() {
                 $('.chips-autocomplete').material_chip({
                     data: e.value,
-                    autocompleteData: e.autoComplete
+                    autocompleteData: e.autoComplete,
+                    autocompleteLimit: 1
                 })
               })
-              console.log(e.autoComplete)
             } else {
               e.value = 'Non renseigné'
             }
           })
         })
+        const thisBis = this
+        $(function() {
+          $('.chips').on('chip.add', function(e, chip){
+            console.log(option)
+            thisBis.$http.post(`${CONFIG.BASEURL_API}tags/${chip.tag}`, {},option).then(r => console.log(r))
+          })
+          $('.chips').on('chip.delete', function(e, chip){
+            thisBis.$http.delete(`${CONFIG.BASEURL_API}tags/${chip.tag}`, option).then(r => console.log(r))
+          })
+        })
+
       })
     },
     methods: {

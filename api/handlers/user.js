@@ -38,8 +38,8 @@ exports.getByData = (req, res) => {
       .catch(showError);
 }
 
-exports.get = (req, res) => {
-  const id = req.decoded.id
+exports.getAll = (req, res) => {
+  // const id = req.decoded.id
   const showSuccess = (data) => {
     res.json({
       success: true,
@@ -54,33 +54,33 @@ exports.get = (req, res) => {
       })
   }
 
-    Query.Get({id})
+    Query.GetAll({})
       .then(Parser.GetData)
       .then(showSuccess)
       .catch(showError);
 }
-
-exports.get = (req, res) => {
-  const id = req.params.id
-  const showSuccess = (data) => {
-    res.json({
-      success: true,
-      data
-    })
-  }
-  const showError = (err) => {
-    console.log(err)
-      res.json({
-          success: false,
-          err: err.error || err
-      })
-  }
-
-    Query.GetPrivate({id})
-      .then(Parser.GetData)
-      .then(showSuccess)
-      .catch(showError);
-}
+//
+// exports.get = (req, res) => {
+//   const id = req.params.id
+//   const showSuccess = (data) => {
+//     res.json({
+//       success: true,
+//       data
+//     })
+//   }
+//   const showError = (err) => {
+//     console.log(err)
+//       res.json({
+//           success: false,
+//           err: err.error || err
+//       })
+//   }
+//
+//     Query.GetPrivate({id})
+//       .then(Parser.GetData)
+//       .then(showSuccess)
+//       .catch(showError);
+// }
 
 exports.signUp = (req, res) => {
     const validate  = {user: new UserValidator(req.body)}

@@ -1,5 +1,6 @@
 'use strict'
 
+const db = require("../../db")
 const _  = require('lodash')
 
 module.exports = class NotifQuery {

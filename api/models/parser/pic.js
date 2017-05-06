@@ -9,10 +9,10 @@ module.exports = class PicValidator extends Validator {
      */
     constructor(toParse) {
         super(toParse, {
-            pic: {
+            base64: {
               funct: e => e,
-              maxLength: 30,
-              message: "Pic invalide"
+              match: /^.*$/,
+              message: "Photo invalide"
             },
             head: {
               funct: e => e === 'true' ? true : false,

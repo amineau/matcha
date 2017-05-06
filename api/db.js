@@ -7,7 +7,6 @@ const txUrl = `http://${db.user}:${db.pass}@${db.host}:${db.port}/db/data/transa
 
 exports.doDatabaseOperation = (query, params) => {
 	return new Promise(function (resolve, reject) {
-		console.log('params :', params, '\nquery :', query)
 		if (params.id)
 			params.id = Number(params.id)
 		params.now = Date.now()
@@ -21,11 +20,8 @@ exports.doDatabaseOperation = (query, params) => {
 				}]
 			}
 		}, (err, res) => {
-			console.log("err :", err, '\nres :', res.body)
-	    	if (err)
-	    		reject({error: err})
-	    	else
-		    	resolve(res.body)
+	    	if (err) return reject({error: err})
+		    resolve(res.body)
 	    })
 	})
 }

@@ -22,7 +22,7 @@ module.exports = class PicQuery {
         const query =
             `MATCH (u: User)
             WHERE id(u) = {id}
-            CREATE(new: Img {name: {pic}})
+            CREATE(new: Img {path: {pic}})
             CREATE(u)-[p:OWNER {head: {head}}]->(new)
             RETURN id(new) as id`
 

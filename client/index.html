@@ -1,18 +1,33 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="icon" type="image/png" href="src/assets/favicon.ico">
     <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css">
     <link rel="stylesheet" href="public/css/index.css">
+    <link rel="stylesheet" href="public/css/watnotif.right-top-bubble.min.css">
     <meta name="viewport" charset="utf-8" content="width=device-width, initial-scale=1.0"/>
     <title>Matcha</title>
   </head>
   <body>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+
     <script async src="./dist/build.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.min.js"></script>
+    <script src="public/js/watnotif-1.0.min.js"></script>
+    <script type="text/javascript">
+      var successNotif = new Notif("Success Message", "success");
+      var errorNotif = new Notif("Error Message", "error");
+      var confirmedNotif = new Notif("Confirm Message", "confirmed");
+      var defaultNotif = new Notif("Default Message", "default");
+      document.addEventListener('DOMContentLoaded', function() {
+        Notif.setWrapperOptions({
+          duration: 2500
+        });
+      }, false);
+    </script>
   </body>
 </html>

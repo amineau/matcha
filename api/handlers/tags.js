@@ -99,7 +99,8 @@ exports.add = (req, res) => {
 }
 
 exports.remove = (req, res) => {
-  const validate = {tags: new TagsValidator(req.body)}
+  const validate = {tags: new TagsValidator(req.params)}
+  const id = req.decoded.id
 
   const showSuccess = () => {
     res.json({
@@ -113,7 +114,7 @@ exports.remove = (req, res) => {
     })
   }
   validate.tags.Parse([{name: 'tag'}])
-      .then(Query.Remove)
+      .then((data) => Query.Remove(_.merge(data, {id})))
       .then(Parser.GetTrue)
       .then(showSuccess)
       .catch(showError)

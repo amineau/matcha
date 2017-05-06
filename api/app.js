@@ -61,6 +61,7 @@ require('./routes/pics')(app)
 require('./routes/connexion')(app)
 require('./routes/notif')(app)
 require('./routes/chat')(app)
+require('./routes/generate')(app)
 
 
 app.listen(nconf.get('server:port'))

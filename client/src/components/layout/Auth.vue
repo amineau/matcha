@@ -15,7 +15,6 @@
 <script>
 
   import CONFIG from '../../../config/conf.json'
-  import jwt from 'jsonwebtoken'
 
   export default {
     name: 'authLayout',

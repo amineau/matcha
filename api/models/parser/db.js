@@ -63,7 +63,6 @@ module.exports = class ParseDatabase {
 			let json = []
 			let data
 			let index
-
 			if (typeof result !== "undefined") {
 				for (let i = 0; i < result.data.length; i++) {
 					if ((index = result.columns.indexOf("all")) != -1)

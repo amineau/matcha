@@ -37,11 +37,10 @@
         this.$http.post(`${CONFIG.BASEURL_API}auth/signin`, data, {
           responseType: 'json'
         }).then(res => {
-          if (res.body.success) {
-            this.$cookie.set('token', res.body.token)
-            this.$router.replace('/dash')
-          }
-        }).catch(err => console.log('err', err))
+          if (!res.body.success) return errorNotif.display(3500)
+          this.$cookie.set('token', res.body.token)
+          this.$router.replace('/dash')
+        })
       }
     },
     props: ['auth'],

@@ -82,7 +82,7 @@ exports.add = (req, res) => {
 
   Promise.all([
     validate.pic.Parse([
-      {name: 'pic'},
+      {name: 'base64'},
       {name: 'head', noReq: true}
     ]),
     Query.Count({id})

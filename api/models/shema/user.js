@@ -36,6 +36,18 @@ module.exports = class UserQuery {
       })
     }
 
+    GetAll(where) {
+      return new Promise((resolve, reject) => {
+       const query =
+           `MATCH (u: User)
+            RETURN id(u) as id, u as all;`;
+
+        db.doDatabaseOperation(query, where)
+          .then(data => resolve(data))
+          .catch(err => reject(err))
+      })
+    }
+
     Set(where, set) {
         return new Promise((resolve, reject) => {
           if (_.isEmpty(where) || _.isEmpty(set)) {
