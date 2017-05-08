@@ -20,10 +20,8 @@
     },
     props: ['auth'],
     created () {
-      this.auth(data => {
-        if (data.success) return this.$router.replace('/dash')
-        this.ready = true
-      })
+      if (this.auth().success) return this.$router.replace('/dash')
+      this.ready = true
     },
     components: {
       homeLayout

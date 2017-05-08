@@ -16,9 +16,9 @@ exports.like = (req, res) => {
   const userId = req.decoded.id
   const mongo = req.app.get('query')
 
-  const showSuccess = (data) => {
+  const showSuccess = (connected) => {
     res.json({
-      data: data,
+      connected,
       success: true
     })
   }
@@ -31,10 +31,8 @@ exports.like = (req, res) => {
   }
 
   Query.Like({id, userId})
-    .then(Parser.GetTrue)
-    .then(() => Query.Connected({id, userId}))
-    .then(Parser.GetData)
-    .then(data => data[0].count ? mongo.Create([id, userId]) : null)
+    .then((data) => Promise.all([Parser.GetData(data),Parser.GetTrue(data)]))
+    .then(data => data[0][0].connected ? mongo.Create([id, userId]) : null)
     .then(() => mongo.FindAll())
     .then(showSuccess)
     .catch(showError)
@@ -45,9 +43,9 @@ exports.unlike = (req, res) => {
   const userId = req.decoded.id
   const mongo = req.app.get('query')
 
-  const showSuccess = (data) => {
+  const showSuccess = (connected) => {
     res.json({
-      data,
+      connected,
       success: true
     })
   }

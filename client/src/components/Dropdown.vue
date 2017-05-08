@@ -25,7 +25,7 @@
   export default {
     name: 'dropdown',
     props: {
-      httpOption: Object,
+      auth: Function,
       notifs: Array
     },
     data () {
@@ -38,7 +38,7 @@
     },
     methods: {
       notifToFalse () {
-        this.$http.put(`${CONFIG.BASEURL_API}notif`, {}, this.httpOption)
+        this.$http.put(`${CONFIG.BASEURL_API}notif`, {}, this.auth().httpOption)
           .then(res => {
             if (!res.body.success) return res.body.err
             this.notifCount = 0

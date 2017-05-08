@@ -2,7 +2,7 @@
   <div v-show='ready' id="authLayout" class='layout'>
     <header>
       <!-- <img src='../../assets/logo.png'> -->
-      <router-link :to='linkBtn' class="waves-effect waves-light btn">{{nameBtn}}</router-link>
+      <!-- <router-link :to='{name: linkBtn}' class="waves-effect waves-light btn">{{nameBtn}}</router-link> -->
     </header>
 
     <main>
@@ -25,10 +25,8 @@
       }
     },
     created () {
-      this.auth(data => {
-        if (data.success) return this.$router.replace('/dash')
-        this.ready = true
-      })
+      if (this.auth().success) return this.$router.replace('/dash')
+      this.ready = true
     },
   }
 

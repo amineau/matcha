@@ -8,29 +8,28 @@
 
   import CONFIG from '../config/conf.json'
   import jwt from 'jsonwebtoken'
+  import 'materialize-css'
 
   export default {
     name: 'app',
-    data () {
-      return {
-        token: null
-      }
-    },
-    props: ['auth'],
-    created () {
-      this.token = this.$cookie.get('token')
-    },
-    beforeUpdate () {
-      this.token = this.$cookie.get('token')
-    },
     methods: {
-      checkToken (callback) {
-        jwt.verify(this.token, CONFIG.SECRET_TOKEN, (err, decoded) => {
-          if (err) return callback({success: false, err})
+      checkToken () {
+        try {
+          const token = this.$cookie.get('token')
+          let decoded = jwt.verify(token, CONFIG.SECRET_TOKEN)
           delete decoded.iat
           delete decoded.exp
-          return callback({success:true, decoded, token: this.token})
-        })
+          return {success: true, decoded,
+            httpOption: {
+              responseType: 'json',
+              headers: {
+                "matcha-token": token
+              }
+            }
+          }
+        } catch (err) {
+          return {success: false, err}
+        }
       }
     }
   }

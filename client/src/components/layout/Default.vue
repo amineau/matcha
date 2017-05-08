@@ -4,7 +4,7 @@
           <!-- <div>Salut {{user.login}}</div> -->
           <button @click="logout" class="btn waves-effect waves-light">Deconnexion</button>
 
-          <dropdown :httpOption="httpOption" :notifs="notifs"></dropdown>
+          <dropdown :auth="auth" :notifs="notifs"></dropdown>
 
       <h1>Header</h1>
     </header>
@@ -53,27 +53,19 @@
       return {
         ready: false,
         notifs: [],
-        httpOption: null
       }
     },
     props: ['auth'],
     created () {
-      this.auth(data => {
-        if (!data.success) return this.$router.replace('/')
-        this.ready = true
-        this.httpOption = {
-          responseType: 'json',
-          headers: {
-            "matcha-token": data.token
-          }
-        }
-        this.$http.get(`${CONFIG.BASEURL_API}notif`, this.httpOption)
-          .then(res => {
-            if (!res.body.success) return console.log(res.body.err)
-            res.body.data.forEach(e => e.link.notif ? this.notifCount++ : null)
-            this.notifs = res.body.data
-          })
-      })
+      const auth = this.auth()
+      if (!auth.success) return this.$router.replace('/')
+      this.ready = true
+      this.$http.get(`${CONFIG.BASEURL_API}notif`, auth.httpOption)
+        .then(res => {
+          if (!res.body.success) return console.log(res.body.err)
+          res.body.data.forEach(e => e.link.notif ? this.notifCount++ : null)
+          this.notifs = res.body.data
+        })
     },
     methods: {
       logout () {

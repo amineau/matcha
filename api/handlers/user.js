@@ -39,7 +39,7 @@ exports.getByData = (req, res) => {
 }
 
 exports.getAll = (req, res) => {
-  // const id = req.decoded.id
+  const id = req.decoded.id
   const showSuccess = (data) => {
     res.json({
       success: true,
@@ -54,7 +54,7 @@ exports.getAll = (req, res) => {
       })
   }
 
-    Query.GetAll({})
+    Query.GetAll({id})
       .then(Parser.GetData)
       .then(showSuccess)
       .catch(showError);
@@ -102,7 +102,9 @@ exports.signUp = (req, res) => {
       {name: 'email'},
       {name: 'password'},
       {name: 'firstName'},
-      {name: 'lastName'}
+      {name: 'lastName'},
+      {name: 'sex'},
+      {name: 'birthday'}
     ])
       .then(data => {
         return new Promise((resolve, reject) => {
@@ -112,9 +114,17 @@ exports.signUp = (req, res) => {
           ])
             .then(result => {
               if (!_.isEmpty(result[0].results[0].data[0]))
-                return reject({error: 'L\'email existe déjà'})
+                return reject({
+                  error: {
+                    email: {message: 'L\'email existe déjà'}
+                  }
+                })
               else if (!_.isEmpty(result[1].results[0].data[0]))
-                return reject({error: 'Le login existe déjà'})
+                return reject({
+                  error: {
+                    login : {message: 'Le login existe déjà'}
+                  }
+                })
               resolve(data)
             })
           })

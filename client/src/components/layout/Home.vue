@@ -1,8 +1,8 @@
 <template>
   <div id="home-layout" class="layout">
     <header>
-      <router-link to='/signup' class="btn waves-effect waves-light">Inscription</router-link>
-      <router-link to='/signin' class="btn waves-effect waves-light">Connexion</router-link>
+      <router-link :to='{name: "signup"}' class="btn waves-effect waves-light">Inscription</router-link>
+      <router-link :to='{name: "signin"}' class="btn waves-effect waves-light">Connexion</router-link>
       <h1>Header</h1>
     </header>
 

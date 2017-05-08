@@ -17,7 +17,11 @@ module.exports = class ConnexionQuery {
             MERGE (u)-[l:LIKED]->(i)
             ON CREATE SET i.score = i.score + {score},
             l.notif = true,
-            l.timestamp = {now}`
+            l.timestamp = {now}
+            WITH u, i
+            OPTIONAL MATCH (u)<-[c:LIKED]-(i)
+            RETURN count(c) AS connected
+            `
 
           db.doDatabaseOperation(query, _.merge(data, {score: conf.score.like}))
             .then((data) => resolve(data))

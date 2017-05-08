@@ -1,5 +1,5 @@
 <template>
-  <authLayout :auth="auth" linkBtn="/signup" nameBtn='Inscription'>
+  <authLayout :auth="auth" linkBtn="signup" nameBtn='Inscription'>
 
     <formInputs :inputs='inputs' action='/dash' :submit='submit' button="Se connecter"></formInputs>
 
@@ -32,6 +32,10 @@
         ]
       }
     },
+
+    created () {
+      console.log('signin created')
+    },
     methods: {
       submit (data) {
         this.$http.post(`${CONFIG.BASEURL_API}auth/signin`, data, {
@@ -39,7 +43,7 @@
         }).then(res => {
           if (!res.body.success) return errorNotif.display(3500)
           this.$cookie.set('token', res.body.token)
-          this.$router.replace('/dash')
+          this.$router.replace('dash')
         })
       }
     },

@@ -116,7 +116,7 @@ module.exports = class Queries {
         if (err) return reject({error: err})
         console.log(`Found the following records :`)
         console.log(docs)
-        resolve(docs)
+        resolve(docs[0].visible)
       })
     })
   }

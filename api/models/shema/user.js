@@ -37,10 +37,16 @@ module.exports = class UserQuery {
     }
 
     GetAll(where) {
+      console.log(where)
       return new Promise((resolve, reject) => {
        const query =
            `MATCH (u: User)
-            RETURN id(u) as id, u as all;`;
+            WHERE id(u) <> {id}
+            OPTIONAL MATCH (u)-[h]-(i: Img)
+            WHERE h.head = true
+            OPTIONAL MATCH (u)<-[:LIKED]-(p:User)
+            OPTIONAL MATCH (u)-[c:LIKED]->(p)
+            RETURN id(u) AS id, u AS all, i.path AS photo, count(i) AS likable, count(c) AS connected, count(p) AS like`;
 
         db.doDatabaseOperation(query, where)
           .then(data => resolve(data))

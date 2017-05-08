@@ -11,6 +11,7 @@
     <title>Matcha</title>
   </head>
   <body>
+
     <div id="app"></div>
     <!-- built files will be auto injected -->
 
@@ -18,16 +19,15 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.min.js"></script>
     <script src="public/js/watnotif-1.0.min.js"></script>
+    <script src="public/js/utils.js"></script>
     <script type="text/javascript">
-      var successNotif = new Notif("Success Message", "success");
-      var errorNotif = new Notif("Error Message", "error");
-      var confirmedNotif = new Notif("Confirm Message", "confirmed");
-      var defaultNotif = new Notif("Default Message", "default");
-      document.addEventListener('DOMContentLoaded', function() {
-        Notif.setWrapperOptions({
-          duration: 2500
-        });
-      }, false);
+    $('.datepicker').pickadate({
+      monthsFull: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+      weekdaysShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+      today: 'aujourd\'hui',
+      clear: 'effacer',
+      formatSubmit: 'yyyymmdd'
+    })
     </script>
   </body>
 </html>
