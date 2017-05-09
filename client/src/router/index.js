@@ -34,26 +34,26 @@ export default new Router({
       component: User,
       children: [
         {
-          path: 'chat',
+          path: '/chat',
           name: 'chat',
           component: Chat
         }
       ]
     },
-    {
-      path: '/auth',
-      children: [
+    // {
+    //   path: '/auth',
+    //   children: [
         {
-          path: 'signin',
+          path: '/signin',
           name: 'signin',
           component: SignIn
         },
         {
-          path: 'signup',
+          path: '/signup',
           name: 'signup',
           component: SignUp
         }
-      ]
-    }
+    //   ]
+    // }
   ]
 })

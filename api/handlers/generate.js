@@ -43,7 +43,7 @@ exports.generate = (req, res) => {
   }
   const sexOp = (sex) => sex === 'M' ? 'W' : 'M'
   let user = []
-  for(let i=0; i<nb; i++) {
+  for(let i=0; i<nb - 1; i++) {
     const index = Math.round((generator.firstName.length - 1) * Math.random())
 
     const login = generator.login[Math.round((generator.login.length - 1) * Math.random())].login
@@ -67,22 +67,24 @@ exports.generate = (req, res) => {
       const finish = data.results[0].data[0].row[0] + data.results[0].stats.nodes_created
       for (let id=begin; id <finish; id++) {
         Query.pic.Add({id, pic: `generator/photo/${data.results[0].data[i++].row[1]}/${Math.round(782*Math.random())}.jpg`, head:true})
-        for (let t=0; t<3+12*Math.random(); t++) {
-          Query.tag.Add({id, tag: generator.tag[Math.round((generator.tag.length - 1) * Math.random())].tag})
-        }
-        for (let t=0; t<nb/10; t++) {
-          const liked = begin + Math.round(Math.random() * (finish-begin))
-          if (liked !== id) {
-            Query.connexion.Visite({userId: id, id: liked})
-            Query.connexion.Like({userId: id, id: liked})
+        .then(() => {
+          for (let t=0; t<3+12*Math.random(); t++) {
+            Query.tag.Add({id, tag: generator.tag[Math.round((generator.tag.length - 1) * Math.random())].tag})
           }
-        }
-        for (let t=0; t<nb/20; t++) {
-          const liked = begin + Math.round(Math.random() * (finish-begin))
-          if (liked !== id) {
-            Query.connexion.Visite({userId: id, id: liked})
+          for (let t=0; t<nb/10; t++) {
+            const liked = begin + Math.round(Math.random() * (finish-begin))
+            if (liked !== id) {
+              Query.connexion.Visite({userId: id, id: liked})
+              Query.connexion.Like({userId: id, id: liked})
+            }
           }
-        }
+          for (let t=0; t<nb/20; t++) {
+            const liked = begin + Math.round(Math.random() * (finish-begin))
+            if (liked !== id) {
+              Query.connexion.Visite({userId: id, id: liked})
+            }
+          }
+        })
       }
     })
     // .then(Parser.GetTrue)

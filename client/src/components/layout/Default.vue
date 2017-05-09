@@ -4,7 +4,7 @@
           <!-- <div>Salut {{user.login}}</div> -->
           <button @click="logout" class="btn waves-effect waves-light">Deconnexion</button>
 
-          <dropdown :auth="auth" :notifs="notifs"></dropdown>
+          <dropdown :auth="auth" :notifs="notifs" class='right'></dropdown>
 
       <h1>Header</h1>
     </header>

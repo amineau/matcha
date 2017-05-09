@@ -181,6 +181,8 @@ exports.set = (req, res) => {
     validate.user.Parse([
           {name: 'firstName', noReq: true},
           {name: 'lastName', noReq: true},
+          {name: 'birthday', noReq: true},
+          {name: 'email', noReq: true},
           {name: 'login', noReq: true},
           {name: 'prefer', noReq: true},
           {name: 'sex', noReq: true},

@@ -11,7 +11,7 @@ module.exports = class NotifQuery {
             `MATCH p=(u: User)<-[r]-(i: User)
             WHERE id(u) = {userId}
             AND exists(r.notif)
-            RETURN i AS user, r AS link, type(r) AS action
+            RETURN id(i) AS id, i AS all, r AS link, type(r) AS action
             ORDER BY link.timestamp DESC`
 
           db.doDatabaseOperation(query, data)

@@ -3,11 +3,15 @@
 
     <p>Mon compte</p>
     <div class="collection">
-      <a v-for="input in inputs" class="row collection-item">
+      <a v-for="input in inputs" @click="input.edit = true" class="row collection-item">
         <div class="col s3">{{input.text}}</div>
-        <div v-if="input.name === 'tag'" class='chips chips-autocomplete col s8'></div>
-        <div v-else class="value col s8">{{input.value}}</div>
-        <i class="fa fa-pencil secondary-content" aria-hidden="true"></i></a>
+        <tagbutton v-if="input.name === 'tag'" :auth="auth" :autocomplete="true"></tagbutton>
+        <div v-else class="value col s8">
+          <formInputs v-if='input.edit' :inputs="[input]" :submit="submit" button="Enregistrer"></formInputs>
+          <div v-else>{{input.value}}</div>
+        </div>
+        <i v-if="input.type !== 'chips'" @click.stop="input.edit = !input.edit" :class="{'fa-pencil': !input.edit, 'fa-close': input.edit}" class="fa secondary-content" aria-hidden="true"></i>
+      </a>
     </div>
 
   </defaultLayout>
@@ -17,117 +21,128 @@
 
   import defaultLayout from './layout/Default.vue'
   import formInputs from './Form.vue'
+  import tagbutton from './button/Tag.vue'
   import CONFIG from '../../config/conf.json'
 
   export default {
     name: 'Profil',
     data () {
       return {
-        inputs: [
-          {
-            name: 'email',
-            text: 'Email',
-            type: 'email',
-            value: null
-          },
-          {
-            name: 'login',
-            text: 'Login',
-            type: 'text'
-          },
-          {
-            name: 'firstName',
-            text: 'Prénom',
-            type: 'text'
-          },
-          {
-            name: 'lastName',
-            text: 'Nom',
-            type: 'text'
-          },
-          {
-            name: 'sex',
-            text: 'Sexe',
-            type: 'select',
-            choice: ['Homme', 'Femme', 'Transgenre']
-          },
-          {
-            name: 'prefer',
-            text: 'Orientation sexuelle',
-            type: 'select',
-            choice: ['Homme', 'Femme', 'Bisexuel']
-          },
-          {
-            name: 'bio',
-            text: 'Bio',
-            type: 'textarea'
-          },
-          {
-            name: 'tag',
-            text: 'Tag',
-            type: 'chips'
-          }
-        ]
+        inputs: [{
+          name: 'email',
+          text: 'Email',
+          type: 'email'
+        }, {
+          name: 'login',
+          text: 'Login',
+          type: 'text'
+        }, {
+          name: 'firstName',
+          text: 'Prénom',
+          type: 'text'
+        }, {
+          name: 'lastName',
+          text: 'Nom',
+          type: 'text'
+        }, {
+          name: 'birthday',
+          text: 'Date de naissance',
+          type: 'date'
+        }, {
+          name: 'sex',
+          text: 'Sexe',
+          type: 'radio',
+          options: [{
+            name: 'M',
+            text: 'Homme'
+          }, {
+            name: 'W',
+            text: 'Femme'
+          }]
+        }, {
+          name: 'prefer',
+          text: 'Orientation sexuelle',
+          type: 'radio',
+          options: [{
+            name: 'M',
+            text: 'Homme'
+          }, {
+            name: 'W',
+            text: 'Femme'
+          }, {
+            name: 'B',
+            text: 'Bisexuel'
+          }]
+        }, {
+          name: 'bio',
+          text: 'Bio',
+          type: 'textarea'
+        }, {
+          name: 'tag',
+          text: 'Tag',
+          type: 'chips'
+        }]
       }
     },
-    created () {
+    mounted () {
       const auth = this.auth()
-      if (!auth.success) return data.err
-
-      Promise.all([
-        this.$http.get(`${CONFIG.BASEURL_API}user/id/${data.decoded.id}`, this.auth.httpOption),
-        this.$http.get(`${CONFIG.BASEURL_API}tags/${data.decoded.id}`, this.auth.httpOption),
-        this.$http.get(`${CONFIG.BASEURL_API}tags`, this.auth.httpOption)
-      ]).then(res => {
-        if (!res[0].body.success || !res[1].body.success || !res[2].body.success) return null
+      if (!auth.success) return auth.err
+      this.inputs.forEach(e => {
+        this.$set(e, 'value', null)
+        this.$set(e, 'edit', false)
+      })
+      this.$http.get(`${CONFIG.BASEURL_API}user/id/${auth.decoded.id}`, auth.httpOption).then(res => {
+        if (!res.body.success ) return null
         this.inputs.forEach(e => {
-          if (res[0].body.data[0][e.name]) {
-            e.value = res[0].body.data[0][e.name]
-          } else if (e.name === 'tag') {
-            e.value = []
-            e.autoComplete = {}
-            res[1].body.data.forEach(i => e.value.push({tag: i}))
-            res[2].body.data.forEach(i => e.autoComplete[i] = null)
-
-            $(function() {
-              $('.chips-autocomplete').material_chip({
-                  data: e.value,
-                  autocompleteData: e.autoComplete,
-                  autocompleteLimit: 1
+          if (res.body.data[0][e.name]) {
+            if (e.options){
+              e.options.forEach(i => {
+                if (i.name === res.body.data[0][e.name]) {
+                  e.value = i.text
+                }
               })
-            })
-          } else {
+            } else {
+              e.value = res.body.data[0][e.name]
+            }
+          } else if (e.name !== 'tag') {
             e.value = 'Non renseigné'
           }
-        })
-      })
-      const thisBis = this
-      $(function() {
-        $('.chips').on('chip.add', function(e, chip){
-          console.log(option)
-          thisBis.$http.post(`${CONFIG.BASEURL_API}tags/${chip.tag}`, {},option).then(r => console.log(r))
-        })
-        $('.chips').on('chip.delete', function(e, chip){
-          thisBis.$http.delete(`${CONFIG.BASEURL_API}tags/${chip.tag}`, option).then(r => console.log(r))
         })
       })
     },
     methods: {
       submit (data) {
-        // this.$http.post(`${CONFIG.BASEURL_API}auth/signin`, data, {
-        //   responseType: 'json'
-        // }).then(res => {
-        //   if (res.body.success) {
-        //     this.$cookie.set('token', res.body.token)
-        //     this.$router.replace('/dash')
-        //   }
-        // }).catch(err => console.log('err', err))
+        console.log('coucou', data)
+        const auth = this.auth()
+        this.$http.put(`${CONFIG.BASEURL_API}user`, data, auth.httpOption).then(res => {
+          if (!res.body.success) return
+          const keys = Object.keys(data)
+          console.log(keys)
+          keys.forEach(key => {
+            this.inputs.forEach(e => {
+              if (e.name === key) {
+                if (e.type === 'radio') {
+                    e.options.forEach(o => {
+                      if (o.name === data[key]) {
+                        e.value = o.text
+                      }
+                    })
+                } else {
+                  e.value = data[key]
+                }
+                e.edit = false
+              }
+            })
+          })
+          console.log('$$$', data)
+        })
       }
     },
     props: ['auth'],
     components: {
       defaultLayout,
-      formInputs
+      formInputs,
+      tagbutton
     }
   }
 
@@ -135,10 +150,12 @@
 
 <style>
 
-/*.row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}*/
+.collection-item:hover i.fa-pencil{
+  display: block;
+}
+
+.collection-item i.fa-pencil{
+  display: none;
+}
 
 </style>

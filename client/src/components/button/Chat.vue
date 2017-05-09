@@ -8,8 +8,7 @@
 
 <script>
 
-  import CONFIG from '../../config/conf.json'
-  import Chat from './Chat.vue'
+  import Chat from '../Chat.vue'
 
   export default {
     name: 'ChatButton',

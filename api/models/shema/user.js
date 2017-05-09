@@ -40,13 +40,19 @@ module.exports = class UserQuery {
       console.log(where)
       return new Promise((resolve, reject) => {
        const query =
-           `MATCH (u: User)
+           `MATCH (u: User), (p:User)
             WHERE id(u) <> {id}
+            AND id(p) = {id}
+            AND (u.sex = p.prefer
+              OR p.prefer = 'B'
+              OR NOT(exists(p.prefer))
+            )
             OPTIONAL MATCH (u)-[h]-(i: Img)
             WHERE h.head = true
-            OPTIONAL MATCH (u)<-[:LIKED]-(p:User)
+            OPTIONAL MATCH (u)<-[:LIKED]-(p)
             OPTIONAL MATCH (u)-[c:LIKED]->(p)
-            RETURN id(u) AS id, u AS all, i.path AS photo, count(i) AS likable, count(c) AS connected, count(p) AS like`;
+            RETURN id(u) AS id, u AS all, i.path AS photo, count(i) AS likable, count(c) AS connected, count(p) AS like
+            ORDER BY u.score`;
 
         db.doDatabaseOperation(query, where)
           .then(data => resolve(data))

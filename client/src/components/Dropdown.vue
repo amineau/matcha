@@ -2,16 +2,13 @@
 <template>
   <div>
     <a class='dropdown-button btn' @click="notifToFalse" data-activates='dropdown1'>
-      <i class="fa fa-envelope-o" aria-hidden="true"></i>
+      <i class="fa fa-bell-o" aria-hidden="true"></i>
       <div class="red">{{notifCount}}</div>
     </a>
 
     <ul id='dropdown1' class='dropdown-content'>
-      <li v-for="notif in notifs">
-        <router-link v-if="notif.action == 'VISITED'" to="#">{{notif.user.login}} a visité votre profil</router-link>
-        <router-link v-else-if="notif.action == 'LIKED'" to="#">{{notif.user.login}} vous a liké</router-link>
-        <router-link v-else-if="notif.action == 'UNLIKED'" to="#">{{notif.user.login}} a retiré son like</router-link>
-        <router-link v-else-if="notif.action == 'CHAT'" to="#">{{notif.user.login}} vous a envoyé un message</router-link>
+      <li v-for="notif in notifs" :class="{new: notif.link.notif}">
+        <router-link :to="{name: 'user', params: {id: notif.id}}">{{textNotif(notif)}}</router-link>
       </li>
     </ul>
   </div>
@@ -20,7 +17,6 @@
 <script>
 
   import CONFIG from '../../config/conf.json'
-
 
   export default {
     name: 'dropdown',
@@ -34,7 +30,18 @@
       }
     },
     created () {
-
+      $(function() {
+        $('.dropdown-button').dropdown({
+         inDuration: 300,
+         outDuration: 225,
+         constrainWidth: false, // Does not change width of dropdown to that of the activator
+         hover: false, // Activate on hover
+         gutter: 0, // Spacing from edge
+         belowOrigin: true, // Displays dropdown below the button
+         alignment: 'left', // Displays dropdown with edge aligned to the left of button
+         stopPropagation: false // Stops event propagation
+       })
+      })
     },
     methods: {
       notifToFalse () {
@@ -43,6 +50,17 @@
             if (!res.body.success) return res.body.err
             this.notifCount = 0
           })
+      },
+      textNotif (notif) {
+        if (notif.action === 'VISITED') {
+          return `${notif.login} a visité votre profil`
+        } else if (notif.action === 'LIKED') {
+          return `${notif.login} vous a liké`
+        } else if (notif.action === 'UNLIKED') {
+          return `${notif.login} a retiré son like`
+        } else if (notif.action === 'CHAT') {
+          return `${notif.login} vous a envoyé un message`
+        }
       }
     },
     watch: {
@@ -56,3 +74,15 @@
   }
 
 </script>
+
+<style>
+
+  .new {
+    background-color: #eee;
+  }
+
+  .dropdown-content {
+    max-height: 200px;
+  }
+
+</style>

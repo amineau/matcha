@@ -11,9 +11,9 @@
            </div>
            <!-- <div class="card-content">{{ people }}</div> -->
            <div class="card-action">
-             <like :httpOption="httpOption" :people="people"></like>
+             <likebutton :httpOption="httpOption" :people="people"></likebutton>
              <chatbutton :people="people"></chatbutton>
-             <router-link :to="{name: 'user', params: {id: people.id}}" class="waves-effect waves-light btn-floating"><i class="fa fa-user-o" aria-hidden="true"></i></router-link>
+             <profilbutton :people="people"></profilbutton>
            </div>
          </div>
        </div>
@@ -25,8 +25,9 @@
 <script>
 
   import defaultLayout from './layout/Default.vue'
-  import like from './Like.vue'
-  import chatbutton from './ChatButton.vue'
+  import likebutton from './button/Like.vue'
+  import chatbutton from './button/Chat.vue'
+  import profilbutton from './button/Profil.vue'
   import CONFIG from '../../config/conf.json'
 
   export default {
@@ -47,7 +48,6 @@
           this.peoples = res.body.data
           this.peoples.forEach(e => {
             if (!e.photo) {
-              console.log(e)
               e.photo = `src/assets/${e.sex}-silhouette.jpg`
             }
           })
@@ -55,7 +55,9 @@
     },
     components: {
       defaultLayout,
-      like
+      likebutton,
+      chatbutton,
+      profilbutton
     }
   }
 

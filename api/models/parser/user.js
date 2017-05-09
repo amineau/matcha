@@ -73,7 +73,7 @@ module.exports = class UserValidator extends Validator {
         },
         bio: {
           funct: e => e,
-          maxLength: 5000,
+          maxLength: 300,
           message: "Message trop long"
         }
       })

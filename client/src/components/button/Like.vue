@@ -8,11 +8,11 @@
 
 <script>
 
-  import CONFIG from '../../config/conf.json'
+  import CONFIG from '../../../config/conf.json'
   import _ from 'lodash'
 
   export default {
-    name: 'Like',
+    name: 'LikeButton',
     props: {
       httpOption: Object,
       people: Object

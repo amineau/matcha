@@ -6,6 +6,7 @@
       <input v-else-if="input.type === 'password'" :id="input.name" type="password" :pattern="input.pattern" v-model.lazy='input.value' class="validate">
       <input v-else-if="input.type === 'date'" :id="input.name" type="text" class="datepicker">
       <div v-else-if="input.type === 'chips'" class="chips chips-autocomplete"></div>
+      <textarea v-else-if="input.type === 'textarea'" :id="input.name" class="materialize-textarea" data-length="300">{{input.value}}</textarea>
       <div v-else-if="input.type === 'radio'" class='radio'>
         <p v-for="option in input.options">
           <input :name="input.name" type="radio" :id="option.name" :value="option.name" />
@@ -21,53 +22,80 @@
 
 <script>
 
-  var picker
-  $(function() {
-    var date = new Date()
-    date.setYear(date.getFullYear() - 18)
-    Materialize.updateTextFields()
-    picker = $('.datepicker').pickadate({
-      monthsFull: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
-      monthsShort: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'],
-      weekdaysFull: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-      weekdaysShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
-      today: '',
-      clear: 'effacer',
-      close: 'Fermer',
-      format: 'dd/mm/yyyy',
-      firstDay: 1,
-      closeOnSelect: true,
-      selectMonths: true,
-      selectYears: true,
-      max: date,
-      onSet: () => {$('.datepicker').removeClass('invalid').addClass('valid')},
-      onClose: () => {
-        if (!picker.get()) {
-          $('.datepicker').removeClass('valid').addClass('invalid')
-        }
-      }
-    }).pickadate('picker')
-  })
-
   export default {
     name: 'formInputs',
+    data () {
+      return {
+        picker: null
+      }
+    },
     props: {
       inputs: Array,
-      action: String,
       submit: Function,
       button: String
+    },
+    mounted () {
+      $(function() {
+        Materialize.updateTextFields()
+        $('textarea').characterCounter()
+      })
+      var date = new Date()
+      date.setYear(date.getFullYear() - 18)
+      this.picker = $('.datepicker').pickadate({
+        monthsFull: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+        monthsShort: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'],
+        weekdaysFull: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+        weekdaysShort: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+        today: '',
+        clear: 'effacer',
+        close: 'Fermer',
+        format: 'dd/mm/yyyy',
+        firstDay: 1,
+        closeOnSelect: true,
+        selectMonths: true,
+        selectYears: true,
+        max: date,
+        onSet: () => {
+          this.inputs.forEach(e => {
+            if (e.type === 'date') {
+              e.value = this.picker.get()
+            }
+          })
+          $('.datepicker').removeClass('invalid').addClass('valid')
+        },
+        onClose: () => {
+          if (!this.picker.get()) {
+            $('.datepicker').removeClass('valid').addClass('invalid')
+          }
+        }
+      }).pickadate('picker')
+      this.inputs.forEach(e => {
+        if (e.type === 'date') {
+          this.picker.set('select', e.value)
+        }
+      })
+      $('textarea').focus(function() {
+        if (this.value == "Non renseigné") {
+             this.value = ""
+        }
+      }).blur(function() {
+        if (this.value=="") {
+             this.value = "Non renseigné"
+        }
+      })
     },
     methods: {
       submiting (body) {
         let data = {}
         let error = false
-        console.log($("input[name='sex']:checked").val())
         body.forEach(e => {
           if (e.type === 'date') {
-            data[e.name] = picker.get()
+            data[e.name] = this.picker.get()
           } else if (e.type === 'radio'){
             data[e.name] = $(`input[name='${e.name}']:checked`).val()
-          } else {
+          } else if (e.type === 'textarea'){
+            data[e.name] = $(`textarea#${e.name}`).val()
+          }else {
             data[e.name] = e.value
           }
           if (!data[e.name]) {
@@ -75,8 +103,18 @@
             error = true
           }
         })
-        console.log(data)
+        console.log('error', data)
         if (!error) return this.submit(data)
+      }
+    },
+    watch: {
+      picker: function() {
+        console.log('picker')
+        this.inputs.forEach(e => {
+          if (e.type === 'date') {
+            e.value = this.picker.get()
+          }
+        })
       }
     }
   }
