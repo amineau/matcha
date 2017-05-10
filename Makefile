@@ -11,7 +11,7 @@ YELLOW	= \033[33m
 CYAN	= \033[36m
 TOKEN := ''
 
-all: $(NAME)
+all: $(NAME) generate
 
 $(NAME):
 	#screen -X eval "chdir $$PWD"
@@ -31,18 +31,10 @@ $(NAME):
 	@imagesnap -q -w 2 ./client/src/assets/profil-1.png
 	@echo Please smile !
 	@imagesnap -q -w 3 ./client/src/assets/profil-2.png
-	@echo Thanks\n
+	@echo Thanks
 
 generate:
-	curl -X POST http://localhost:4242/generate/100
-
-install:
-	@brew update
-	@brew install imagesnap
-	@brew install neo4j
-	@brew install mongodb
-	@brew install node
-	@mkdir ~/Documents/Mongodb
+	curl -X POST http://localhost:4242/generate/$(NB)
 
 clean:
 	screen -S $(NAME) -p 0 -X at "#" stuff $$'\003'

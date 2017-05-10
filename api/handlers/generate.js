@@ -72,7 +72,7 @@ exports.generate = (req, res) => {
             .then(() => Query.pic.Add({id, pic: `src/assets/profil-1.png`, head: false}))
             .then(() => Query.pic.Add({id, pic: `src/assets/profil-2.png`, head: false}))
         } else {
-          const photo = `generator/photo/${data.results[0].data[i].row[1]}/${Math.round(782*Math.random())}.jpg`
+          const photo = `generator/photo/${data.results[0].data[i++].row[1]}/${Math.round(782*Math.random())}.jpg`
             promises = Query.pic.Add({id, pic: photo, head: true})
               .then(() => Query.pic.Add({id, pic: photo, head: false}))
         }

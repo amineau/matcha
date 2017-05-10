@@ -33,7 +33,6 @@
           if (this.autocomplete) {
             res[1].body.data.forEach(i => autocompleteOptions.data[i] = null)
           }
-          console.log(data)
           resolve({data, autocompleteOptions})
         })
       }).then((data) => {
