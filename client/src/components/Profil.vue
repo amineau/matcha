@@ -2,6 +2,9 @@
   <defaultLayout :auth="auth">
 
     <p>Mon compte</p>
+    <div>
+      <img v-for='photo in photos' :src="photo.path" :width="photo.head?360:200" :height="photo.head?360:200" />
+    </div>
     <div class="collection">
       <a v-for="input in inputs" @click="input.edit = true" class="row collection-item">
         <div class="col s3">{{input.text}}</div>
@@ -28,6 +31,7 @@
     name: 'Profil',
     data () {
       return {
+        photos: [],
         inputs: [{
           name: 'email',
           text: 'Email',
@@ -91,31 +95,50 @@
         this.$set(e, 'value', null)
         this.$set(e, 'edit', false)
       })
-      this.$http.get(`${CONFIG.BASEURL_API}user/id/${auth.decoded.id}`, auth.httpOption).then(res => {
-        if (!res.body.success ) return null
-        this.inputs.forEach(e => {
-          if (res.body.data[0][e.name]) {
-            if (e.options){
-              e.options.forEach(i => {
-                if (i.name === res.body.data[0][e.name]) {
-                  e.value = i.text
-                }
-              })
-            } else {
-              e.value = res.body.data[0][e.name]
+      Promise.all([
+        this.$http.get(`${CONFIG.BASEURL_API}user/id/${auth.decoded.id}`, auth.httpOption).then(res => {
+          if (!res.body.success ) return null
+          console.log(res.body)
+          this.inputs.forEach(e => {
+            if (res.body.data[0][e.name]) {
+              if (e.options){
+                e.options.forEach(i => {
+                  if (i.name === res.body.data[0][e.name]) {
+                    e.value = i.text
+                  }
+                })
+              } else {
+                e.value = res.body.data[0][e.name]
+              }
+            } else if (e.name !== 'tag') {
+              e.value = 'Non renseigné'
             }
-          } else if (e.name !== 'tag') {
-            e.value = 'Non renseigné'
+          })
+        }),
+        this.$http.get(`${CONFIG.BASEURL_API}pic/${auth.decoded.id}`, auth.httpOption).then(res => {
+          if (!res.body.success ) return null
+          this.photos = res.body.data
+          console.log('for',this.photos)
+          if (this.photos.length < 5) {
+            this.photos.push({path: `src/assets/M-silhouette.jpg`, head: this.photos.length === 0})
           }
         })
-      })
+      ])
     },
     methods: {
       submit (data) {
         console.log('coucou', data)
         const auth = this.auth()
         this.$http.put(`${CONFIG.BASEURL_API}user`, data, auth.httpOption).then(res => {
-          if (!res.body.success) return
+          if (!res.body.success) {
+            this.inputs.forEach(n => {
+              if (res.body.err[n.name]){
+                this.$set(n, 'error', res.body.err[n.name].message)
+                $('#' + n.name).removeClass('valid').addClass('invalid')
+              }
+            })
+            return null
+          }
           const keys = Object.keys(data)
           console.log(keys)
           keys.forEach(key => {

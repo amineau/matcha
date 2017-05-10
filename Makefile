@@ -9,6 +9,7 @@ GREENB	= \033[1;32m
 GREEN	= \033[0;32m
 YELLOW	= \033[33m
 CYAN	= \033[36m
+TOKEN := ''
 
 all: $(NAME)
 
@@ -24,6 +25,24 @@ $(NAME):
 	screen -S $(NAME) -p 3 -X stuff $$'nodemon api/app.js\n'
 	screen -S $(NAME) -X screen 4
 	screen -S $(NAME) -p 4 -X stuff $$'neo4j console\n'
+	@echo Wait...
+	@imagesnap -q -w 1 ./client/src/assets/profil-0.png
+	@echo Smile !
+	@imagesnap -q -w 2 ./client/src/assets/profil-1.png
+	@echo Please smile !
+	@imagesnap -q -w 3 ./client/src/assets/profil-2.png
+	@echo Thanks\n
+
+generate:
+	curl -X POST http://localhost:4242/generate/100
+
+install:
+	@brew update
+	@brew install imagesnap
+	@brew install neo4j
+	@brew install mongodb
+	@brew install node
+	@mkdir ~/Documents/Mongodb
 
 clean:
 	screen -S $(NAME) -p 0 -X at "#" stuff $$'\003'
@@ -32,8 +51,11 @@ clean:
 	screen -S $(NAME) -p 3 -X at "#" stuff $$'\003'
 	screen -S $(NAME) -p 4 -X at "#" stuff $$'\003'
 
+picclean:
+	rm -rf client/src/assets/profil-*.png
+
 fclean: clean
-	sleep 10
+	@sleep 10
 	screen -S $(NAME) -X quit
 
 re: fclean all

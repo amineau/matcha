@@ -12,7 +12,7 @@ module.exports = class UserQuery {
             tab += `${key}:{${key}},`
           const query =
             `CREATE(u: User{${tab} score: 0})
-            RETURN *;`
+            RETURN *`
 
           db.doDatabaseOperation(query, data)
             .then(data => resolve(data))
@@ -23,12 +23,32 @@ module.exports = class UserQuery {
     Get(where) {
       return new Promise((resolve, reject) => {
         let toWhere = ''
-        for (let key in where)
-          toWhere += key === 'id' ? `${key}(u)={${key}}AND` : `u.${key}={${key}}AND`
+        for (let key in where) {
+          toWhere += toWhere !== '' ? ` AND ` : ''
+          toWhere += key === 'id' ? `${key}(u)={${key}}` : `u.${key}={${key}}`
+        }
        const query =
            `MATCH (u: User)
-            WHERE ${toWhere.slice(0, -3)}
-            RETURN id(u) as id, u as all;`;
+            WHERE ${toWhere}
+            RETURN id(u) as id, u as all`
+
+        db.doDatabaseOperation(query, where)
+          .then(data => resolve(data))
+          .catch(err => reject(err))
+      })
+    }
+
+    GetForSet(where) {
+      return new Promise((resolve, reject) => {
+        let toWhere = ''
+        for (let key in where) {
+          toWhere += toWhere !== '' ? ` AND ` : ''
+          toWhere += key === 'id' ? `${key}(u)<>{${key}}` : `u.${key}={${key}}`
+        }
+       const query =
+           `MATCH (u: User)
+            WHERE ${toWhere}
+            RETURN id(u) as id, u as all`
 
         db.doDatabaseOperation(query, where)
           .then(data => resolve(data))
@@ -37,7 +57,6 @@ module.exports = class UserQuery {
     }
 
     GetAll(where) {
-      console.log(where)
       return new Promise((resolve, reject) => {
        const query =
            `MATCH (u: User), (p:User)
@@ -49,10 +68,9 @@ module.exports = class UserQuery {
             )
             OPTIONAL MATCH (u)-[h]-(i: Img)
             WHERE h.head = true
-            OPTIONAL MATCH (u)<-[:LIKED]-(p)
-            OPTIONAL MATCH (u)-[c:LIKED]->(p)
-            RETURN id(u) AS id, u AS all, i.path AS photo, count(i) AS likable, count(c) AS connected, count(p) AS like
-            ORDER BY u.score`;
+            OPTIONAL MATCH (u)<-[l:LIKED]-(p)
+            OPTIONAL MATCH (u)<-[:LIKED]-(p), (u)-[c:LIKED]->(p)
+            RETURN id(u) AS id, u AS all, i.path AS photo, count(i) AS likable, count(c) AS connected, count(l) AS like`
 
         db.doDatabaseOperation(query, where)
           .then(data => resolve(data))
@@ -75,7 +93,7 @@ module.exports = class UserQuery {
               `MATCH (u:User)
               WHERE ${toWhere.slice(0, -3)}
               SET ${toSet.slice(0, -1)}
-              RETURN *;`;
+              RETURN *`
 
           db.doDatabaseOperation(query, _.merge(where, set))
             .then(data => resolve(data))

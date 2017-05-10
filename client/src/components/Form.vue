@@ -6,10 +6,10 @@
       <input v-else-if="input.type === 'password'" :id="input.name" type="password" :pattern="input.pattern" v-model.lazy='input.value' class="validate">
       <input v-else-if="input.type === 'date'" :id="input.name" type="text" class="datepicker">
       <div v-else-if="input.type === 'chips'" class="chips chips-autocomplete"></div>
-      <textarea v-else-if="input.type === 'textarea'" :id="input.name" class="materialize-textarea" data-length="300">{{input.value}}</textarea>
+      <textarea v-else-if="input.type === 'textarea'" :id="input.name" class="materialize-textarea" v-model.lazy='input.value' data-length="300">{{input.value}}</textarea>
       <div v-else-if="input.type === 'radio'" class='radio'>
         <p v-for="option in input.options">
-          <input :name="input.name" type="radio" :id="option.name" :value="option.name" />
+          <input :name="input.name" type="radio" :id="option.name" :value="option.name" :checked="input.value === option.text"/>
           <label :for="option.name">{{option.text}}</label>
         </p>
       </div>
@@ -93,9 +93,7 @@
             data[e.name] = this.picker.get()
           } else if (e.type === 'radio'){
             data[e.name] = $(`input[name='${e.name}']:checked`).val()
-          } else if (e.type === 'textarea'){
-            data[e.name] = $(`textarea#${e.name}`).val()
-          }else {
+          } else {
             data[e.name] = e.value
           }
           if (!data[e.name]) {

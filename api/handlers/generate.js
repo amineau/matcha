@@ -54,20 +54,29 @@ exports.generate = (req, res) => {
     const prefer = 'MWB'.concat(sexOp(sex).repeat(7)).charAt(Math.round(9 * Math.random()))
     const bio = generator.bio[Math.round((generator.bio.length - 1) * Math.random())].bio
     const score = Math.round(500 * Math.random())
-    user.push({login, firstName, lastName, email, sex, prefer, bio, score, password: hash('Youhou55')})
+    const birthday = '12/02/1993'
+    user.push({login, firstName, lastName, email, sex, prefer, bio, score, birthday, password: hash('Youhou55')})
   }
-  user.push({login: 'Toto', firstName:'Thomas', lastName:'Durand', email:'tdurand@hotmail.fr', sex:'M', prefer:'W', bio:'', score:10000, password: hash('Youhou55')})
+  user.push({login: 'Toto', firstName:'Thomas', lastName:'Durand', email:'tdurand@hotmail.fr', sex:'M', prefer:'W', bio:'', score:10000, password: hash('Youhou55'), birthday: '15/12/1990'})
 
   Query.generate.DeleteAll()
     .then(() => Query.generate.Generate({user}))
     .then((data) => {
-      console.log(data.results[0].data)
       let i = 0
       const begin = data.results[0].data[0].row[0]
       const finish = data.results[0].data[0].row[0] + data.results[0].stats.nodes_created
       for (let id=begin; id <finish; id++) {
-        Query.pic.Add({id, pic: `generator/photo/${data.results[0].data[i++].row[1]}/${Math.round(782*Math.random())}.jpg`, head:true})
-        .then(() => {
+        let promises
+        if (id === finish-1) {
+          promises = Query.pic.Add({id, pic: `src/assets/profil-0.png`, head: true})
+            .then(() => Query.pic.Add({id, pic: `src/assets/profil-1.png`, head: false}))
+            .then(() => Query.pic.Add({id, pic: `src/assets/profil-2.png`, head: false}))
+        } else {
+          const photo = `generator/photo/${data.results[0].data[i].row[1]}/${Math.round(782*Math.random())}.jpg`
+            promises = Query.pic.Add({id, pic: photo, head: true})
+              .then(() => Query.pic.Add({id, pic: photo, head: false}))
+        }
+        promises.then(() => {
           for (let t=0; t<3+12*Math.random(); t++) {
             Query.tag.Add({id, tag: generator.tag[Math.round((generator.tag.length - 1) * Math.random())].tag})
           }

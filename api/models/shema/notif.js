@@ -11,7 +11,9 @@ module.exports = class NotifQuery {
             `MATCH p=(u: User)<-[r]-(i: User)
             WHERE id(u) = {userId}
             AND exists(r.notif)
-            RETURN id(i) AS id, i AS all, r AS link, type(r) AS action
+            OPTIONAL MATCH (i)-[l]-(e:Img)
+            WHERE l.head = true
+            RETURN id(i) AS id, i AS all, r AS link, type(r) AS action, e.path AS photo
             ORDER BY link.timestamp DESC`
 
           db.doDatabaseOperation(query, data)

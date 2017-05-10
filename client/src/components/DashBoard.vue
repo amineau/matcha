@@ -9,7 +9,7 @@
              <img :src="people.photo"/>
              <span class="card-title">{{people.login}}</span>
            </div>
-           <!-- <div class="card-content">{{ people }}</div> -->
+           <div class="card-content">{{ calculateAge(people.birthday) }} ans</div>
            <div class="card-action">
              <likebutton :httpOption="httpOption" :people="people"></likebutton>
              <chatbutton :people="people"></chatbutton>
@@ -52,6 +52,20 @@
             }
           })
         })
+    },
+    methods: {
+      calculateAge (birthDate) {
+          birthDate = new Date(birthDate)
+          const now = new Date()
+
+          var years = (now.getFullYear() - birthDate.getFullYear())
+
+          if (now.getMonth() < birthDate.getMonth() ||
+              now.getMonth() == birthDate.getMonth() && now.getDate() < birthDate.getDate()) {
+              years--
+          }
+          return years
+      }
     },
     components: {
       defaultLayout,

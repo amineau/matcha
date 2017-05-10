@@ -98,7 +98,7 @@ exports.add = (req, res) => {
     })
     .then(data => isHead(data))
     .then(data => Query.Add(_.merge(data, {id})))
-    .then(Parser.GetDebug)
+    .then(Parser.GetTrue)
     .then(showSuccess)
     .catch(showError)
 }

@@ -138,7 +138,6 @@ exports.signUp = (req, res) => {
 exports.signIn = (req, res, next) => {
   const nconf = req.app.get('nconf')
   passport.authenticate('local', (err, user, info) => {
-    console.log('*****', err, '*****')
     if (err) {
       return res.json({
         success: false,
@@ -167,17 +166,17 @@ exports.set = (req, res) => {
     }
 
     const showSuccess = () => {
-        res.json({
-          success: true
-        })
+      res.json({
+        success: true
+      })
     }
     const showError = (err) => {
-      console.log(err)
-        res.json({
-            success: false,
-            err: err.error
-        })
+      res.json({
+          success: false,
+          err: err.error
+      })
     }
+
     validate.user.Parse([
           {name: 'firstName', noReq: true},
           {name: 'lastName', noReq: true},
@@ -187,8 +186,33 @@ exports.set = (req, res) => {
           {name: 'prefer', noReq: true},
           {name: 'sex', noReq: true},
           {name: 'bio', noReq: true}
-        ])
-        .then((data) => Query.Set({id}, data))
+        ]).then(data => {
+          return new Promise((resolve, reject) => {
+            let promises = []
+            const intersection = _.intersection(Object.keys(data), ['login', 'email'])
+            intersection.forEach(e => {
+              promises.push(Query.GetForSet({
+                id,
+                [e]: data[e]
+              }))
+            })
+            return Promise.all(promises)
+              .then(res => {
+                res.every((e, k) => {
+                  console.log(e)
+                  if (!_.isEmpty(e.results[0].data[0])) {
+                    return reject({
+                      error: {
+                        [intersection[k]]: {message: `${intersection[k]} déjà existant`}
+                      }
+                    })
+                  }
+                })
+              })
+              .then(() => resolve(data))
+              .catch(err => reject(err))
+          })
+        }).then(data => Query.Set({id}, data))
         .then(Parser.GetTrue)
         .then(showSuccess)
         .catch(showError)

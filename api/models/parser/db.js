@@ -5,7 +5,6 @@ module.exports = class ParseDatabase {
 	GetTrue(body) {
 		return new Promise((resolve, reject) => {
 			if (!body.errors.length){
-				console.log(body.results[0])
 				if (body.results[0].stats.contains_updates){
 					return resolve()
 				} else {
@@ -64,7 +63,6 @@ module.exports = class ParseDatabase {
 			let json = []
 			let data
 			let index
-			console.log(body, '*******//')
 			if (typeof result !== "undefined") {
 				for (let i = 0; i < result.data.length; i++) {
 					if ((index = result.columns.indexOf("all")) != -1)

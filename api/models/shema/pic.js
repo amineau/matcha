@@ -49,9 +49,10 @@ module.exports = class PicQuery {
     Get(data) {
       return new Promise((resolve, reject) => {
         const query =
-          `MATCH (u: User)-[]->(i: Img)
+          `MATCH (u: User)-[h:OWNER]->(i: Img)
           WHERE id(u) = {id}
-          RETURN i as photo`
+          RETURN i AS all, h.head AS head
+          ORDER BY head DESC`
 
         db.doDatabaseOperation(query, data)
           .then((data) => resolve(data))

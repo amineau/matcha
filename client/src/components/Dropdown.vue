@@ -1,14 +1,16 @@
 
 <template>
   <div>
-    <a class='dropdown-button btn' @click="notifToFalse" data-activates='dropdown1'>
+    <a class='dropdown-button btn' data-activates='dropdown1' @click='notifToFalse'>
       <i class="fa fa-bell-o" aria-hidden="true"></i>
       <div class="red">{{notifCount}}</div>
     </a>
 
     <ul id='dropdown1' class='dropdown-content'>
-      <li v-for="notif in notifs" :class="{new: notif.link.notif}">
-        <router-link :to="{name: 'user', params: {id: notif.id}}">{{textNotif(notif)}}</router-link>
+      <li v-for="notif in notifs" :class="{'new': notif.link.notif}">
+        <router-link :to="{name: notif.action==='CHAT'?'chat':'user', params: {id: notif.id}}"  class="valign-wrapper">
+          <img :src="notif.photo" witdh=50 height=50/><div>{{textNotif(notif)}}</div>
+        </router-link>
       </li>
     </ul>
   </div>
@@ -39,7 +41,7 @@
          gutter: 0, // Spacing from edge
          belowOrigin: true, // Displays dropdown below the button
          alignment: 'left', // Displays dropdown with edge aligned to the left of button
-         stopPropagation: false // Stops event propagation
+         stopPropagation: true // Stops event propagation
        })
       })
     },
@@ -66,8 +68,6 @@
     watch: {
       notifs: function (val) {
         val.forEach(e => e.link.notif ? this.notifCount++ : 0)
-        console.log('notifs updated', this.notifCount)
-        console.log(val)
       }
     }
 
@@ -77,12 +77,24 @@
 
 <style>
 
-  .new {
+  .dropdown-content li.new:hover {
+    background-color: white;
+  }
+  .dropdown-content li.new {
     background-color: #eee;
   }
 
   .dropdown-content {
-    max-height: 200px;
+    max-height: 400px;
+  }
+
+  .dropdown-content li>a {
+    display: flex;
+  }
+
+  .dropdown-content li>a img {
+    border-radius: 50%;
+    margin-right: 10px;
   }
 
 </style>
