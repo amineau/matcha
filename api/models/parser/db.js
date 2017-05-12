@@ -1,5 +1,7 @@
 'use strict'
 
+const fs = require('fs')
+
 module.exports = class ParseDatabase {
 
 	GetTrue(body) {
@@ -11,6 +13,7 @@ module.exports = class ParseDatabase {
 					return reject({error: "Les données d'entrées ne permettent pas d'effectuer l'opération"})
 				}
 			}
+			console.log(body.errors[0])
 			return reject({error: "Echec de connection avec la base de donnée"})
 		})
 	}
@@ -72,6 +75,11 @@ module.exports = class ParseDatabase {
 					for (let j = 0; j < result.columns.length; j++) {
 						if (j != index)
 							data[result.columns[j]] = result.data[i].row[j]
+					}
+					if (data.path) {
+						const bitmap = fs.readFileSync(data.path)
+    				data.base64 = 'data:image\/png;base64,' + new Buffer(bitmap).toString('base64')
+						delete data.path
 					}
 					json.push(data)
 				}

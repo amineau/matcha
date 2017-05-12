@@ -22,9 +22,12 @@ module.exports = class PicQuery {
         const query =
             `MATCH (u: User)
             WHERE id(u) = {id}
-            CREATE(new: Img {path: {pic}})
-            CREATE(u)-[p:OWNER {head: {head}}]->(new)
-            RETURN id(new) as id`
+            CREATE(u)-[p:OWNER {head: true}]->(new:Img {path: {path}})
+            WITH p, id(new) AS id, u
+            MATCH (u)-[o:OWNER]->(:Img)
+            WHERE id(o) <> id(p)
+            SET p.head = false
+            RETURN id LIMIT 1`
 
           db.doDatabaseOperation(query, data)
             .then((data) => resolve(data))
@@ -51,7 +54,7 @@ module.exports = class PicQuery {
         const query =
           `MATCH (u: User)-[h:OWNER]->(i: Img)
           WHERE id(u) = {id}
-          RETURN i AS all, h.head AS head
+          RETURN id(i) AS id, i AS all, h.head AS head
           ORDER BY head DESC`
 
         db.doDatabaseOperation(query, data)
@@ -64,10 +67,12 @@ module.exports = class PicQuery {
       return new Promise((resolve, reject) => {
         const query =
             `MATCH (u: User)-[r:OWNER]->(i: Img)
-            WHERE id(u) = {userId}
+            WHERE id(u) = {id}
             AND id(i) = {picId}
             AND r.head = false
-            DETACH DELETE i`
+            WITH i, i.path AS photoPath
+            DETACH DELETE i
+            RETURN photoPath`
 
           db.doDatabaseOperation(query, data)
             .then((data) => resolve(data))

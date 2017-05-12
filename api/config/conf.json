@@ -6,7 +6,7 @@
   "neo4j": {
     "host": "localhost",
     "port": "7474",
-    "user": "amineau",
+    "user": "neo4j",
     "pass": "94gV9FNjmS3q5V6v"
   },
   "mongo": {
@@ -20,7 +20,7 @@
   },
   "token": {
     "secret": "h6Oo6sNvmpJI1PU",
-    "expires": 3600
+    "expires": 36000
   },
   "bcrypt": {
     "saltRounds": 10

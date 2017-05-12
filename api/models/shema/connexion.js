@@ -69,8 +69,9 @@ module.exports = class ConnexionQuery {
             SET i.score = i.score - {score},
             r.timestamp = {now}
             WITH u, i, r
-            MATCH (u)<-[:LIKED]-(i)
-            SET r.notif = true`
+            MATCH (u)<-[c:LIKED]-(i)
+            SET r.notif = true
+            RETURN count(c) AS deconnected`
 
           db.doDatabaseOperation(query, _.merge(data, {score: conf.score.like}))
             .then((data) => resolve(data))

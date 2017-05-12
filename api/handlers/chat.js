@@ -5,7 +5,7 @@ const _              = require('lodash')
 
 exports.get = (req, res) => {
   const senderId = req.decoded.id
-  const recipientId = req.params.id
+  const recipientId = Number(req.params.id)
   const query = req.app.get('query')
 
   const showSuccess = (data) => {
@@ -30,10 +30,12 @@ exports.get = (req, res) => {
 exports.add = (req, res) => {
   const validate = {chat: new ChatValidator(req.body)}
   const senderId = req.decoded.id
-  const recipientId = req.params.id
+  const recipientId = Number(req.params.id)
   const query = req.app.get('query')
+  const io = req.app.get('io')
 
   const showSuccess = (data) => {
+    io.emit('notif', recipientId)
     res.json({
       data,
       success: true
@@ -47,8 +49,14 @@ exports.add = (req, res) => {
     })
   }
 
+
   validate.chat.Parse([{name: 'comment'}])
-    .then(comment => query.AddComment([senderId, recipientId], comment))
+    .then(data => {
+      console.log('socket emit de la merdasse n1')
+      io.emit('chat', { senderId, recipientId, comment: data.comment })
+      console.log('socket emit de la merdasse')
+      return query.AddComment([senderId, recipientId], data)
+    })
     .then(showSuccess)
     .catch(showError)
 }

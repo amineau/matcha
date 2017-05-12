@@ -4,6 +4,7 @@ const assert = require('assert')
 const {host, port, table} = require('./config/conf').mongo
 const MongoClient = require('mongodb').MongoClient
 const _ = require('lodash')
+const colors = require('colors')
 
 module.exports = class Queries {
 
@@ -38,15 +39,16 @@ module.exports = class Queries {
     return new Promise ((resolve, reject) => {
       if (typeof users !== 'object' || users.length !== 2)
         return reject({error: 'Parameters incompatible'})
-      this._collection.updateOne({users: {"$in": users}, users: {"$size": users.length}}, {
+      users.sort((a,b) => a - b)
+      this._collection.updateOne({users}, {
         $set: {
           users,
           visible: true
         },
       }, {upsert: true}, (err, result) => {
         if (err) return reject({error: err})
-        console.log(`Inserted ${users} into the chat collection`)
-        console.log('*****', result, '*************')
+        console.log(`Inserted ${users} into the chat collection`.red)
+        // console.log('*****', result, '*************')
         resolve(result)
       })
     })
@@ -55,11 +57,15 @@ module.exports = class Queries {
   FindComments (users) {
     // Find some documents
     return new Promise ((resolve, reject) => {
-      this._collection.findOne({users: {"$in": users}, users: {"$size": users.length}}, (err, docs) => {
+      users.sort((a,b) => a - b)
+      console.log(users)
+      this._collection.findOne({users}, (err, docs) => {
         if (err) return reject({error: err})
         if (!docs) return reject({error: 'No resources found'})
         console.log(`Found the following records where users is ${users}`)
-        docs.chat.sort((a, b) => b.timestamp - a.timestamp)
+        console.log(docs)
+        if (!docs.chat) return resolve([])
+        docs.chat.sort((a, b) => a.timestamp - b.timestamp)
         resolve(docs.chat)
       })
     })
@@ -70,7 +76,8 @@ module.exports = class Queries {
     return new Promise ((resolve, reject) => {
       if (typeof users !== 'object' || users.length !== 2 || !comment)
         return reject({error: 'Parameters incompatible'})
-      this._collection.update({users: {"$in": users}, users: {"$size": users.length}}, {
+      users.sort((a,b) => a - b)
+      this._collection.update({users}, {
         $push: {
           chat: {
             timestamp: Date.now(),
@@ -89,17 +96,9 @@ module.exports = class Queries {
   Delete (users) {
     // Get the documents collection
     return new Promise ((resolve, reject) => {
-      this._collection.update({
-        users: {
-          "$in": users
-        },
-        users: {
-          "$size": users.length
-        }
-      }, {
-        $set: {
-          visible: false
-        }
+      users.sort((a,b) => a - b)
+      this._collection.update({users: [users[0], users[1]]}, {
+        $set: { visible: false }
       }, (err, result) => {
         if (err) return reject({error: err})
         if (result.result.n !== 1) return reject({error: 'Opération impossible'})
@@ -112,10 +111,12 @@ module.exports = class Queries {
   FindAll () {
     // Find some documents
     return new Promise ((resolve, reject) => {
-      this._collection.find().toArray((err, docs) => {
-        if (err) return reject({error: err})
+      this._collection.find({}).toArray((err, docs) => {
+        if (err) return reject(console.log(err))
         console.log(`Found the following records :`)
         console.log(docs)
+        // if (!docs.length)
+        //   return resolve()
         resolve(docs[0].visible)
       })
     })

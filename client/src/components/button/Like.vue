@@ -23,6 +23,7 @@
           .then(res => {
             if (!res.body.success) return res.body.err
             this.people.like = !this.people.like
+            console.log(res.body)
             this.people.connected = res.body.connected
             this.$emit('update:people.connected')
           })

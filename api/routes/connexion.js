@@ -8,7 +8,7 @@ module.exports = (app) => {
     app.post('/like/:id', restrict, connexion.like)
     app.post('/block/:id', restrict, connexion.block)
     app.post('/report/:id', restrict, connexion.report)
-    app.post('/visite/:id', restrict, connexion.visite)
+    app.post('/visit/:id', restrict, connexion.visite)
     app.post('/unlike/:id', restrict, connexion.unlike)
     app.post('/unblock/:id', restrict, connexion.unblock)
 

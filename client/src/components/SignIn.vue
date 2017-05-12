@@ -32,10 +32,6 @@
         ]
       }
     },
-
-    created () {
-      console.log('signin created')
-    },
     methods: {
       submit (data) {
         this.$http.post(`${CONFIG.BASEURL_API}auth/signin`, data, {
@@ -43,6 +39,7 @@
         }).then(res => {
           if (!res.body.success) return errorNotif.display(3500)
           this.$cookie.set('token', res.body.token)
+          this.$socket.emit('online', res.body.id)
           this.$router.replace('dash')
         })
       }

@@ -6,7 +6,7 @@
        <div v-for="people in peoples" class="col s6 m4 l3">
          <div class="card">
            <div class="card-image">
-             <img :src="people.photo"/>
+             <img :src="people.base64"/>
              <span class="card-title">{{people.login}}</span>
            </div>
            <div class="card-content">{{ calculateAge(people.birthday) }} ans</div>
@@ -35,20 +35,23 @@
     data () {
       return {
         peoples: [],
-        httpOption: this.auth().httpOption
+        httpOption: null
       }
     },
     props: {
       auth: Function
     },
     created () {
-      this.$http.get(`${CONFIG.BASEURL_API}users`, this.httpOption)
+      const auth = this.auth()
+      if (!auth.success) return console.log(auth.error)
+      this.httpOption = auth.httpOption
+      this.$http.get(`${CONFIG.BASEURL_API}users`, auth.httpOption)
         .then(res => {
           if (!res.body.success) return res.body.err
           this.peoples = res.body.data
           this.peoples.forEach(e => {
-            if (!e.photo) {
-              e.photo = `src/assets/${e.sex}-silhouette.jpg`
+            if (!e.base64) {
+              e.base64 = `src/assets/${e.sex}-silhouette.jpg`
             }
           })
         })

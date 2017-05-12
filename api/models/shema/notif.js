@@ -13,7 +13,7 @@ module.exports = class NotifQuery {
             AND exists(r.notif)
             OPTIONAL MATCH (i)-[l]-(e:Img)
             WHERE l.head = true
-            RETURN id(i) AS id, i AS all, r AS link, type(r) AS action, e.path AS photo
+            RETURN id(i) AS id, i AS all, r AS link, type(r) AS action, e.path AS path
             ORDER BY link.timestamp DESC`
 
           db.doDatabaseOperation(query, data)

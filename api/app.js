@@ -1,6 +1,9 @@
 "use strict"
 
 const express = require('express')
+let app = express()
+let server = require('http').createServer(app)
+let io = require('socket.io')(server)
 const passport = require('./passport')
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
@@ -10,7 +13,6 @@ const path = require('path')
 const fs = require('fs')
 const Queries = require('./queries')
 
-let app = express()
 
 nconf.env()
 nconf.file({file: path.join(__dirname, 'config/conf.json')})
@@ -52,7 +54,26 @@ app.use(morgan('dev'))
 	  })
 	})
 
+let users = {}
+let connected = ['essai']
+io.on('connection', function(socket){
+	socket.on('online', (id) => {
+		users[socket.id] = id
+		connected.push(id)
+		console.log('user online', id, connected)
+		io.emit('user', connected)
+	})
 
+	socket.on('disconnect', () => {
+		const id = users[socket.id]
+		delete users[socket.id]
+		connected.splice(connected.indexOf(id), 1)
+		console.log('user offline', id,connected)
+		io.emit('user', connected)
+	})
+})
+
+app.set('io', io)
 
 //Routes
 require('./routes/user')(app)
@@ -64,5 +85,6 @@ require('./routes/chat')(app)
 require('./routes/generate')(app)
 
 
-app.listen(nconf.get('server:port'))
+
+server.listen(nconf.get('server:port'))
 console.log(`Server starting in ${nconf.get('server:host')}:${nconf.get('server:port')}`)

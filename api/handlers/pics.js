@@ -4,6 +4,9 @@ const DbParser	 	= require("../models/parser/db")
 const PicValidator  = require("../models/parser/pic")
 const PicQuery      = require("../models/shema/pic")
 const _             = require('lodash')
+const fs            = require('fs')
+const path          = require('path')
+const uuid          = require('node-uuid')
 
 const db			= require("../db")
 
@@ -71,34 +74,24 @@ exports.add = (req, res) => {
       err: err.error
     })
   }
-  const isHead = (data) => {
-    if (data.head)
-      return Query.Clear({id})
-        .then(() => Promise.resolve(data))
-        .catch(err => Promise.reject(err))
-    data.head = false
-    return Promise.resolve(data)
-  }
-
-  Promise.all([
-    validate.pic.Parse([
-      {name: 'base64'},
-      {name: 'head', noReq: true}
-    ]),
-    Query.Count({id})
-      .then(Parser.GetData)
-  ])
+  validate.pic.Parse([{name: 'base64'}])
     .then(data => {
-      if (data[1][0].count >= 5) {
-        return Promise.reject({error: "Vous ne pouvez pas charger plus de 5 photos"})
-      } else if (data[1][0].count === 0) {
-        data[0].head = true
-      }
-      return Promise.resolve(data[0])
+      return new Promise((resolve, reject) => {
+        const pathname = path.join(__dirname, '../data/profile', id.toString())
+        const filename = uuid.v4() + '.png'
+        if (!fs.existsSync(pathname)) {
+          fs.mkdirSync(pathname)
+        }
+        const base64Data = data.base64.replace(/^data:image\/png;base64,/, "")
+        var decodedImage = new Buffer(base64Data, 'base64')
+        fs.writeFile(path.join(pathname, filename), decodedImage, err => {
+          if (err) return reject({error: err})
+        })
+        resolve({path: path.join(pathname, filename)})
+      })
     })
-    .then(data => isHead(data))
     .then(data => Query.Add(_.merge(data, {id})))
-    .then(Parser.GetTrue)
+    .then(Parser.GetData)
     .then(showSuccess)
     .catch(showError)
 }
@@ -128,7 +121,7 @@ exports.profile = (req, res) => {
 
 exports.delete = (req, res) => {
     const picId   = Number(req.params.id)
-    const userId  = req.decoded.id
+    const id  = req.decoded.id
 
     const showSuccess = (data) => {
       res.json({
@@ -137,14 +130,33 @@ exports.delete = (req, res) => {
       })
     }
     const showError = (err) => {
+      console.log(err)
       res.json({
         success: false,
         err: err.error
       })
     }
 
-    Query.Delete({picId, userId})
-      .then(Parser.GetTrue)
+    Query.Delete({picId, id})
+      .then(Parser.GetData)
+      .then(data => {
+        return new Promise((resolve, reject) => {
+          const path = data[0].photoPath
+          fs.unlink(path, err => {
+            if (err) return reject({error: err})
+            const pathname = path.slice(0, path.lastIndexOf('/'))
+            fs.readdir(pathname, (err, files) => {
+              if (err) return reject({error: err})
+              if (!files.length) {
+                fs.rmdir(pathname, err => {
+                  if (err) return reject({error: err})
+                })
+              }
+            })
+          })
+          resolve(data)
+        })
+      })
       .then(showSuccess)
       .catch(showError)
 }

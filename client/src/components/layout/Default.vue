@@ -4,9 +4,10 @@
           <!-- <div>Salut {{user.login}}</div> -->
           <button @click="logout" class="btn waves-effect waves-light">Deconnexion</button>
 
-          <dropdown :auth="auth" :notifs="notifs" class='right'></dropdown>
-
+          <dropdown :auth="auth" class='right'></dropdown>
+{{id}}
       <h1>Header</h1>
+      {{users}}
     </header>
 
     <main>
@@ -53,24 +54,38 @@
       return {
         ready: false,
         notifs: [],
+        id: 0,
+        users: []
       }
     },
     props: ['auth'],
     created () {
       const auth = this.auth()
       if (!auth.success) return this.$router.replace('/')
+      this.id = auth.decoded.id
       this.ready = true
-      this.$http.get(`${CONFIG.BASEURL_API}notif`, auth.httpOption)
-        .then(res => {
-          if (!res.body.success) return console.log(res.body.err)
-          res.body.data.forEach(e => e.link.notif ? this.notifCount++ : null)
-          this.notifs = res.body.data
-        })
+      // this.$socket.emit('online', this.id)
+
     },
     methods: {
       logout () {
         this.$cookie.delete('token')
         this.$router.replace('/')
+        this.$socket.emit('disconnect', this.id)
+      }
+    },
+    sockets:{
+      connect (){
+        this.$socket.emit('online', this.id)
+        this.$options.sockets['user'] = (users) => {
+          this.users = users
+        }
+        console.log('socket connected')
+      },
+      disconnect (){
+        this.$socket.emit('disconnect', this.id)
+        console.log('socket disconnected')
+        return this.id
       }
     },
     components: {

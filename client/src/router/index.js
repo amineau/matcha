@@ -32,13 +32,18 @@ export default new Router({
       path: '/user/:id',
       name: 'user',
       component: User,
-      children: [
-        {
-          path: '/chat',
-          name: 'chat',
-          component: Chat
-        }
-      ]
+      // children: [
+      //   {
+      //     path: '/chat',
+      //     name: 'chat',
+      //     component: Chat
+      //   }
+      // ]
+    },
+    {
+      path: '/chat/:id',
+      name: 'chat',
+      component: Chat
     },
     // {
     //   path: '/auth',

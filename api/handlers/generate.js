@@ -27,6 +27,21 @@ const Query  = {
   connexion: new ConnexionQuery()
 }
 
+
+var deleteFolderRecursive = function(path) {
+  if( fs.existsSync(path) ) {
+    fs.readdirSync(path).forEach(function(file,index){
+      var curPath = path + "/" + file;
+      if(fs.lstatSync(curPath).isDirectory()) { // recurse
+        deleteFolderRecursive(curPath);
+      } else { // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
+  }
+};
+
 exports.generate = (req, res) => {
   const nb = req.params.nb
   const showSuccess = () => {
@@ -60,6 +75,13 @@ exports.generate = (req, res) => {
   user.push({login: 'Toto', firstName:'Thomas', lastName:'Durand', email:'tdurand@hotmail.fr', sex:'M', prefer:'W', bio:'', score:10000, password: hash('Youhou55'), birthday: '15/12/1990'})
 
   Query.generate.DeleteAll()
+    .then(() => {
+      const files = fs.readdirSync('api/data/profile')
+      console.log(files)
+      files.forEach(file => {
+        deleteFolderRecursive('api/data/profile/' + file)
+      })
+    })
     .then(() => Query.generate.Generate({user}))
     .then((data) => {
       let i = 0
@@ -68,13 +90,15 @@ exports.generate = (req, res) => {
       for (let id=begin; id <finish; id++) {
         let promises
         if (id === finish-1) {
-          promises = Query.pic.Add({id, pic: `src/assets/profil-0.png`, head: true})
-            .then(() => Query.pic.Add({id, pic: `src/assets/profil-1.png`, head: false}))
-            .then(() => Query.pic.Add({id, pic: `src/assets/profil-2.png`, head: false}))
+          promises = Query.pic.Add({id, path: path.join(__dirname, '../../client/src/assets/profil-0.png')})
+            .then(() => Query.pic.Add({id, path: path.join(__dirname, '../../client/src/assets/profil-1.png')}))
+            .then(() => Query.pic.Add({id, path: path.join(__dirname, '../../client/src/assets/profil-2.png')}))
         } else {
-          const photo = `generator/photo/${data.results[0].data[i++].row[1]}/${Math.round(782*Math.random())}.jpg`
-            promises = Query.pic.Add({id, pic: photo, head: true})
-              .then(() => Query.pic.Add({id, pic: photo, head: false}))
+          const dirname = path.join(__dirname, '../../generator/photo', data.results[0].data[i++].row[1])
+          const nbFile = 1 // 782
+          const pathname = path.join(dirname, Math.round((nbFile-1)*Math.random()) + '.jpg')
+            promises = Query.pic.Add({id, path: pathname})
+              .then(() => Query.pic.Add({id, path: pathname}))
         }
         promises.then(() => {
           for (let t=0; t<3+12*Math.random(); t++) {

@@ -15,8 +15,10 @@ exports.like = (req, res) => {
   const id = Number(req.params.id)
   const userId = req.decoded.id
   const mongo = req.app.get('query')
+  const io = req.app.get('io')
 
   const showSuccess = (connected) => {
+    io.emit('notif', id)
     res.json({
       connected,
       success: true
@@ -32,8 +34,7 @@ exports.like = (req, res) => {
 
   Query.Like({id, userId})
     .then((data) => Promise.all([Parser.GetData(data),Parser.GetTrue(data)]))
-    .then(data => data[0][0].connected ? mongo.Create([id, userId]) : null)
-    .then(() => mongo.FindAll())
+    .then(data => data[0][0].connected ? mongo.Create([id, userId]) : false)
     .then(showSuccess)
     .catch(showError)
 }
@@ -42,10 +43,12 @@ exports.unlike = (req, res) => {
   const id = Number(req.params.id)
   const userId = req.decoded.id
   const mongo = req.app.get('query')
+  const io = req.app.get('io')
 
-  const showSuccess = (connected) => {
+  const showSuccess = (deco) => {
+    if (deco) io.emit('notif', id)
     res.json({
-      connected,
+      connected: false,
       success: true
     })
   }
@@ -58,9 +61,8 @@ exports.unlike = (req, res) => {
   }
 
   Query.Unlike({id, userId})
-    .then(Parser.GetTrue)
-    .then(() => mongo.Delete([id, userId]))
-    .then(() => mongo.FindAll())
+    .then((data) => Promise.all([Parser.GetData(data),Parser.GetTrue(data)]))
+    .then(data => data[0][0].deconnected ? mongo.Delete([id, userId]) : false)
     .then(showSuccess)
     .catch(showError)
 }
@@ -142,8 +144,10 @@ exports.report = (req, res) => {
 exports.visite = (req, res) => {
   const id = Number(req.params.id)
   const userId = req.decoded.id
+  const io = req.app.get('io')
 
   const showSuccess = (data) => {
+    io.emit('notif', id)
     res.json({
       data,
       success: true

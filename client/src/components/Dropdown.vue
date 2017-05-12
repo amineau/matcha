@@ -9,7 +9,7 @@
     <ul id='dropdown1' class='dropdown-content'>
       <li v-for="notif in notifs" :class="{'new': notif.link.notif}">
         <router-link :to="{name: notif.action==='CHAT'?'chat':'user', params: {id: notif.id}}"  class="valign-wrapper">
-          <img :src="notif.photo" witdh=50 height=50/><div>{{textNotif(notif)}}</div>
+          <img :src="notif.base64" witdh=50 height=50/><div>{{textNotif(notif)}}</div>
         </router-link>
       </li>
     </ul>
@@ -23,15 +23,26 @@
   export default {
     name: 'dropdown',
     props: {
-      auth: Function,
-      notifs: Array
+      auth: Function
     },
     data () {
       return {
         notifCount: 0,
+        httpOption: null,
+        notifs: []
       }
     },
     created () {
+      const auth = this.auth()
+      if (!auth.success) return console.log(auth.err)
+      this.httpOption = auth.httpOption
+      this.loadNotifs()
+      this.$options.sockets.notif = (id) => {
+        console.log('notif', id)
+        if (id === auth.decoded.id) {
+          this.loadNotifs()
+        }
+      }
       $(function() {
         $('.dropdown-button').dropdown({
          inDuration: 300,
@@ -53,6 +64,15 @@
             this.notifCount = 0
           })
       },
+      loadNotifs () {
+        this.notifCount = 0
+        this.$http.get(`${CONFIG.BASEURL_API}notif`, this.httpOption)
+          .then(res => {
+            if (!res.body.success) return console.log(res.body.err)
+            res.body.data.forEach(e => e.link.notif ? this.notifCount++ : null)
+            this.notifs = res.body.data
+          })
+      },
       textNotif (notif) {
         if (notif.action === 'VISITED') {
           return `${notif.login} a visité votre profil`
@@ -64,13 +84,7 @@
           return `${notif.login} vous a envoyé un message`
         }
       }
-    },
-    watch: {
-      notifs: function (val) {
-        val.forEach(e => e.link.notif ? this.notifCount++ : 0)
-      }
     }
-
   }
 
 </script>

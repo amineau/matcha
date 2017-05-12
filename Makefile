@@ -9,32 +9,39 @@ GREENB	= \033[1;32m
 GREEN	= \033[0;32m
 YELLOW	= \033[33m
 CYAN	= \033[36m
-TOKEN := ''
-
+UNAME := $(shell uname)
+ifeq ($(UNAME),Linux)
+	SNAP := sleep 3 && fswebcam -D 2 --png
+else
+	SNAP := imagesnap -w 2
+endif
 all: $(NAME) generate
 
 $(NAME):
 	#screen -X eval "chdir $$PWD"
 	screen -dmS $(NAME)
-	screen -S $(NAME) -p 0 -X stuff $$'mongod --dbpath ~/Documents/Mongodb\n'
+	screen -S $(NAME) -p 0 -X stuff $$'a mongod --dbpath ~/Documents/Mongodb\n'
 	screen -S $(NAME) -X screen 1
-	screen -S $(NAME) -p 1 -X stuff $$'cd client && webpack --watch\n'
+	screen -S $(NAME) -p 1 -X stuff $$'a cd client && webpack --watch\n'
 	screen -S $(NAME) -X screen 2
-	screen -S $(NAME) -p 2 -X stuff $$'cd client && webpack-dev-server\n'
+	screen -S $(NAME) -p 2 -X stuff $$'a cd client && webpack-dev-server\n'
 	screen -S $(NAME) -X screen 3
-	screen -S $(NAME) -p 3 -X stuff $$'nodemon api/app.js\n'
+	screen -S $(NAME) -p 3 -X stuff $$'a nodemon api/app.js\n'
 	screen -S $(NAME) -X screen 4
-	screen -S $(NAME) -p 4 -X stuff $$'neo4j console\n'
+	screen -S $(NAME) -p 4 -X stuff $$'a neo4j console\n'
 	@echo Wait...
-	@imagesnap -q -w 1 ./client/src/assets/profil-0.png
+	$(SNAP) -q ./client/src/assets/profil-0.png
 	@echo Smile !
-	@imagesnap -q -w 2 ./client/src/assets/profil-1.png
+	$(SNAP) -q ./client/src/assets/profil-1.png
 	@echo Please smile !
-	@imagesnap -q -w 3 ./client/src/assets/profil-2.png
+	$(SNAP) -q ./client/src/assets/profil-2.png
 	@echo Thanks
 
 generate:
-	curl -X POST http://localhost:4242/generate/$(NB)
+	curl -X POST http://localhost:4242/generate/50
+
+test:
+	echo $(shell uname)
 
 clean:
 	screen -S $(NAME) -p 0 -X at "#" stuff $$'\003'

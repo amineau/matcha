@@ -154,6 +154,7 @@ exports.signIn = (req, res, next) => {
     }
     return res.json({
       success: true,
+      id: user.id,
       token: jwt.sign(payload, nconf.get('token:secret'), { expiresIn: nconf.get('token:expires') })
     })
   })(req, res, next)
