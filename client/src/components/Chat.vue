@@ -24,7 +24,8 @@
         input: {
           name: 'comment',
           type: 'textarea',
-          label: false
+          label: false,
+          value: null
         }
       }
     },
@@ -49,7 +50,7 @@
         this.chat.push({comment: data.comment, sender: this.newAuth.decoded.id})
         this.$http.post(`${CONFIG.BASEURL_API}chat/${this.$route.params.id}`, {comment: data.comment}, this.newAuth.httpOption).then(res => {
           if (!res.body.success) return alert('Erreur lors de l\'obtention des messages')
-
+          this.input.value = null
         })
       }
     },

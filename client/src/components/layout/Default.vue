@@ -5,9 +5,8 @@
           <button @click="logout" class="btn waves-effect waves-light">Deconnexion</button>
 
           <dropdown :auth="auth" class='right'></dropdown>
-{{id}}
+
       <h1>Header</h1>
-      {{users}}
     </header>
 
     <main>
@@ -53,39 +52,41 @@
     data () {
       return {
         ready: false,
-        notifs: [],
-        id: 0,
-        users: []
+        notifs: []
       }
     },
-    props: ['auth'],
+    props: {
+      auth: Function
+    },
     created () {
       const auth = this.auth()
       if (!auth.success) return this.$router.replace('/')
-      this.id = auth.decoded.id
       this.ready = true
-      // this.$socket.emit('online', this.id)
+      this.$options.sockets.user = (users) => {
+        let list = []
+        Object.keys(users).map((objectKey) => {
+          list.push(users[objectKey])
+        })
+        this.$parent.$emit('userUpdate', list)
+      }
+      console.log('socket connected')
+      let vm = this
+      $(window).focus(function() {
+        vm.$socket.emit('online', auth.decoded.id)
+        console.log('focus on')
+      })
 
+      $(window).blur(function() {
+        vm.$socket.emit('focus off', auth.decoded.id)
+        console.log('focus off')
+      })
     },
     methods: {
       logout () {
         this.$cookie.delete('token')
         this.$router.replace('/')
-        this.$socket.emit('disconnect', this.id)
-      }
-    },
-    sockets:{
-      connect (){
-        this.$socket.emit('online', this.id)
-        this.$options.sockets['user'] = (users) => {
-          this.users = users
-        }
-        console.log('socket connected')
-      },
-      disconnect (){
-        this.$socket.emit('disconnect', this.id)
-        console.log('socket disconnected')
-        return this.id
+        this.$socket.emit('logout')
+        console.log('socket logout')
       }
     },
     components: {

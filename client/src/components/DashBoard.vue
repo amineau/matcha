@@ -7,7 +7,7 @@
          <div class="card">
            <div class="card-image">
              <img :src="people.base64"/>
-             <span class="card-title">{{people.login}}</span>
+             <span class="card-title">{{people.login}} <i :class="{'orange-text': people.status === 2, 'green-text': people.status === 1, 'grey-text': !people.status}" class="fa fa-circle" aria-hidden="true"></i></span>
            </div>
            <div class="card-content">{{ calculateAge(people.birthday) }} ans</div>
            <div class="card-action">
@@ -35,7 +35,8 @@
     data () {
       return {
         peoples: [],
-        httpOption: null
+        httpOption: null,
+        users: {}
       }
     },
     props: {
@@ -50,11 +51,20 @@
           if (!res.body.success) return res.body.err
           this.peoples = res.body.data
           this.peoples.forEach(e => {
+            this.$set(e, 'status', false)
             if (!e.base64) {
               e.base64 = `src/assets/${e.sex}-silhouette.jpg`
             }
           })
+        }).then(() => {
+          this.$on('userUpdate', (users) => {
+            this.peoples.forEach((e, k) => {
+              const user = users.find(user => user.id === e.id)
+              e.status = user ? user.status : 0
+            })
+          })
         })
+        .then(() => this.$socket.emit('online', auth.decoded.id))
     },
     methods: {
       calculateAge (birthDate) {
@@ -69,6 +79,18 @@
           }
           return years
       }
+    },
+    watch: {
+      users () {
+        console.log('watch users')
+        let list = []
+        Object.keys(this.users.list).map((objectKey) => {
+          list.push(this.users.list[objectKey])
+        })
+        this.peoples.forEach(e => {
+          e.status = list.indexOf(e.id) !== -1
+        })
+      },
     },
     components: {
       defaultLayout,

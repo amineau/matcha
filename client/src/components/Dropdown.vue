@@ -71,6 +71,7 @@
             if (!res.body.success) return console.log(res.body.err)
             res.body.data.forEach(e => e.link.notif ? this.notifCount++ : null)
             this.notifs = res.body.data
+            console.log('notifCount', this.notifCount)
           })
       },
       textNotif (notif) {

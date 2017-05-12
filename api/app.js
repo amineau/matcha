@@ -55,21 +55,31 @@ app.use(morgan('dev'))
 	})
 
 let users = {}
-let connected = ['essai']
 io.on('connection', function(socket){
 	socket.on('online', (id) => {
-		users[socket.id] = id
-		connected.push(id)
-		console.log('user online', id, connected)
-		io.emit('user', connected)
+		users[socket.id] = {id, status: 1}
+		console.log('user online', id, users)
+		io.emit('user', users)
+	})
+
+	socket.on('logout', () => {
+		const id = users[socket.id]
+		delete users[socket.id]
+		console.log('user offline', id,users)
+		io.emit('user', users)
+	})
+
+	socket.on('focus off', (id) => {
+		users[socket.id] = {id, status: 2}
+		console.log('user focus off', id, users)
+		io.emit('user', users)
 	})
 
 	socket.on('disconnect', () => {
 		const id = users[socket.id]
 		delete users[socket.id]
-		connected.splice(connected.indexOf(id), 1)
-		console.log('user offline', id,connected)
-		io.emit('user', connected)
+		console.log('user offline', id,users)
+		io.emit('user', users)
 	})
 })
 
