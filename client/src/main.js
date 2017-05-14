@@ -3,10 +3,11 @@
   import Vue from 'vue'
   import VueCookie from 'vue-cookie'
   import VueResource from 'vue-resource'
+  import VueSocketio from 'vue-socket.io'
   import App from './app.vue'
   import router from './router'
-  import VueSocketio from 'vue-socket.io'
   import CONFIG from '../config/conf.json'
+
 
   Vue.use(VueResource)
   Vue.use(VueCookie)

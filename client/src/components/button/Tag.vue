@@ -12,12 +12,16 @@
     name: 'TagButton',
     props: {
       auth: Function,
+      init: Boolean,
       autocomplete: Boolean
     },
     mounted () {
       const auth = this.auth()
-      if (!auth.success) return
-      let promises = [this.$http.get(`${CONFIG.BASEURL_API}tags/${auth.decoded.id}`, auth.httpOption)]
+      if (!auth.success) return console.log(auth.error)
+      let promises = []
+      if (this.init) {
+        promises.push(this.$http.get(`${CONFIG.BASEURL_API}tags/${auth.decoded.id}`, auth.httpOption))
+      }
       if (this.autocomplete) {
         promises.push(this.$http.get(`${CONFIG.BASEURL_API}tags`, auth.httpOption))
       }
@@ -29,25 +33,31 @@
           if (!success) return
           let autocompleteOptions = {data: {}}
           let data = []
-          res[0].body.data.forEach(i => data.push({tag: i}))
-          if (this.autocomplete) {
-            res[1].body.data.forEach(i => autocompleteOptions.data[i] = null)
+          if (this.init) {
+            res[0].body.data.forEach(i => data.push({tag: i}))
+            if (this.autocomplete) {
+              res[1].body.data.forEach(i => autocompleteOptions.data[i] = null)
+            }
+          } else {
+            res[0].body.data.forEach(i => autocompleteOptions.data[i] = null)
           }
           resolve({data, autocompleteOptions})
         })
       }).then((data) => {
-        var thisVm = this
+        var vm = this
         $(function() {
           $('.chips').material_chip(data)
-          if (!thisVm.autocomplete) {
+          if (!vm.autocomplete) {
             $('.chip i').remove()
           }
-          $('.chips').on('chip.add', function(e, chip){
-            thisVm.$http.post(`${CONFIG.BASEURL_API}tags/${chip.tag}`, {}, auth.httpOption).catch(r => console.log(r))
-          })
-          $('.chips').on('chip.delete', function(e, chip){
-            thisVm.$http.delete(`${CONFIG.BASEURL_API}tags/${chip.tag}`, auth.httpOption).catch(r => console.log(r))
-          })
+          if (vm.autocomplete && vm.init) {
+            $('.chips').on('chip.add', function(e, chip){
+              vm.$http.post(`${CONFIG.BASEURL_API}tags/${chip.tag}`, {}, auth.httpOption).catch(r => console.log(r))
+            })
+            $('.chips').on('chip.delete', function(e, chip){
+              vm.$http.delete(`${CONFIG.BASEURL_API}tags/${chip.tag}`, auth.httpOption).catch(r => console.log(r))
+            })
+          }
         })
       })
     }

@@ -47,7 +47,11 @@ module.exports = class UserValidator extends Validator {
           message: 'Caractère(s) incorrect(s)'
         },
         birthday: {
-          funct: e => e,
+          funct: e => {
+            let date = e.split('/')
+            date = [date[1], date[0], date[2]].join(',')
+            return new Date(date).getTime()
+          },
           match: /^(?:(?:31(\/)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/)(?:0?2|(?:Feb))\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/,
           message: 'Format de la date invalide dd/mm/yyyy'
         },
@@ -75,6 +79,14 @@ module.exports = class UserValidator extends Validator {
           funct: e => e,
           maxLength: 300,
           message: "Message trop long"
+        },
+        latitude: {
+          funct: e => e,
+          message: 'Latitude invalide'
+        },
+        longitude: {
+          funct: e => e,
+          message: 'longitude invalide'
         }
       })
     }

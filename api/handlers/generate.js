@@ -69,15 +69,14 @@ exports.generate = (req, res) => {
     const prefer = 'MWB'.concat(sexOp(sex).repeat(7)).charAt(Math.round(9 * Math.random()))
     const bio = generator.bio[Math.round((generator.bio.length - 1) * Math.random())].bio
     const score = Math.round(500 * Math.random())
-    const birthday = '12/02/1993'
+    const birthday = new Date('12/02/19' + (99 - Math.round(20 * Math.random())).toString()).getTime()
     user.push({login, firstName, lastName, email, sex, prefer, bio, score, birthday, password: hash('Youhou55')})
   }
-  user.push({login: 'Toto', firstName:'Thomas', lastName:'Durand', email:'tdurand@hotmail.fr', sex:'M', prefer:'W', bio:'', score:10000, password: hash('Youhou55'), birthday: '15/12/1990'})
+  user.push({login: 'Toto', firstName:'Thomas', lastName:'Durand', email:'tdurand@hotmail.fr', sex:'M', prefer:'W', bio:'', score:10000, password: hash('Youhou55'), birthday: new Date('12/02/19' + (99 - Math.round(20 * Math.random())).toString()).getTime()})
 
   Query.generate.DeleteAll()
     .then(() => {
       const files = fs.readdirSync('api/data/profile')
-      console.log(files)
       files.forEach(file => {
         deleteFolderRecursive('api/data/profile/' + file)
       })

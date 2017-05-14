@@ -2,6 +2,8 @@
   <defaultLayout :auth="auth">
 
     <p>Personnes à proximitées</p>
+    <tagbutton :auth="auth" :autocomplete="true" :init="false"></tagbutton>
+    <formInputs :inputs="inputs" :submit="search" button="Rechercher"></formInputs>
     <div class="row">
        <div v-for="people in peoples" class="col s6 m4 l3">
          <div class="card">
@@ -28,6 +30,8 @@
   import likebutton from './button/Like.vue'
   import chatbutton from './button/Chat.vue'
   import profilbutton from './button/Profil.vue'
+  import tagbutton from './button/Tag.vue'
+  import formInputs from './Form.vue'
   import CONFIG from '../../config/conf.json'
 
   export default {
@@ -36,7 +40,24 @@
       return {
         peoples: [],
         httpOption: null,
-        users: {}
+        users: {},
+        inputs: [{
+          name: 'age',
+          text: 'Âge',
+          type: 'range',
+          min: 18,
+          max: 77,
+          value: [18, 77],
+          label: true
+        },{
+          name: 'score',
+          text: 'Score de popularité',
+          type: 'range',
+          min: 0,
+          max: 2000,
+          value: [0, 2000],
+          label: true
+        }]
       }
     },
     props: {
@@ -78,6 +99,34 @@
               years--
           }
           return years
+      },
+      search () {
+        let params = []
+        this.inputs.forEach(e => {
+          params.push(`${e.name}[min]=${e.value[0]}`)
+          params.push(`${e.name}[max]=${e.value[1]}`)
+        })
+        $('.chips').material_chip('data').forEach((e, k) => {
+          params.push(`tags[${k}]=${e.tag}`)
+        })
+        this.$http.get(`${CONFIG.BASEURL_API}users?${params.join('&')}`, this.httpOption)
+          .then(res => {
+            if (!res.body.success) return res.body.err
+            this.peoples = res.body.data
+            this.peoples.forEach(e => {
+              this.$set(e, 'status', false)
+              if (!e.base64) {
+                e.base64 = `src/assets/${e.sex}-silhouette.jpg`
+              }
+            })
+          }).then(() => {
+            this.$on('userUpdate', (users) => {
+              this.peoples.forEach((e, k) => {
+                const user = users.find(user => user.id === e.id)
+                e.status = user ? user.status : 0
+              })
+            })
+          })
       }
     },
     watch: {
@@ -93,6 +142,8 @@
       },
     },
     components: {
+      tagbutton,
+      formInputs,
       defaultLayout,
       likebutton,
       chatbutton,

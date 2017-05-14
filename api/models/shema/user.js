@@ -8,6 +8,7 @@ module.exports = class UserQuery {
     Create(data) {
         return new Promise((resolve, reject) => {
           let tab = ''
+          console.log('birthday', data.birthday)
           for (let key in data)
             tab += `${key}:{${key}},`
           const query =
@@ -57,21 +58,47 @@ module.exports = class UserQuery {
     }
 
     GetAll(where) {
+      let toWhere = ''
+      let match = ''
+      if (where.age) {
+        if (where.age.min) {
+          let min = new Date()
+          min.setFullYear(min.getFullYear() - where.age.min)
+          toWhere += ` AND u.birthday <= ${min.getTime()}`
+        }
+        if (where.age.max) {
+          let max = new Date()
+          max.setFullYear(max.getFullYear() - where.age.max)
+          toWhere += ` AND u.birthday >= ${max.getTime()}`
+          console.log('max :', max)
+        }
+        console.log(where.age)
+
+      }
+      if (where.tags && where.tags.length) {
+        match = ', (u)-[]-(t:Tag)'
+        let tags = []
+        where.tags.forEach(e => tags.push(`'${e}'`))
+        console.log(tags)
+        toWhere += ` AND (t.name=${tags.join(' OR t.name=')})`
+      }
       return new Promise((resolve, reject) => {
        const query =
-           `MATCH (u: User), (p:User)
+           `MATCH (u: User), (p:User)${match}
             WHERE id(u) <> {id}
             AND id(p) = {id}
             AND (u.sex = p.prefer
               OR p.prefer = 'B'
               OR NOT(exists(p.prefer))
             )
+            ${toWhere}
             OPTIONAL MATCH (u)-[h]-(i: Img)
             WHERE h.head = true
             OPTIONAL MATCH (u)<-[l:LIKED]-(p)
             OPTIONAL MATCH (u)<-[:LIKED]-(p), (u)-[c:LIKED]->(p)
             RETURN id(u) AS id, u AS all, i.path AS path, count(i) AS likable, count(c) AS connected, count(l) AS like`
 
+console.log(query)
         db.doDatabaseOperation(query, where)
           .then(data => resolve(data))
           .catch(err => reject(err))

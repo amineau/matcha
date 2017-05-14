@@ -80,6 +80,17 @@
         vm.$socket.emit('focus off', auth.decoded.id)
         console.log('focus off')
       })
+      navigator.geolocation.getCurrentPosition(pos => {
+        console.log('pos', pos.coords)
+        if (pos.coords) {
+          this.$http.put(`${CONFIG.BASEURL_API}user`, {
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude
+          }, auth.httpOption).then(res => {
+            if (!res.body.success) return console.log(res.body.err)
+          })
+        }
+      })
     },
     methods: {
       logout () {

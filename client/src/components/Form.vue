@@ -13,6 +13,7 @@
           <label :for="option.name">{{option.text}}</label>
         </p>
       </div>
+      <vue-slider v-else-if="input.type === 'range'" v-model="input.value" :min='input.min' :max='input.max' width="80%"></vue-slider>
       <input v-else :id="input.name" :type="input.type" class="validate">
       <label v-show="input.label" v-if="input.type !== 'radio'" :for="input.name" :data-error="input.error">{{input.text}}</label>
     </div>
@@ -21,6 +22,8 @@
 </template>
 
 <script>
+
+  import vueSlider from 'vue-slider-component'
 
   export default {
     name: 'formInputs',
@@ -33,6 +36,9 @@
       inputs: Array,
       submit: Function,
       button: String
+    },
+    components: {
+      vueSlider
     },
     mounted () {
       $(function() {

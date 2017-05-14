@@ -40,6 +40,8 @@ exports.getByData = (req, res) => {
 
 exports.getAll = (req, res) => {
   const id = req.decoded.id
+  const query = req.query
+  console.log(query)
   const showSuccess = (data) => {
     res.json({
       success: true,
@@ -54,10 +56,10 @@ exports.getAll = (req, res) => {
       })
   }
 
-    Query.GetAll({id})
+    Query.GetAll(_.merge({id}, query))
       .then(Parser.GetData)
       .then(showSuccess)
-      .catch(showError);
+      .catch(showError)
 }
 //
 // exports.get = (req, res) => {
@@ -186,7 +188,9 @@ exports.set = (req, res) => {
           {name: 'login', noReq: true},
           {name: 'prefer', noReq: true},
           {name: 'sex', noReq: true},
-          {name: 'bio', noReq: true}
+          {name: 'bio', noReq: true},
+          {name: 'latitude', noReq: true},
+          {name: 'longitude', noReq: true}
         ]).then(data => {
           return new Promise((resolve, reject) => {
             let promises = []

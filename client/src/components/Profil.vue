@@ -7,7 +7,7 @@
     <div class="collection">
       <a v-for="input in inputs" @click="input.edit = true" class="row collection-item">
         <div class="col s3">{{input.text}}</div>
-        <tagbutton v-if="input.name === 'tag'" :auth="auth" :autocomplete="true"></tagbutton>
+        <tagbutton v-if="input.name === 'tag'" :auth="auth" :autocomplete="true" :init="true"></tagbutton>
         <div v-else class="value col s8">
           <formInputs v-if='input.edit' :inputs="[input]" :submit="submit" button="Enregistrer"></formInputs>
           <div v-else>{{input.value}}</div>
