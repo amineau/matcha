@@ -70,10 +70,10 @@ module.exports = class UserQuery {
           let max = new Date()
           max.setFullYear(max.getFullYear() - where.age.max)
           toWhere += ` AND u.birthday >= ${max.getTime()}`
-          console.log('max :', max)
         }
-        console.log(where.age)
-
+      }
+      if (where.score) {
+        toWhere += ` AND u.score >= ${where.score.min} AND u.score <= ${where.score.max}`
       }
       if (where.tags && where.tags.length) {
         match = ', (u)-[]-(t:Tag)'
@@ -98,7 +98,6 @@ module.exports = class UserQuery {
             OPTIONAL MATCH (u)<-[:LIKED]-(p), (u)-[c:LIKED]->(p)
             RETURN id(u) AS id, u AS all, i.path AS path, count(i) AS likable, count(c) AS connected, count(l) AS like`
 
-console.log(query)
         db.doDatabaseOperation(query, where)
           .then(data => resolve(data))
           .catch(err => reject(err))

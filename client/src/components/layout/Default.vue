@@ -52,6 +52,7 @@
     data () {
       return {
         ready: false,
+        httpOption: {},
         notifs: []
       }
     },
@@ -62,6 +63,7 @@
       const auth = this.auth()
       if (!auth.success) return this.$router.replace('/')
       this.ready = true
+      this.httpOption = auth.httpOption
       this.$options.sockets.user = (users) => {
         let list = []
         Object.keys(users).map((objectKey) => {
@@ -69,27 +71,18 @@
         })
         this.$parent.$emit('userUpdate', list)
       }
-      console.log('socket connected')
       let vm = this
       $(window).focus(function() {
         vm.$socket.emit('online', auth.decoded.id)
-        console.log('focus on')
       })
 
       $(window).blur(function() {
         vm.$socket.emit('focus off', auth.decoded.id)
-        console.log('focus off')
       })
-      navigator.geolocation.getCurrentPosition(pos => {
-        console.log('pos', pos.coords)
-        if (pos.coords) {
-          this.$http.put(`${CONFIG.BASEURL_API}user`, {
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude
-          }, auth.httpOption).then(res => {
-            if (!res.body.success) return console.log(res.body.err)
-          })
-        }
+      navigator.geolocation.watchPosition(pos => this.setPosition(pos.coords), err => {
+        this.$http.get(`http://ip-api.com/json`).then(res => {
+          this.setPosition({latitude: res.data.lat, longitude: res.data.lon})
+        }).catch(err => console.log(err))
       })
     },
     methods: {
@@ -98,6 +91,16 @@
         this.$router.replace('/')
         this.$socket.emit('logout')
         console.log('socket logout')
+      },
+      setPosition (coords) {
+        if (coords) {
+          this.$http.put(`${CONFIG.BASEURL_API}user`, {
+            latitude: coords.latitude,
+            longitude: coords.longitude
+          }, this.httpOption).then(res => {
+            if (!res.body.success) return console.log(res.body.err)
+          })
+        }
       }
     },
     components: {

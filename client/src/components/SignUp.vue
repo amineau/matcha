@@ -10,6 +10,7 @@
 
   import authLayout from './layout/Auth.vue'
   import formInputs from './Form.vue'
+  import _ from 'lodash'
   import CONFIG from '../../config/conf.json'
 
   export default {
@@ -75,10 +76,26 @@
       })
     },
     methods: {
+      getPosition () {
+        return new Promise((resolve, reject) => {
+          navigator.geolocation.watchPosition(
+            pos => resolve(pos.coords),
+            err => {
+              this.$http.get(`http://ip-api.com/json`).then(res => {
+                resolve({latitude: res.data.lat, longitude: res.data.lon})
+              }).catch(err => reject(err))
+            }
+          )
+        })
+      },
       submit (data) {
-        this.$http.post(`${CONFIG.BASEURL_API}auth/signup`, data, {
-          responseType: 'json'
-        }).then(res => {
+        this.getPosition()
+        .then(coords => this.$http.post(`${CONFIG.BASEURL_API}auth/signup`,
+          _.merge(data, coords), {
+            responseType: 'json'
+          })
+        )
+        .then(res => {
           if (!res.body.success) {
             this.inputs.forEach(n => {
               if (res.body.err[n.name]){

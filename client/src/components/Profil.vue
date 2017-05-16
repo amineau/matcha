@@ -25,6 +25,7 @@
   import formInputs from './Form.vue'
   import setPhoto from './SetPhoto.vue'
   import tagbutton from './button/Tag.vue'
+  import dateformat from 'dateformat'
   import CONFIG from '../../config/conf.json'
 
   export default {
@@ -105,6 +106,9 @@
                   e.value = i.text
                 }
               })
+            } else if (e.type === 'date') {
+              const date = new Date(res.body.data[0][e.name])
+              e.value = dateformat(date, 'dd/mm/yyyy')
             } else {
               e.value = res.body.data[0][e.name]
             }

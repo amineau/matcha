@@ -12,6 +12,26 @@ const jwt           = require('jsonwebtoken')
 const Parser = new DbParser()
 const Query  = new UserQuery()
 
+function convertRad(input){
+  return (Math.PI * input)/180
+}
+
+function Distance(pos_a, pos_b){
+
+    const R = 6378 //Rayon de la terre en mètre
+
+    if (!pos_b.latitude || !pos_b.longitude || !pos_a.latitude || !pos_b.longitude
+        || (pos_b.latitude === pos_a.latitude && pos_b.longitude === pos_a.longitude)) return 0
+
+    const lat_a = convertRad(pos_a.latitude)
+    const lon_a = convertRad(pos_a.longitude)
+    const lat_b = convertRad(pos_b.latitude)
+    const lon_b = convertRad(pos_b.longitude)
+
+    const d = R * (Math.PI/2 - Math.asin( Math.sin(lat_b) * Math.sin(lat_a) + Math.cos(lon_b - lon_a) * Math.cos(lat_b) * Math.cos(lat_a)))
+    return Math.round(d)
+}
+
 exports.getByData = (req, res) => {
   const {by, data} = req.params
   const validate = {
@@ -55,11 +75,25 @@ exports.getAll = (req, res) => {
           err: err.error || err
       })
   }
-
+  Promise.all([
     Query.GetAll(_.merge({id}, query))
+      .then(Parser.GetData),
+    Query.Get({id})
       .then(Parser.GetData)
-      .then(showSuccess)
-      .catch(showError)
+  ])
+    .then(data => {
+      return new Promise((resolve) => {
+        const myPosition = {
+          latitude: data[1][0].latitude,
+          longitude: data[1][0].longitude
+        }
+        data[0].forEach(e => {e.distance = Distance(myPosition, e); console.log(e.login, e.distance)})
+
+        resolve(data[0].filter(e => e.distance <= query.distance))
+      })
+    })
+    .then(showSuccess)
+    .catch(showError)
 }
 //
 // exports.get = (req, res) => {
@@ -106,7 +140,9 @@ exports.signUp = (req, res) => {
       {name: 'firstName'},
       {name: 'lastName'},
       {name: 'sex'},
-      {name: 'birthday'}
+      {name: 'birthday'},
+      {name: 'latitude'},
+      {name: 'longitude'}
     ])
       .then(data => {
         return new Promise((resolve, reject) => {

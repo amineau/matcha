@@ -13,7 +13,14 @@
           <label :for="option.name">{{option.text}}</label>
         </p>
       </div>
-      <vue-slider v-else-if="input.type === 'range'" v-model="input.value" :min='input.min' :max='input.max' width="80%"></vue-slider>
+      <vue-slider v-else-if="input.type === 'range'" v-model="input.value"
+      :min='input.min'
+      :max='input.max'
+      width="80%"
+      :style='{"marginLeft": "10%", "marginBottom": "30px"}'
+      :formatter="input.formatter"
+      :interval="input.interval"
+      :tooltipDir='["bottom","top"]'></vue-slider>
       <input v-else :id="input.name" :type="input.type" class="validate">
       <label v-show="input.label" v-if="input.type !== 'radio'" :for="input.name" :data-error="input.error">{{input.text}}</label>
     </div>
@@ -61,17 +68,15 @@
         selectMonths: true,
         selectYears: true,
         max: date,
-        onSet: () => {
-          this.inputs.forEach(e => {
-            if (e.type === 'date') {
-              e.value = this.picker.get()
-            }
-          })
-          $('.datepicker').removeClass('invalid').addClass('valid')
-        },
         onClose: () => {
           if (!this.picker.get()) {
             $('.datepicker').removeClass('valid').addClass('invalid')
+          } else {
+            this.inputs.forEach(e => {
+              if (e.type === 'date') {
+                e.value = this.picker.get()
+              }
+            })
           }
         }
       }).pickadate('picker')

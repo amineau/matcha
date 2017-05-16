@@ -16,7 +16,6 @@ passport.use(new LocalStrategy({
     .then(Parser.GetData)
     .then(user => {
       user = user[0]
-      console.log('%%%%%%%%%%', password, '==========',user)
       if (!user) {
         done(null, false, {error: 'Utilisateur inconnu'})
       } else if (!bcrypt.compareSync(password, user.password)) {

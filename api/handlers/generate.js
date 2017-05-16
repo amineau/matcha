@@ -70,9 +70,11 @@ exports.generate = (req, res) => {
     const bio = generator.bio[Math.round((generator.bio.length - 1) * Math.random())].bio
     const score = Math.round(500 * Math.random())
     const birthday = new Date('12/02/19' + (99 - Math.round(20 * Math.random())).toString()).getTime()
-    user.push({login, firstName, lastName, email, sex, prefer, bio, score, birthday, password: hash('Youhou55')})
+    const longitude = 2 + (0.5 * Math.random())
+    const latitude = 48.5 + (0.5 * Math.random())
+    user.push({login, firstName, lastName, email, sex, prefer, bio, score, birthday, latitude, longitude, password: hash('Youhou55')})
   }
-  user.push({login: 'Toto', firstName:'Thomas', lastName:'Durand', email:'tdurand@hotmail.fr', sex:'M', prefer:'W', bio:'', score:10000, password: hash('Youhou55'), birthday: new Date('12/02/19' + (99 - Math.round(20 * Math.random())).toString()).getTime()})
+  user.push({login: 'Toto', firstName:'Thomas', lastName:'Durand', email:'tdurand@hotmail.fr', sex:'M', prefer:'W', bio:'', score:10000, password: hash('Youhou55'), birthday: new Date('12/02/19' + (99 - Math.round(20 * Math.random())).toString()).getTime(), latitude:48.896671, longitude: 2.318384})
 
   Query.generate.DeleteAll()
     .then(() => {
@@ -94,7 +96,7 @@ exports.generate = (req, res) => {
             .then(() => Query.pic.Add({id, path: path.join(__dirname, '../../client/src/assets/profil-2.png')}))
         } else {
           const dirname = path.join(__dirname, '../../generator/photo', data.results[0].data[i++].row[1])
-          const nbFile = 1 // 782
+          const nbFile = 782 //1
           const pathname = path.join(dirname, Math.round((nbFile-1)*Math.random()) + '.jpg')
             promises = Query.pic.Add({id, path: pathname})
               .then(() => Query.pic.Add({id, path: pathname}))
