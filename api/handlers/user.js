@@ -87,7 +87,7 @@ exports.getAll = (req, res) => {
           latitude: data[1][0].latitude,
           longitude: data[1][0].longitude
         }
-        data[0].forEach(e => {e.distance = Distance(myPosition, e); console.log(e.login, e.distance)})
+        data[0].forEach(e => e.distance = Distance(myPosition, e))
 
         resolve(data[0].filter(e => e.distance <= query.distance))
       })
@@ -95,28 +95,28 @@ exports.getAll = (req, res) => {
     .then(showSuccess)
     .catch(showError)
 }
-//
-// exports.get = (req, res) => {
-//   const id = req.params.id
-//   const showSuccess = (data) => {
-//     res.json({
-//       success: true,
-//       data
-//     })
-//   }
-//   const showError = (err) => {
-//     console.log(err)
-//       res.json({
-//           success: false,
-//           err: err.error || err
-//       })
-//   }
-//
-//     Query.GetPrivate({id})
-//       .then(Parser.GetData)
-//       .then(showSuccess)
-//       .catch(showError);
-// }
+
+exports.getLiked = (req, res) => {
+  const id = req.decoded.id
+  const showSuccess = (data) => {
+    res.json({
+      success: true,
+      data
+    })
+  }
+  const showError = (err) => {
+    console.log(err)
+      res.json({
+          success: false,
+          err: err.error || err
+      })
+  }
+
+    Query.GetLiked({id})
+      .then(Parser.GetData)
+      .then(showSuccess)
+      .catch(showError);
+}
 
 exports.signUp = (req, res) => {
     const validate  = {user: new UserValidator(req.body)}

@@ -3,6 +3,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '../components/Home.vue'
 import DashBoard from '../components/DashBoard.vue'
+import Like from '../components/Like.vue'
 import User from '../components/User.vue'
 import Profil from '../components/Profil.vue'
 import Chat from '../components/Chat.vue'
@@ -24,6 +25,11 @@ export default new Router({
       component: DashBoard
     },
     {
+      path: '/liked',
+      name: 'liked',
+      component: Like
+    },
+    {
       path: '/settings/profile',
       name: 'profil',
       component: Profil
@@ -31,34 +37,22 @@ export default new Router({
     {
       path: '/user/:id',
       name: 'user',
-      component: User,
-      // children: [
-      //   {
-      //     path: '/chat',
-      //     name: 'chat',
-      //     component: Chat
-      //   }
-      // ]
+      component: User
     },
     {
       path: '/chat/:id',
       name: 'chat',
       component: Chat
     },
-    // {
-    //   path: '/auth',
-    //   children: [
-        {
-          path: '/signin',
-          name: 'signin',
-          component: SignIn
-        },
-        {
-          path: '/signup',
-          name: 'signup',
-          component: SignUp
-        }
-    //   ]
-    // }
+    {
+      path: '/signin',
+      name: 'signin',
+      component: SignIn
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: SignUp
+    }
   ]
 })

@@ -10,6 +10,7 @@
         <tagbutton v-if="input.name === 'tag'" :auth="auth" :autocomplete="true" :init="true"></tagbutton>
         <div v-else class="value col s8">
           <formInputs v-if='input.edit' :inputs="[input]" :submit="submit" button="Enregistrer"></formInputs>
+          <div v-else-if='input.type === "radio"'>{{textOption(input)}}</div>
           <div v-else>{{input.value}}</div>
         </div>
         <i v-if="input.type !== 'chips'" @click.stop="input.edit = !input.edit" :class="{'fa-pencil': !input.edit, 'fa-close': input.edit}" class="fa secondary-content" aria-hidden="true"></i>
@@ -97,13 +98,12 @@
       })
       this.$http.get(`${CONFIG.BASEURL_API}user/id/${auth.decoded.id}`, auth.httpOption).then(res => {
         if (!res.body.success ) return null
-        console.log(res.body)
         this.inputs.forEach(e => {
           if (res.body.data[0][e.name]) {
             if (e.options){
               e.options.forEach(i => {
                 if (i.name === res.body.data[0][e.name]) {
-                  e.value = i.text
+                  e.value = i.name
                 }
               })
             } else if (e.type === 'date') {
@@ -120,7 +120,6 @@
     },
     methods: {
       submit (data) {
-        console.log('coucou', data)
         const auth = this.auth()
         this.$http.put(`${CONFIG.BASEURL_API}user`, data, auth.httpOption).then(res => {
           if (!res.body.success) {
@@ -136,26 +135,25 @@
           keys.forEach(key => {
             this.inputs.forEach(e => {
               if (e.name === key) {
-                if (e.type === 'radio') {
-                    e.options.forEach(o => {
-                      if (o.name === data[key]) {
-                        e.value = o.text
-                      }
-                    })
-                } else {
-                  e.value = data[key]
-                }
+                e.value = data[key]
                 e.edit = false
               }
             })
           })
         })
       },
+      textOption (input) {
+        let text
+        input.options.forEach(e => {
+          if (e.name === input.value) {
+            text = e.text
+          }
+        })
+        return text
+      }
     },
-    watch: {
-      // photos: function() {
-      //   this.photos.sort((a,b) => b.head)
-      // }
+    computed: {
+
     },
     props: ['auth'],
     components: {

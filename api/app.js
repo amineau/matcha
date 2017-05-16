@@ -58,27 +58,23 @@ let users = {}
 io.on('connection', function(socket){
 	socket.on('online', (id) => {
 		users[socket.id] = {id, status: 1}
-		console.log('user online', id, users)
 		io.emit('user', users)
 	})
 
 	socket.on('logout', () => {
 		const id = users[socket.id]
 		delete users[socket.id]
-		console.log('user offline', id,users)
 		io.emit('user', users)
 	})
 
 	socket.on('focus off', (id) => {
 		users[socket.id] = {id, status: 2}
-		console.log('user focus off', id, users)
 		io.emit('user', users)
 	})
 
 	socket.on('disconnect', () => {
 		const id = users[socket.id]
 		delete users[socket.id]
-		console.log('user offline', id,users)
 		io.emit('user', users)
 	})
 })

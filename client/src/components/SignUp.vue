@@ -17,55 +17,44 @@
     name: 'signup',
     data () {
       return {
-        inputs: [
-          {
-            name: 'email',
-            text: 'Email',
-            type: 'email'
-          },
-          {
-            name: 'login',
-            text: 'Login',
-            type: 'text'
-          },
-          {
-            name: 'firstName',
-            text: 'Prénom',
-            type: 'text'
-          },
-          {
-            name: 'lastName',
-            text: 'Nom',
-            type: 'text'
-          },
-          {
-            name: 'sex',
-            text: 'Sexe',
-            type: 'radio',
-            options: [
-              {
-                name: 'M',
-                text: 'Homme'
-              },
-              {
-                name: 'W',
-                text: 'Femme'
-              }
-            ]
-          },
-          {
-            name: 'birthday',
-            text: 'Date de naissance',
-            type: 'date'
-          },
-          {
-            name: 'password',
-            text: 'Mot de Passe',
-            type: 'password',
-            pattern: '(?=.*[0-9])(?=.*[a-zA-Z])(.{6,50})',
-            error: 'Doit contenir entre 6 et 50 caractères et au moins une lettre et un chiffre',
-          }
-        ]
+        inputs: [{
+          name: 'email',
+          text: 'Email',
+          type: 'email'
+        },{
+          name: 'login',
+          text: 'Login',
+          type: 'text'
+        },{
+          name: 'firstName',
+          text: 'Prénom',
+          type: 'text'
+        },{
+          name: 'lastName',
+          text: 'Nom',
+          type: 'text'
+        },{
+          name: 'sex',
+          text: 'Sexe',
+          type: 'radio',
+          options: [{
+            name: 'M',
+            text: 'Homme'
+          },{
+            name: 'W',
+            text: 'Femme'
+          }]
+        },{
+          name: 'birthday',
+          text: 'Date de naissance',
+          type: 'date'
+        },{
+          name: 'password',
+          text: 'Mot de Passe',
+          type: 'password',
+          pattern: '(?=.*[0-9])(?=.*[a-zA-Z])(.{6,50})',
+          error: 'Doit contenir entre 6 et 50 caractères et au moins une lettre et un chiffre',
+        }]
       }
     },
     created () {

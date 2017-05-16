@@ -46,7 +46,6 @@
       this.$http.get(`${CONFIG.BASEURL_API}user/id/${auth.decoded.id}`, auth.httpOption)
         .then(res => {
           if (!res.body.success) return console.log(res.body.err)
-          console.log(res.body.data[0])
           this.center = {
             lat: res.body.data[0].latitude,
             lng: res.body.data[0].longitude

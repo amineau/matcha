@@ -1,6 +1,6 @@
 <template>
 
-  <div :class='{"chips-autocomplete": autocomplete}' class='chips col s8'></div>
+  <div :class='{"chips-autocomplete": autocomplete}' class='chips'></div>
 
 </template>
 

@@ -83415,6 +83415,10 @@ var _DashBoard = __webpack_require__(510);
 
 var _DashBoard2 = _interopRequireDefault(_DashBoard);
 
+var _Like = __webpack_require__(639);
+
+var _Like2 = _interopRequireDefault(_Like);
+
 var _User = __webpack_require__(296);
 
 var _User2 = _interopRequireDefault(_User);
@@ -83449,6 +83453,10 @@ exports.default = new _vueRouter2.default({
     name: 'dashBoard',
     component: _DashBoard2.default
   }, {
+    path: '/liked',
+    name: 'liked',
+    component: _Like2.default
+  }, {
     path: '/settings/profile',
     name: 'profil',
     component: _Profil2.default
@@ -83460,11 +83468,7 @@ exports.default = new _vueRouter2.default({
     path: '/chat/:id',
     name: 'chat',
     component: _Chat2.default
-  },
-  // {
-  //   path: '/auth',
-  //   children: [
-  {
+  }, {
     path: '/signin',
     name: 'signin',
     component: _SignIn2.default
@@ -83472,10 +83476,7 @@ exports.default = new _vueRouter2.default({
     path: '/signup',
     name: 'signup',
     component: _SignUp2.default
-  }
-  //   ]
-  // }
-  ]
+  }]
 });
 
 /***/ }),
@@ -83655,7 +83656,6 @@ exports.default = {
       _this.chat = res.body.data;
     });
     this.$options.sockets.chat = function (data) {
-      console.log(data, data.recipientId, _this.newAuth.decoded.id, data.senderId, _this.$route.params.id);
       if (data.recipientId === _this.newAuth.decoded.id && data.senderId === Number(_this.$route.params.id)) {
         _this.chat.push({ sender: data.senderId, comment: data.comment, timestamp: new Date() });
       }
@@ -83666,7 +83666,6 @@ exports.default = {
     submit: function submit(data) {
       var _this2 = this;
 
-      console.log(data);
       this.chat.push({ comment: data.comment, sender: this.newAuth.decoded.id });
       this.$http.post(_conf2.default.BASEURL_API + 'chat/' + this.$route.params.id, { comment: data.comment }, this.newAuth.httpOption).then(function (res) {
         if (!res.body.success) return alert('Erreur lors de l\'obtention des messages');
@@ -83738,6 +83737,7 @@ exports.default = {
   name: 'DashBoard',
   data: function data() {
     return {
+      list: true,
       peoples: [],
       markers: [],
       httpOption: null,
@@ -83754,7 +83754,7 @@ exports.default = {
     var auth = this.auth();
     if (!auth.success) return console.log(auth.error);
     this.httpOption = auth.httpOption;
-    this.$http.get(_conf2.default.BASEURL_API + 'users?distance=250', auth.httpOption).then(this.updatePeople).then(function () {
+    this.$http.get(_conf2.default.BASEURL_API + 'users?distance=100', auth.httpOption).then(this.updatePeople).then(function () {
       return _this.$socket.emit('online', auth.decoded.id);
     });
   },
@@ -83763,7 +83763,6 @@ exports.default = {
     updatePeople: function updatePeople(res) {
       var _this2 = this;
 
-      console.log(res);
       return new _promise2.default(function (resolve) {
         if (!res.body.success) return res.body.err;
         _this2.peoples = res.body.data;
@@ -83798,7 +83797,6 @@ exports.default = {
             e.status = user ? user.status : 0;
           });
         });
-        console.log(_this2.markers);
         resolve();
       });
     }
@@ -83807,7 +83805,6 @@ exports.default = {
     users: function users() {
       var _this3 = this;
 
-      console.log('watch users');
       var list = [];
       (0, _keys2.default)(this.users.list).map(function (objectKey) {
         list.push(_this3.users.list[objectKey]);
@@ -83824,9 +83821,6 @@ exports.default = {
     googleMap: _Map2.default
   }
 }; //
-//
-//
-//
 //
 //
 //
@@ -83884,7 +83878,6 @@ exports.default = {
     this.httpOption = auth.httpOption;
     this.loadNotifs();
     this.$options.sockets.notif = function (id) {
-      console.log('notif', id);
       if (id === auth.decoded.id) {
         _this.loadNotifs();
       }
@@ -83922,7 +83915,6 @@ exports.default = {
           return e.link.notif ? _this3.notifCount++ : null;
         });
         _this3.notifs = res.body.data;
-        console.log('notifCount', _this3.notifCount);
       });
     },
     textNotif: function textNotif(notif) {
@@ -83938,6 +83930,7 @@ exports.default = {
     }
   }
 }; //
+//
 //
 //
 //
@@ -84050,8 +84043,6 @@ exports.default = {
       body.forEach(function (e) {
         if (e.type === 'date') {
           data[e.name] = _this2.picker.get();
-        } else if (e.type === 'radio') {
-          data[e.name] = $('input[name=\'' + e.name + '\']:checked').val();
         } else {
           data[e.name] = e.value;
         }
@@ -84060,23 +84051,16 @@ exports.default = {
           error = true;
         }
       });
-      console.log('error', data);
       if (!error) return this.submit(data);
-    }
-  },
-  watch: {
-    picker: function picker() {
-      var _this3 = this;
-
-      console.log('picker');
-      this.inputs.forEach(function (e) {
-        if (e.type === 'date') {
-          e.value = _this3.picker.get();
-        }
-      });
     }
   }
 }; //
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -84191,7 +84175,6 @@ exports.default = {
     if (!auth.success) return console.log(auth.err);
     this.$http.get(_conf2.default.BASEURL_API + 'user/id/' + auth.decoded.id, auth.httpOption).then(function (res) {
       if (!res.body.success) return console.log(res.body.err);
-      console.log(res.body.data[0]);
       _this.center = {
         lat: res.body.data[0].latitude,
         lng: res.body.data[0].longitude
@@ -84300,6 +84283,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //
 //
 //
+//
 
 
 exports.default = {
@@ -84373,13 +84357,12 @@ exports.default = {
     });
     this.$http.get(_conf2.default.BASEURL_API + 'user/id/' + auth.decoded.id, auth.httpOption).then(function (res) {
       if (!res.body.success) return null;
-      console.log(res.body);
       _this.inputs.forEach(function (e) {
         if (res.body.data[0][e.name]) {
           if (e.options) {
             e.options.forEach(function (i) {
               if (i.name === res.body.data[0][e.name]) {
-                e.value = i.text;
+                e.value = i.name;
               }
             });
           } else if (e.type === 'date') {
@@ -84399,7 +84382,6 @@ exports.default = {
     submit: function submit(data) {
       var _this2 = this;
 
-      console.log('coucou', data);
       var auth = this.auth();
       this.$http.put(_conf2.default.BASEURL_API + 'user', data, auth.httpOption).then(function (res) {
         if (!res.body.success) {
@@ -84415,27 +84397,24 @@ exports.default = {
         keys.forEach(function (key) {
           _this2.inputs.forEach(function (e) {
             if (e.name === key) {
-              if (e.type === 'radio') {
-                e.options.forEach(function (o) {
-                  if (o.name === data[key]) {
-                    e.value = o.text;
-                  }
-                });
-              } else {
-                e.value = data[key];
-              }
+              e.value = data[key];
               e.edit = false;
             }
           });
         });
       });
+    },
+    textOption: function textOption(input) {
+      var text = void 0;
+      input.options.forEach(function (e) {
+        if (e.name === input.value) {
+          text = e.text;
+        }
+      });
+      return text;
     }
   },
-  watch: {
-    // photos: function() {
-    //   this.photos.sort((a,b) => b.head)
-    // }
-  },
+  computed: {},
   props: ['auth'],
   components: {
     defaultLayout: _Default2.default,
@@ -84479,6 +84458,7 @@ exports.default = {
   name: 'Search',
   data: function data() {
     return {
+      active: false,
       httpOption: null,
       inputs: [{
         name: 'age',
@@ -84506,8 +84486,8 @@ exports.default = {
         formatter: '{value}km',
         type: 'range',
         min: 0,
-        max: 250,
-        value: 250,
+        max: 200,
+        value: 100,
         interval: 1,
         label: true
       }]
@@ -84520,6 +84500,8 @@ exports.default = {
   },
   methods: {
     search: function search() {
+      var _this = this;
+
       var params = [];
       this.inputs.forEach(function (e) {
         if ((0, _typeof3.default)(e.value) !== 'object') {
@@ -84534,7 +84516,9 @@ exports.default = {
       });
       var auth = this.auth();
       if (!auth.success) return alert(auth.err);
-      this.$http.get(_conf2.default.BASEURL_API + 'users?' + params.join('&'), auth.httpOption).then(this.update);
+      this.$http.get(_conf2.default.BASEURL_API + 'users?' + params.join('&'), auth.httpOption).then(this.update).then(function () {
+        return _this.active = false;
+      });
     }
   },
   components: {
@@ -84542,6 +84526,15 @@ exports.default = {
     formInputs: _Form2.default
   }
 }; //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -84928,14 +84921,12 @@ exports.default = {
   },
   created: function created() {
     var auth = this.auth();
-    console.log(auth);
     if (!auth.success) return console.log(auth.err);
     if (auth.decoded.id !== this.$route.params.id) {
       this.$http.post(_conf2.default.BASEURL_API + 'visit/' + this.$route.params.id, {}, auth.httpOption).then(function (res) {
         if (!res.body.success) return console.log(res.body.err);
       });
     }
-    console.log(this.$route.params.id);
   },
 
   props: {
@@ -85022,9 +85013,8 @@ exports.default = {
       var _this = this;
 
       this.$http.post('' + _conf2.default.BASEURL_API + (this.people.like ? 'un' : '') + 'like/' + this.people.id, {}, this.httpOption).then(function (res) {
-        if (!res.body.success) return res.body.err;
+        if (!res.body.success) return console.lo(res.body.err);
         _this.people.like = !_this.people.like;
-        console.log(res.body);
         _this.people.connected = res.body.connected;
         _this.$emit('update:people.connected');
       });
@@ -85275,6 +85265,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 exports.default = {
@@ -85328,7 +85331,6 @@ exports.default = {
       this.$cookie.delete('token');
       this.$router.replace('/');
       this.$socket.emit('logout');
-      console.log('socket logout');
     },
     setPosition: function setPosition(coords) {
       if (coords) {
@@ -87456,7 +87458,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n.chips {\n  margin-right: 20px;\n}\ndiv.search {\n  cursor: pointer;\n  padding-bottom: 10px;\n  margin: 40px 0 40px 0;\n  border-bottom: 1px solid #34888C\n}\n\n", ""]);
 
 // exports
 
@@ -87512,7 +87514,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -87554,7 +87556,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, "\n.content {\n  display: flex;\n  justify-content: space-between;\n}\n\n", ""]);
+exports.push([module.i, "\n.content {\n  display: flex;\n  justify-content: space-between;\n  flex-wrap: wrap;\n}\n@media only screen and (max-width: 1092px) {\n.content {\n    flex-direction: column;\n    justify-content: space-around;\n}\n}\n\n", ""]);
 
 // exports
 
@@ -87568,7 +87570,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\nnav {\n  background-color: transparent;\n}\nnav ul a, nav .brand-logo {\n  color: #34888C;\n}\n\n/*@media only screen and (max-width: 992px) {\n  nav .brand-logo {\n    display: none;\n  }\n}*/\n\n", ""]);
 
 // exports
 
@@ -87596,7 +87598,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, "\n.like {\n  color: red\n}\n\n", ""]);
+exports.push([module.i, "\n.yellow-m:focus, .yellow-m:hover {\n  background-color: #F5E356;\n}\n\n", ""]);
 
 // exports
 
@@ -87666,7 +87668,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -87680,7 +87682,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -87694,7 +87696,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, "\n.dropdown-content li.new:hover {\n  background-color: white;\n}\n.dropdown-content li.new {\n  background-color: #eee;\n}\n.dropdown-content {\n  max-height: 400px;\n}\n.dropdown-content li>a {\n  display: flex;\n}\n.dropdown-content li>a img {\n  border-radius: 50%;\n  margin-right: 10px;\n}\n\n", ""]);
+exports.push([module.i, "\n.dropdown-content li.new:hover {\n  background-color: white;\n}\n.dropdown-content li.new {\n  background-color: #eee;\n}\n.dropdown-content {\n  max-height: 400px;\n}\n.dropdown-content li>a {\n  display: flex;\n}\n.dropdown-content li>a img {\n  border-radius: 50%;\n  margin-right: 10px;\n}\n.notif {\n  position: relative;\n}\n.notif div {\n  position: absolute;\n  top: 15px;\n  right: 12px;\n  border-radius: 50%;\n  height: 15px;\n  line-height: 15px;\n  width: 15px;\n  text-align: center;\n  font-size: 0.5em\n}\n.notif i {\n  height: auto;\n}\n\n", ""]);
 
 // exports
 
@@ -87708,7 +87710,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n.switch {\n  border: 2px solid #34888C;\n  border-radius: 5px;\n  color: #34888C;\n  padding: 0 !important;\n}\n.switch i {\n  cursor: pointer;\n  padding: 15px !important;\n}\n.switch i:hover {\n  background-color: rgba(0,0,0,0.1);\n}\n\n\n", ""]);
 
 // exports
 
@@ -87736,7 +87738,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -97295,19 +97297,38 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('tagbutton', {
+  return _c('div', [(_vm.active) ? _c('div', [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "input-field col s12"
+  }, [_c('label', [_vm._v("Tags")]), _vm._v(" "), _c('tagbutton', {
     attrs: {
       "auth": _vm.auth,
       "autocomplete": true,
       "init": false
     }
-  }), _vm._v(" "), _c('formInputs', {
+  })], 1)]), _vm._v(" "), _c('formInputs', {
     attrs: {
       "inputs": _vm.inputs,
       "submit": _vm.search,
       "button": "Rechercher"
     }
-  })], 1)
+  })], 1) : _vm._e(), _vm._v(" "), _c('div', {
+    staticClass: "search center text-blue-m",
+    on: {
+      "click": function($event) {
+        _vm.active = !_vm.active
+      }
+    }
+  }, [_c('i', {
+    staticClass: "fa",
+    class: {
+      "fa-chevron-down": !_vm.active, "fa-chevron-up": _vm.active
+    },
+    attrs: {
+      "aria-hidden": "true"
+    }
+  }), _vm._v(" Recherche")])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -97579,20 +97600,54 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "id": "default-layout"
     }
-  }, [_c('header', [_c('button', {
-    staticClass: "btn waves-effect waves-light",
-    on: {
-      "click": _vm.logout
+  }, [_c('header', [_c('nav', [_c('div', {
+    staticClass: "container"
+  }, [_c('div', {
+    staticClass: "nav-fixed col s12 m8 l4"
+  }, [_c('router-link', {
+    staticClass: "brand-logo hide-on-med-and-down",
+    attrs: {
+      "to": "dash"
     }
-  }, [_vm._v("Deconnexion")]), _vm._v(" "), _c('dropdown', {
+  }, [_vm._v("Matcha")]), _vm._v(" "), _c('ul', {
     staticClass: "right",
+    attrs: {
+      "id": "nav-mobile"
+    }
+  }, [_c('li', [_c('router-link', {
+    attrs: {
+      "to": {
+        name: 'dashBoard'
+      }
+    }
+  }, [_vm._v("DashBoard")])], 1), _vm._v(" "), _c('li', [_c('router-link', {
+    attrs: {
+      "to": {
+        name: 'liked'
+      }
+    }
+  }, [_vm._v("Like")])], 1), _vm._v(" "), _c('li', [_c('router-link', {
+    attrs: {
+      "to": {
+        name: 'profil'
+      }
+    }
+  }, [_vm._v("Profil")])], 1), _vm._v(" "), _c('li', [_c('dropdown', {
     attrs: {
       "auth": _vm.auth
     }
-  }), _vm._v(" "), _c('h1', [_vm._v("Header")])], 1), _vm._v(" "), _c('main', [_vm._t("default")], 2), _vm._v(" "), _vm._m(0)])
+  })], 1), _vm._v(" "), _c('li', [_c('a', {
+    on: {
+      "click": _vm.logout
+    }
+  }, [_vm._v("Deconnexion")])])])], 1)])])]), _vm._v(" "), _c('main', {
+    staticClass: "container"
+  }, [_c('section', {
+    staticClass: "col s12 m9 l6"
+  }, [_vm._t("default")], 2)]), _vm._v(" "), _vm._m(0)])
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('footer', {
-    staticClass: "page-footer cyan"
+    staticClass: "page-footer brown-m"
   }, [_c('div', {
     staticClass: "container"
   }, [_c('div', {
@@ -97685,7 +97740,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "submit": _vm.submit,
         "button": "Enregistrer"
       }
-    }) : _c('div', [_vm._v(_vm._s(input.value))])], 1), _vm._v(" "), (input.type !== 'chips') ? _c('i', {
+    }) : (input.type === "radio") ? _c('div', [_vm._v(_vm._s(_vm.textOption(input)))]) : _c('div', [_vm._v(_vm._s(input.value))])], 1), _vm._v(" "), (input.type !== 'chips') ? _c('i', {
       staticClass: "fa secondary-content",
       class: {
         'fa-pencil': !input.edit, 'fa-close': input.edit
@@ -97718,7 +97773,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   return _c('button', {
     staticClass: "waves-effect waves-light btn-floating",
     class: {
-      red: _vm.people.like
+      'yellow-m': _vm.people.like
     },
     attrs: {
       "disabled": !_vm.people.likable
@@ -97860,17 +97915,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "id": input.name,
         "type": "text"
       }
-    }) : (input.type === 'chips') ? _c('div', {
-      staticClass: "chips chips-autocomplete"
     }) : (input.type === 'textarea') ? _c('textarea', {
       directives: [{
         name: "model",
-        rawName: "v-model.lazy",
+        rawName: "v-model",
         value: (input.value),
-        expression: "input.value",
-        modifiers: {
-          "lazy": true
-        }
+        expression: "input.value"
       }],
       staticClass: "materialize-textarea",
       attrs: {
@@ -97881,7 +97931,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "value": (input.value)
       },
       on: {
-        "change": function($event) {
+        "input": function($event) {
+          if ($event.target.composing) { return; }
           input.value = $event.target.value
         }
       }
@@ -97889,6 +97940,15 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       staticClass: "radio"
     }, _vm._l((input.options), function(option) {
       return _c('p', [_c('input', {
+        directives: [{
+          name: "model",
+          rawName: "v-model.lazy",
+          value: (input.value),
+          expression: "input.value",
+          modifiers: {
+            "lazy": true
+          }
+        }],
         attrs: {
           "name": input.name,
           "type": "radio",
@@ -97896,7 +97956,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         },
         domProps: {
           "value": option.name,
-          "checked": input.value === option.text
+          "checked": _vm._q(input.value, option.name)
+        },
+        on: {
+          "__c": function($event) {
+            input.value = option.name
+          }
         }
       }), _vm._v(" "), _c('label', {
         attrs: {
@@ -97905,16 +97970,31 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }, [_vm._v(_vm._s(option.text))])])
     })) : (input.type === 'range') ? _c('vue-slider', {
       style: ({
-        "marginLeft": "10%",
-        "marginBottom": "30px"
+        "marginLeft": "160px",
+        "marginRight": "20px",
+        "marginBottom": "10px",
+        "marginTop": "10px"
       }),
       attrs: {
         "min": input.min,
         "max": input.max,
-        "width": "80%",
+        "bgStyle": {
+          "backgroundColor": "#fff",
+          "boxShadow": "inset 0.5px 0.5px 3px 1px rgba(0,0,0,.36)"
+        },
+        "tooltip": "always",
+        "sliderStyle": {
+          "backgroundColor": "#34888C"
+        },
+        "tooltipStyle": {
+          "backgroundColor": "#34888C",
+          "borderColor": "#34888C"
+        },
+        "processStyle": {
+          "backgroundColor": "#34888C"
+        },
         "formatter": input.formatter,
-        "interval": input.interval,
-        "tooltipDir": ["bottom", "top"]
+        "interval": input.interval
       },
       model: {
         value: (input.value),
@@ -97942,7 +98022,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }
     }, [_vm._v(_vm._s(input.text))]) : _vm._e()], 1)
   }), _vm._v(" "), _c('button', {
-    staticClass: "btn waves-effect waves-light",
+    staticClass: "btn waves-effect waves-light right",
     attrs: {
       "type": "submit"
     },
@@ -98020,7 +98100,7 @@ if (false) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "chips col s8",
+    staticClass: "chips",
     class: {
       "chips-autocomplete": _vm.autocomplete
     }
@@ -98142,7 +98222,7 @@ if (false) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', [_c('a', {
-    staticClass: "dropdown-button btn",
+    staticClass: "dropdown-button notif",
     attrs: {
       "data-activates": "dropdown1"
     },
@@ -98155,7 +98235,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "aria-hidden": "true"
     }
   }), _vm._v(" "), _c('div', {
-    staticClass: "red"
+    staticClass: "btn btn-floating pulse brown-m"
   }, [_vm._v(_vm._s(_vm.notifCount))])]), _vm._v(" "), _c('ul', {
     staticClass: "dropdown-content",
     attrs: {
@@ -98202,7 +98282,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "auth": _vm.auth
     }
-  }, [_c('p', [_vm._v("Personnes à proximitées")]), _vm._v(" "), _c('search', {
+  }, [_c('search', {
     attrs: {
       "peoples": _vm.peoples,
       "auth": _vm.auth,
@@ -98211,23 +98291,40 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }), _vm._v(" "), _c('div', {
     staticClass: "row"
   }, [_c('div', {
-    staticClass: "col s4 right"
-  }, [_c('ul', {
-    staticClass: "tabs"
-  }, [_c('li', {
-    staticClass: "tab col s6"
-  }, [_c('a', {
+    staticClass: "col s4 right switch"
+  }, [_c('i', {
+    staticClass: "fa fa-list-ul fa-2x col s6 center-align",
+    class: {
+      'text-brown-m': _vm.list
+    },
     attrs: {
-      "href": "#list"
+      "aria-hidden": "true"
+    },
+    on: {
+      "click": function($event) {
+        _vm.list = true
+      }
     }
-  }, [_vm._v("List")])]), _vm._v(" "), _c('li', {
-    staticClass: "tab col s6"
-  }, [_c('a', {
-    staticClass: "active",
+  }), _vm._v(" "), _c('i', {
+    staticClass: "fa fa-map-o fa-2x col s6 center-align",
+    class: {
+      'text-brown-m': !_vm.list
+    },
     attrs: {
-      "href": "#map"
+      "aria-hidden": "true"
+    },
+    on: {
+      "click": function($event) {
+        _vm.list = false
+      }
     }
-  }, [_vm._v("Map")])])])])]), _vm._v(" "), _c('div', {
+  })])]), _vm._v(" "), _c('div', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.list),
+      expression: "list"
+    }],
     staticClass: "row",
     attrs: {
       "id": "list"
@@ -98241,13 +98338,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "people": people
       }
     })], 1)
-  })), _vm._v(" "), _c('googleMap', {
+  })), _vm._v(" "), (!_vm.list) ? _c('googleMap', {
     attrs: {
-      "id": "map",
       "markers": _vm.markers,
       "auth": _vm.auth
     }
-  })], 1)
+  }) : _vm._e()], 1)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -105461,6 +105557,243 @@ function kindOf(val) {
   }
 })(this);
 
+
+/***/ }),
+/* 637 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _keys = __webpack_require__(93);
+
+var _keys2 = _interopRequireDefault(_keys);
+
+var _promise = __webpack_require__(152);
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _Default = __webpack_require__(73);
+
+var _Default2 = _interopRequireDefault(_Default);
+
+var _Card = __webpack_require__(509);
+
+var _Card2 = _interopRequireDefault(_Card);
+
+var _Map = __webpack_require__(513);
+
+var _Map2 = _interopRequireDefault(_Map);
+
+var _Search = __webpack_require__(515);
+
+var _Search2 = _interopRequireDefault(_Search);
+
+var _conf = __webpack_require__(7);
+
+var _conf2 = _interopRequireDefault(_conf);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+  name: 'Liked',
+  data: function data() {
+    return {
+      peoples: [],
+      httpOption: null,
+      users: {}
+    };
+  },
+
+  props: {
+    auth: Function
+  },
+  created: function created() {
+    var _this = this;
+
+    var auth = this.auth();
+    if (!auth.success) return console.log(auth.error);
+    this.httpOption = auth.httpOption;
+    this.$http.get(_conf2.default.BASEURL_API + 'users/liked', auth.httpOption).then(this.updatePeople).then(function () {
+      return _this.$socket.emit('online', auth.decoded.id);
+    });
+  },
+
+  methods: {
+    updatePeople: function updatePeople(res) {
+      var _this2 = this;
+
+      return new _promise2.default(function (resolve) {
+        if (!res.body.success) return res.body.err;
+        _this2.peoples = res.body.data;
+        _this2.markers = [];
+        _this2.peoples.forEach(function (e) {
+          _this2.$set(e, 'status', false);
+          if (!e.base64) {
+            e.base64 = 'src/assets/' + e.sex + '-silhouette.jpg';
+          }
+        });
+        _this2.$on('userUpdate', function (users) {
+          _this2.peoples.forEach(function (e, k) {
+            var user = users.find(function (user) {
+              return user.id === e.id;
+            });
+            e.status = user ? user.status : 0;
+          });
+        });
+        resolve();
+      });
+    }
+  },
+  watch: {
+    users: function users() {
+      var _this3 = this;
+
+      var list = [];
+      (0, _keys2.default)(this.users.list).map(function (objectKey) {
+        list.push(_this3.users.list[objectKey]);
+      });
+      this.peoples.forEach(function (e) {
+        e.status = list.indexOf(e.id) !== -1;
+      });
+    }
+  },
+  components: {
+    search: _Search2.default,
+    defaultLayout: _Default2.default,
+    card: _Card2.default,
+    googleMap: _Map2.default
+  }
+}; //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/***/ }),
+/* 638 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 639 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(641)
+}
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(637),
+  /* template */
+  __webpack_require__(640),
+  /* styles */
+  injectStyle,
+  /* scopeId */
+  null,
+  /* moduleIdentifier (server only) */
+  null
+)
+Component.options.__file = "/Users/amineau/perso/matcha/client/src/components/Like.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] Like.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-6677502f", Component.options)
+  } else {
+    hotAPI.reload("data-v-6677502f", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 640 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('defaultLayout', {
+    attrs: {
+      "auth": _vm.auth
+    }
+  }, [_c('div', {
+    staticClass: "row"
+  }, _vm._l((_vm.peoples), function(people) {
+    return _c('div', {
+      staticClass: "col s6 m4 l3"
+    }, [_c('card', {
+      attrs: {
+        "httpOption": _vm.httpOption,
+        "people": people
+      }
+    })], 1)
+  }))])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-6677502f", module.exports)
+  }
+}
+
+/***/ }),
+/* 641 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(638);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(5)("aef40238", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-6677502f\",\"scoped\":false,\"hasInlineConfig\":false}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Like.vue", function() {
+     var newContent = require("!!../../../node_modules/css-loader/index.js!../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-6677502f\",\"scoped\":false,\"hasInlineConfig\":false}!../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Like.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
 
 /***/ })
 /******/ ]);

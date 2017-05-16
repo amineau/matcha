@@ -1,19 +1,11 @@
 <template>
   <defaultLayout :auth="auth">
 
-    <search :peoples="peoples" :auth="auth" :update="updatePeople"></search>
     <div class="row">
-      <div class="col s4 right switch">
-        <i @click="list=true" :class="{'text-brown-m': list}" class="fa fa-list-ul fa-2x col s6 center-align" aria-hidden="true"></i>
-        <i @click="list=false" :class="{'text-brown-m': !list}" class="fa fa-map-o fa-2x col s6 center-align" aria-hidden="true"></i>
-      </div>
-    </div>
-    <div v-show="list" class="row" id="list">
        <div v-for="people in peoples" class="col s6 m4 l3">
          <card :httpOption="httpOption" :people="people"></card>
        </div>
      </div>
-     <googleMap v-if="!list" :markers="markers" :auth="auth"></googleMap>
 
   </defaultLayout>
 </template>
@@ -27,12 +19,10 @@
   import CONFIG from '../../config/conf.json'
 
   export default {
-    name: 'DashBoard',
+    name: 'Liked',
     data () {
       return {
-        list: true,
         peoples: [],
-        markers: [],
         httpOption: null,
         users: {}
       }
@@ -44,7 +34,7 @@
       const auth = this.auth()
       if (!auth.success) return console.log(auth.error)
       this.httpOption = auth.httpOption
-      this.$http.get(`${CONFIG.BASEURL_API}users?distance=100`, auth.httpOption)
+      this.$http.get(`${CONFIG.BASEURL_API}users/liked`, auth.httpOption)
         .then(this.updatePeople)
         .then(() => this.$socket.emit('online', auth.decoded.id))
     },
@@ -59,20 +49,6 @@
             if (!e.base64) {
               e.base64 = `src/assets/${e.sex}-silhouette.jpg`
             }
-            this.markers.push({
-              position: {
-                lat: e.latitude,
-                lng: e.longitude
-              },
-              icon: {
-                url: e.base64,
-                scaledSize: {
-                  width: 32,
-                  height: 32
-                }
-              },
-              path: () => this.$router.push({name: 'user', params: { id: e.id }})
-            })
           })
           this.$on('userUpdate', (users) => {
             this.peoples.forEach((e, k) => {
@@ -106,22 +82,6 @@
 </script>
 
 <style>
-
-  .switch {
-    border: 2px solid #34888C;
-    border-radius: 5px;
-    color: #34888C;
-    padding: 0 !important;
-  }
-
-  .switch i {
-    cursor: pointer;
-    padding: 15px !important;
-  }
-
-  .switch i:hover {
-    background-color: rgba(0,0,0,0.1);
-  }
 
 
 </style>

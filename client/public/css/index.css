@@ -1,14 +1,59 @@
-/*.btn, .btn-large {
-  background-color: #aaaaff
+.btn, .btn-large, .btn-floating {
+  background-color: #34888C;
 }
 
-.btn:focus, .btn-large:focus {
-  background-color: #ffaaaa
+.btn:focus, .btn-large:focus, .btn-floating:focus {
+  background-color: #34888C;
 }
 
-.btn:hover, .btn-large:hover {
-  background-color: #ffaaaa
-}*/
+.btn:hover, .btn-large:hover, .btn-floating:hover {
+  background-color: #34888C;
+}
+
+.yellow-m {
+  background-color: #F5E356;
+}
+
+.brown-m {
+  background-color: #CB6318;
+}
+
+.blue-m {
+  background-color: #34888C;
+}
+
+.text-blue-m {
+  color: #34888C;
+}
+
+.text-brown-m {
+  color: #CB6318
+}
+
+.chip {
+  color: white;
+  background-color: #CB6318;
+}
+
+.chips.focus {
+  border-bottom-color: #CB6318;
+}
+
+input:not([type]):focus:not([readonly]),
+input[type=text]:focus:not([readonly]),
+input[type=password]:focus:not([readonly]),
+input[type=email]:focus:not([readonly]),
+input[type=url]:focus:not([readonly]),
+input[type=time]:focus:not([readonly]),
+input[type=date]:focus:not([readonly]),
+input[type=datetime]:focus:not([readonly]),
+input[type=datetime-local]:focus:not([readonly]),
+input[type=tel]:focus:not([readonly]),
+input[type=number]:focus:not([readonly]),
+input[type=search]:focus:not([readonly]),
+textarea.materialize-textarea:focus:not([readonly]) {
+  border-bottom-color: #CB6318;
+}
 
 body, .layout {
    display: flex;

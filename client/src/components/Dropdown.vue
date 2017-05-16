@@ -1,9 +1,10 @@
 
 <template>
   <div>
-    <a class='dropdown-button btn' data-activates='dropdown1' @click='notifToFalse'>
+    <a class='dropdown-button notif' data-activates='dropdown1' @click='notifToFalse'>
       <i class="fa fa-bell-o" aria-hidden="true"></i>
-      <div class="red">{{notifCount}}</div>
+      <!-- <div v-if="notifCount">{{notifCount}}</div> -->
+      <div class="btn btn-floating pulse brown-m">{{notifCount}}</div>
     </a>
 
     <ul id='dropdown1' class='dropdown-content'>
@@ -38,7 +39,6 @@
       this.httpOption = auth.httpOption
       this.loadNotifs()
       this.$options.sockets.notif = (id) => {
-        console.log('notif', id)
         if (id === auth.decoded.id) {
           this.loadNotifs()
         }
@@ -71,7 +71,6 @@
             if (!res.body.success) return console.log(res.body.err)
             res.body.data.forEach(e => e.link.notif ? this.notifCount++ : null)
             this.notifs = res.body.data
-            console.log('notifCount', this.notifCount)
           })
       },
       textNotif (notif) {
@@ -110,6 +109,26 @@
   .dropdown-content li>a img {
     border-radius: 50%;
     margin-right: 10px;
+  }
+
+  .notif {
+    position: relative;
+  }
+
+  .notif div {
+    position: absolute;
+    top: 15px;
+    right: 12px;
+    border-radius: 50%;
+    height: 15px;
+    line-height: 15px;
+    width: 15px;
+    text-align: center;
+    font-size: 0.5em
+  }
+
+  .notif i {
+    height: auto;
   }
 
 </style>

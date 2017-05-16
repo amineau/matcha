@@ -62,6 +62,14 @@
   .content {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  @media only screen and (max-width: 1092px) {
+    .content {
+      flex-direction: column;
+      justify-content: space-around;
+    }
   }
 
 </style>

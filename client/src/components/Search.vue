@@ -1,8 +1,17 @@
 <template>
   <div>
 
-    <tagbutton :auth="auth" :autocomplete="true" :init="false"></tagbutton>
-    <formInputs :inputs="inputs" :submit="search" button="Rechercher"></formInputs>
+    <div v-if="active">
+      <div class='row'>
+        <div class="input-field col s12">
+          <label>Tags</label>
+          <tagbutton :auth="auth" :autocomplete="true" :init="false"></tagbutton>
+        </div>
+      </div>
+      <formInputs :inputs="inputs" :submit="search" button="Rechercher"></formInputs>
+    </div>
+
+    <div @click="active=!active" class="search center text-blue-m"><i :class='{"fa-chevron-down": !active, "fa-chevron-up": active}' class="fa" aria-hidden="true"></i> Recherche</div>
   </div>
 </template>
 
@@ -16,6 +25,7 @@
     name: 'Search',
     data () {
       return {
+        active: false,
         httpOption: null,
         inputs: [{
           name: 'age',
@@ -43,8 +53,8 @@
           formatter: '{value}km',
           type: 'range',
           min: 0,
-          max: 250,
-          value: 250,
+          max: 200,
+          value: 100,
           interval: 1,
           label: true
         }]
@@ -72,6 +82,7 @@
         if (!auth.success) return alert(auth.err)
         this.$http.get(`${CONFIG.BASEURL_API}users?${params.join('&')}`, auth.httpOption)
           .then(this.update)
+          .then(() => this.active=false)
       }
     },
     components: {
@@ -84,5 +95,15 @@
 
 <style>
 
+  .chips {
+    margin-right: 20px;
+  }
+
+  div.search {
+    cursor: pointer;
+    padding-bottom: 10px;
+    margin: 40px 0 40px 0;
+    border-bottom: 1px solid #34888C
+  }
 
 </style>

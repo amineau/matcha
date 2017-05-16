@@ -1,19 +1,32 @@
 <template>
   <div id="default-layout" class="layout" v-show="ready">
     <header>
-          <!-- <div>Salut {{user.login}}</div> -->
-          <button @click="logout" class="btn waves-effect waves-light">Deconnexion</button>
 
-          <dropdown :auth="auth" class='right'></dropdown>
+          <nav>
+            <div class='container'>
 
-      <h1>Header</h1>
+              <div class="nav-fixed col s12 m8 l4">
+                <router-link to="dash" class="brand-logo hide-on-med-and-down">Matcha</router-link>
+                <ul id="nav-mobile" class="right">
+                  <li><router-link :to="{name: 'dashBoard'}">DashBoard</router-link></li>
+                  <li><router-link :to="{name: 'liked'}">Like</router-link></li>
+                  <li><router-link :to="{name: 'profil'}">Profil</router-link></li>
+                  <li><dropdown :auth="auth"></dropdown></li>
+                  <li><a @click="logout">Deconnexion</a></li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+
     </header>
 
-    <main>
-      <slot></slot>
+    <main class="container">
+      <section class="col s12 m9 l6">
+        <slot></slot>
+      </section>
     </main>
 
-    <footer class="page-footer cyan">
+    <footer class="page-footer brown-m">
       <div class="container">
         <div class="row">
           <div class="col l6 s12">
@@ -90,7 +103,6 @@
         this.$cookie.delete('token')
         this.$router.replace('/')
         this.$socket.emit('logout')
-        console.log('socket logout')
       },
       setPosition (coords) {
         if (coords) {
@@ -111,5 +123,19 @@
 </script>
 
 <style>
+
+  nav {
+    background-color: transparent;
+  }
+
+  nav ul a, nav .brand-logo {
+    color: #34888C;
+  }
+
+  /*@media only screen and (max-width: 992px) {
+    nav .brand-logo {
+      display: none;
+    }
+  }*/
 
 </style>

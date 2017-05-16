@@ -37,7 +37,6 @@
         this.chat = res.body.data
       })
       this.$options.sockets.chat = (data) => {
-        console.log(data, data.recipientId,this.newAuth.decoded.id,data.senderId, this.$route.params.id)
         if (data.recipientId === this.newAuth.decoded.id
          && data.senderId === Number(this.$route.params.id)) {
            this.chat.push({sender: data.senderId, comment: data.comment, timestamp: new Date()})
@@ -46,7 +45,6 @@
     },
     methods: {
       submit(data) {
-        console.log(data)
         this.chat.push({comment: data.comment, sender: this.newAuth.decoded.id})
         this.$http.post(`${CONFIG.BASEURL_API}chat/${this.$route.params.id}`, {comment: data.comment}, this.newAuth.httpOption).then(res => {
           if (!res.body.success) return alert('Erreur lors de l\'obtention des messages')

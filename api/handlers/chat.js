@@ -52,9 +52,7 @@ exports.add = (req, res) => {
 
   validate.chat.Parse([{name: 'comment'}])
     .then(data => {
-      console.log('socket emit de la merdasse n1')
       io.emit('chat', { senderId, recipientId, comment: data.comment })
-      console.log('socket emit de la merdasse')
       return query.AddComment([senderId, recipientId], data)
     })
     .then(showSuccess)

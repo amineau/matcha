@@ -1,6 +1,6 @@
 <template>
 
-  <button @click="liked" :class="{red: people.like}" :disabled="!people.likable" class="waves-effect waves-light btn-floating">
+  <button @click="liked" :class="{'yellow-m': people.like}" :disabled="!people.likable" class="waves-effect waves-light btn-floating">
     <i class="fa fa-heart-o" aria-hidden="true"></i>
   </button>
 
@@ -21,9 +21,8 @@
       liked () {
         this.$http.post(`${CONFIG.BASEURL_API}${this.people.like?'un':''}like/${this.people.id}`, {}, this.httpOption)
           .then(res => {
-            if (!res.body.success) return res.body.err
+            if (!res.body.success) return console.lo(res.body.err)
             this.people.like = !this.people.like
-            console.log(res.body)
             this.people.connected = res.body.connected
             this.$emit('update:people.connected')
           })
@@ -35,8 +34,8 @@
 
 <style>
 
-  .like {
-    color: red
+  .yellow-m:focus, .yellow-m:hover {
+    background-color: #F5E356;
   }
 
 </style>

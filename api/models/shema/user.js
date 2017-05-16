@@ -8,7 +8,6 @@ module.exports = class UserQuery {
     Create(data) {
         return new Promise((resolve, reject) => {
           let tab = ''
-          console.log('birthday', data.birthday)
           for (let key in data)
             tab += `${key}:{${key}},`
           const query =
@@ -50,6 +49,24 @@ module.exports = class UserQuery {
            `MATCH (u: User)
             WHERE ${toWhere}
             RETURN id(u) as id, u as all`
+
+        db.doDatabaseOperation(query, where)
+          .then(data => resolve(data))
+          .catch(err => reject(err))
+      })
+    }
+
+    GetLiked(where) {
+      return new Promise((resolve, reject) => {
+       const query =
+           `MATCH (u: User)-[:LIKED]->(p:User)
+            WHERE id(u) <> {id}
+            AND id(p) = {id}
+            OPTIONAL MATCH (u)-[h]-(i: Img)
+            WHERE h.head = true
+            OPTIONAL MATCH (u)<-[l:LIKED]-(p)
+            OPTIONAL MATCH (u)<-[:LIKED]-(p), (u)-[c:LIKED]->(p)
+            RETURN id(u) AS id, u AS all, i.path AS path, count(i) AS likable, count(c) AS connected, count(l) AS like`
 
         db.doDatabaseOperation(query, where)
           .then(data => resolve(data))

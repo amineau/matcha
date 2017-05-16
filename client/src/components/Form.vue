@@ -5,26 +5,32 @@
       <input v-else-if="input.type === 'email'" :id="input.name" type="email" v-model.lazy='input.value' class="validate">
       <input v-else-if="input.type === 'password'" :id="input.name" type="password" :pattern="input.pattern" v-model.lazy='input.value' class="validate">
       <input v-else-if="input.type === 'date'" :id="input.name" type="text" class="datepicker">
-      <div v-else-if="input.type === 'chips'" class="chips chips-autocomplete"></div>
-      <textarea v-else-if="input.type === 'textarea'" :id="input.name" class="materialize-textarea" v-model.lazy='input.value' data-length="300">{{input.value}}</textarea>
+      <textarea v-else-if="input.type === 'textarea'" :id="input.name" class="materialize-textarea" v-model='input.value' data-length="300">{{input.value}}</textarea>
       <div v-else-if="input.type === 'radio'" class='radio'>
         <p v-for="option in input.options">
-          <input :name="input.name" type="radio" :id="option.name" :value="option.name" :checked="input.value === option.text"/>
+          <input :name="input.name" type="radio" :id="option.name" :value="option.name" v-model.lazy='input.value'/>
           <label :for="option.name">{{option.text}}</label>
         </p>
       </div>
       <vue-slider v-else-if="input.type === 'range'" v-model="input.value"
-      :min='input.min'
-      :max='input.max'
-      width="80%"
-      :style='{"marginLeft": "10%", "marginBottom": "30px"}'
-      :formatter="input.formatter"
-      :interval="input.interval"
-      :tooltipDir='["bottom","top"]'></vue-slider>
+        :min='input.min'
+        :max='input.max'
+        :style='{"marginLeft": "160px", "marginRight": "20px", "marginBottom": "10px", "marginTop": "10px"}'
+        :bgStyle='{
+          "backgroundColor": "#fff",
+          "boxShadow": "inset 0.5px 0.5px 3px 1px rgba(0,0,0,.36)"
+        }'
+        tooltip="always"
+        :sliderStyle='{"backgroundColor": "#34888C"}'
+        :tooltipStyle='{"backgroundColor": "#34888C", "borderColor": "#34888C"}'
+        :processStyle='{"backgroundColor": "#34888C"}'
+        :formatter="input.formatter"
+        :interval="input.interval"
+      ></vue-slider>
       <input v-else :id="input.name" :type="input.type" class="validate">
       <label v-show="input.label" v-if="input.type !== 'radio'" :for="input.name" :data-error="input.error">{{input.text}}</label>
     </div>
-    <button @click.prevent="submiting(inputs)" class="btn waves-effect waves-light" type='submit'>{{button}}</button>
+    <button @click.prevent="submiting(inputs)" class="btn waves-effect waves-light right" type='submit'>{{button}}</button>
   </form>
 </template>
 
@@ -102,8 +108,6 @@
         body.forEach(e => {
           if (e.type === 'date') {
             data[e.name] = this.picker.get()
-          } else if (e.type === 'radio'){
-            data[e.name] = $(`input[name='${e.name}']:checked`).val()
           } else {
             data[e.name] = e.value
           }
@@ -112,18 +116,7 @@
             error = true
           }
         })
-        console.log('error', data)
         if (!error) return this.submit(data)
-      }
-    },
-    watch: {
-      picker: function() {
-        console.log('picker')
-        this.inputs.forEach(e => {
-          if (e.type === 'date') {
-            e.value = this.picker.get()
-          }
-        })
       }
     }
   }
