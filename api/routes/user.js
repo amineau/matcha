@@ -12,6 +12,9 @@ module.exports = (app) => {
 
 	app.get('/users', restrict, user.getAll)
 	app.get('/users/liked', restrict, user.getLiked)
+	app.get('/users/like', restrict, user.getLike)
+	app.get('/users/visited', restrict, user.getVisited)
+	app.get('/users/visite', restrict, user.getVisite)
 	app.get('/user/:by/:data', restrict, user.getByData)
 
 	app.delete('/user', restrict, user.delete)

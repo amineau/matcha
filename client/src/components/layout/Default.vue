@@ -9,7 +9,7 @@
                 <router-link to="dash" class="brand-logo hide-on-med-and-down">Matcha</router-link>
                 <ul id="nav-mobile" class="right">
                   <li><router-link :to="{name: 'dashBoard'}">DashBoard</router-link></li>
-                  <li><router-link :to="{name: 'liked'}">Like</router-link></li>
+                  <li><router-link :to="{name: 'followed'}">Suivi</router-link></li>
                   <li><router-link :to="{name: 'profil'}">Profil</router-link></li>
                   <li><dropdown :auth="auth"></dropdown></li>
                   <li><a @click="logout">Deconnexion</a></li>
@@ -26,7 +26,7 @@
       </section>
     </main>
 
-    <footer class="page-footer brown-m">
+    <footer class="page-footer blue-m">
       <div class="container">
         <div class="row">
           <div class="col l6 s12">
@@ -130,6 +130,11 @@
 
   nav ul a, nav .brand-logo {
     color: #34888C;
+  }
+
+  main.container {
+    margin-top: 20px;
+    margin-bottom: 20px;
   }
 
   /*@media only screen and (max-width: 992px) {

@@ -3,7 +3,7 @@
   <gmap-map
     :center="center"
     :zoom="10"
-    style="width: 80%; height: 800px"
+    style="width: 100%; height: 400px"
   >
     <gmap-marker
       v-for="m in markers"

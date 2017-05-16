@@ -4,8 +4,8 @@
     <search :peoples="peoples" :auth="auth" :update="updatePeople"></search>
     <div class="row">
       <div class="col s4 right switch">
-        <i @click="list=true" :class="{'text-brown-m': list}" class="fa fa-list-ul fa-2x col s6 center-align" aria-hidden="true"></i>
-        <i @click="list=false" :class="{'text-brown-m': !list}" class="fa fa-map-o fa-2x col s6 center-align" aria-hidden="true"></i>
+        <i @click="list=true" :class="{'text-yellow-m': list}" class="fa fa-list-ul fa-2x col s6 center-align" aria-hidden="true"></i>
+        <i @click="list=false" :class="{'text-yellow-m': !list}" class="fa fa-map-o fa-2x col s6 center-align" aria-hidden="true"></i>
       </div>
     </div>
     <div v-show="list" class="row" id="list">
@@ -106,22 +106,6 @@
 </script>
 
 <style>
-
-  .switch {
-    border: 2px solid #34888C;
-    border-radius: 5px;
-    color: #34888C;
-    padding: 0 !important;
-  }
-
-  .switch i {
-    cursor: pointer;
-    padding: 15px !important;
-  }
-
-  .switch i:hover {
-    background-color: rgba(0,0,0,0.1);
-  }
 
 
 </style>

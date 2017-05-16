@@ -118,6 +118,72 @@ exports.getLiked = (req, res) => {
       .catch(showError);
 }
 
+exports.getLike = (req, res) => {
+  const id = req.decoded.id
+  const showSuccess = (data) => {
+    res.json({
+      success: true,
+      data
+    })
+  }
+  const showError = (err) => {
+    console.log(err)
+      res.json({
+          success: false,
+          err: err.error || err
+      })
+  }
+
+    Query.GetLike({id})
+      .then(Parser.GetData)
+      .then(showSuccess)
+      .catch(showError);
+}
+
+exports.getVisited = (req, res) => {
+  const id = req.decoded.id
+  const showSuccess = (data) => {
+    res.json({
+      success: true,
+      data
+    })
+  }
+  const showError = (err) => {
+    console.log(err)
+      res.json({
+          success: false,
+          err: err.error || err
+      })
+  }
+
+    Query.GetVisited({id})
+      .then(Parser.GetData)
+      .then(showSuccess)
+      .catch(showError);
+}
+
+exports.getVisite = (req, res) => {
+  const id = req.decoded.id
+  const showSuccess = (data) => {
+    res.json({
+      success: true,
+      data
+    })
+  }
+  const showError = (err) => {
+    console.log(err)
+      res.json({
+          success: false,
+          err: err.error || err
+      })
+  }
+
+    Query.GetVisite({id})
+      .then(Parser.GetData)
+      .then(showSuccess)
+      .catch(showError);
+}
+
 exports.signUp = (req, res) => {
     const validate  = {user: new UserValidator(req.body)}
     const showSuccess = () => {

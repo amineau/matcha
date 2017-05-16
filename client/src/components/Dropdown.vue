@@ -3,8 +3,7 @@
   <div>
     <a class='dropdown-button notif' data-activates='dropdown1' @click='notifToFalse'>
       <i class="fa fa-bell-o" aria-hidden="true"></i>
-      <!-- <div v-if="notifCount">{{notifCount}}</div> -->
-      <div class="btn btn-floating pulse brown-m">{{notifCount}}</div>
+      <div :class="{pulse: notifCount}" class="btn btn-floating brown-m">{{notifCount}}</div>
     </a>
 
     <ul id='dropdown1' class='dropdown-content'>

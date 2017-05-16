@@ -39,7 +39,7 @@ $(NAME):
 	@echo Thanks
 
 generate:
-	curl -X POST http://localhost:4242/generate/10
+	curl -X POST http://localhost:4242/generate/100
 
 test:
 	echo $(shell uname)

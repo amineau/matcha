@@ -59,14 +59,71 @@ module.exports = class UserQuery {
     GetLiked(where) {
       return new Promise((resolve, reject) => {
        const query =
-           `MATCH (u: User)-[:LIKED]->(p:User)
+           `MATCH (u: User)-[t:LIKED]->(p:User)
             WHERE id(u) <> {id}
             AND id(p) = {id}
             OPTIONAL MATCH (u)-[h]-(i: Img)
             WHERE h.head = true
             OPTIONAL MATCH (u)<-[l:LIKED]-(p)
             OPTIONAL MATCH (u)<-[:LIKED]-(p), (u)-[c:LIKED]->(p)
-            RETURN id(u) AS id, u AS all, i.path AS path, count(i) AS likable, count(c) AS connected, count(l) AS like`
+            RETURN id(u) AS id, u AS all, i.path AS path, count(i) AS likable, count(c) AS connected, count(l) AS like, t.timestamp AS timestamp
+            ORDER BY timestamp DESC`
+
+        db.doDatabaseOperation(query, where)
+          .then(data => resolve(data))
+          .catch(err => reject(err))
+      })
+    }
+
+    GetLike(where) {
+      return new Promise((resolve, reject) => {
+       const query =
+           `MATCH (u: User)<-[t:LIKED]-(p:User)
+            WHERE id(u) <> {id}
+            AND id(p) = {id}
+            OPTIONAL MATCH (u)-[h]-(i: Img)
+            WHERE h.head = true
+            OPTIONAL MATCH (u)-[c:LIKED]->(p)
+            RETURN id(u) AS id, u AS all, i.path AS path, count(i) AS likable, count(c) AS connected, count(t) AS like, t.timestamp AS timestamp
+            ORDER BY timestamp DESC`
+
+        db.doDatabaseOperation(query, where)
+          .then(data => resolve(data))
+          .catch(err => reject(err))
+      })
+    }
+
+    GetVisited(where) {
+      return new Promise((resolve, reject) => {
+       const query =
+           `MATCH (u: User)-[t:VISITED]->(p:User)
+            WHERE id(u) <> {id}
+            AND id(p) = {id}
+            OPTIONAL MATCH (u)-[h]-(i: Img)
+            WHERE h.head = true
+            OPTIONAL MATCH (u)<-[l:LIKED]-(p)
+            OPTIONAL MATCH (u)<-[:LIKED]-(p), (u)-[c:LIKED]->(p)
+            RETURN id(u) AS id, u AS all, i.path AS path, count(i) AS likable, count(c) AS connected, count(l) AS like, t.timestamp AS timestamp
+            ORDER BY timestamp DESC`
+
+        db.doDatabaseOperation(query, where)
+          .then(data => resolve(data))
+          .catch(err => reject(err))
+      })
+    }
+
+    GetVisite(where) {
+      return new Promise((resolve, reject) => {
+       const query =
+           `MATCH (u: User)<-[t:VISITED]-(p:User)
+            WHERE id(u) <> {id}
+            AND id(p) = {id}
+            OPTIONAL MATCH (u)-[h]-(i: Img)
+            WHERE h.head = true
+            OPTIONAL MATCH (u)<-[l:LIKED]-(p)
+            OPTIONAL MATCH (u)<-[:LIKED]-(p), (u)-[c:LIKED]->(p)
+            RETURN id(u) AS id, u AS all, i.path AS path, count(i) AS likable, count(c) AS connected, count(l) AS like, t.timestamp AS timestamp
+            ORDER BY timestamp DESC`
 
         db.doDatabaseOperation(query, where)
           .then(data => resolve(data))

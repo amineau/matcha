@@ -3,7 +3,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '../components/Home.vue'
 import DashBoard from '../components/DashBoard.vue'
-import Like from '../components/Like.vue'
+import Followed from '../components/Followed.vue'
 import User from '../components/User.vue'
 import Profil from '../components/Profil.vue'
 import Chat from '../components/Chat.vue'
@@ -25,9 +25,9 @@ export default new Router({
       component: DashBoard
     },
     {
-      path: '/liked',
-      name: 'liked',
-      component: Like
+      path: '/followed',
+      name: 'followed',
+      component: Followed
     },
     {
       path: '/settings/profile',

@@ -85,6 +85,7 @@ module.exports = class ParseDatabase {
 				}
 				resolve(json)
 			}
+			console.log(body.errors)
 			reject({error: "Ressource non trouvée"})
 		})
 	}
