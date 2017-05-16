@@ -41,10 +41,14 @@ sécurisés :<br>
 Vous devrez donc concevoir une application permettant à deux potentielles âmes soeurs de se rencontrer, de l’inscription au contact final.
 <br><br>
 
+## Solution
+
+La solution est développée avec Nodejs(express) et Vuejs, ainsi que la base de donnée graphique Neo4j et MongoDb.
+
 Pour installer toutes les dépendances npm:
 
 `npm install`
 
-Pour lancer le serveur :
+Pour lancer le serveur et les bases de données:
 
-`node app.js`
+`make`
