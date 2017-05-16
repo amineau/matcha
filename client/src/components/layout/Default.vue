@@ -92,7 +92,7 @@
       $(window).blur(function() {
         vm.$socket.emit('focus off', auth.decoded.id)
       })
-      navigator.geolocation.watchPosition(pos => this.setPosition(pos.coords), err => {
+      navigator.geolocation.getCurrentPosition(pos => this.setPosition(pos.coords), err => {
         this.$http.get(`http://ip-api.com/json`).then(res => {
           this.setPosition({latitude: res.data.lat, longitude: res.data.lon})
         }).catch(err => console.log(err))

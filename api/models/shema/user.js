@@ -22,14 +22,31 @@ module.exports = class UserQuery {
 
     Get(where) {
       return new Promise((resolve, reject) => {
-        let toWhere = ''
+        let toWhere = []
         for (let key in where) {
-          toWhere += toWhere !== '' ? ` AND ` : ''
-          toWhere += key === 'id' ? `${key}(u)={${key}}` : `u.${key}={${key}}`
+          toWhere.push(key === 'id' ? `${key}(u)={${key}}` : `u.${key}={${key}}`)
+        }
+       const query =
+           `MATCH (u: User), (p: User)
+            WHERE ${toWhere.join(' AND ')}
+            RETURN id(u) as id, u as all`
+
+        db.doDatabaseOperation(query, where)
+          .then(data => resolve(data))
+          .catch(err => reject(err))
+      })
+    }
+
+
+    GetPrivate(where) {
+      return new Promise((resolve, reject) => {
+        let toWhere = []
+        for (let key in where) {
+          toWhere.push(key === 'id' ? `${key}(u)={${key}}` : `u.${key}={${key}}`)
         }
        const query =
            `MATCH (u: User)
-            WHERE ${toWhere}
+            WHERE ${toWhere.join(' AND ')}
             RETURN id(u) as id, u as all`
 
         db.doDatabaseOperation(query, where)
@@ -40,14 +57,13 @@ module.exports = class UserQuery {
 
     GetForSet(where) {
       return new Promise((resolve, reject) => {
-        let toWhere = ''
+        let toWhere = []
         for (let key in where) {
-          toWhere += toWhere !== '' ? ` AND ` : ''
-          toWhere += key === 'id' ? `${key}(u)<>{${key}}` : `u.${key}={${key}}`
+          toWhere.push(key === 'id' ? `${key}(u)<>{${key}}` : `u.${key}={${key}}`)
         }
        const query =
            `MATCH (u: User)
-            WHERE ${toWhere}
+            WHERE ${toWhere.join(' AND ')}
             RETURN id(u) as id, u as all`
 
         db.doDatabaseOperation(query, where)
@@ -147,14 +163,14 @@ module.exports = class UserQuery {
         }
       }
       if (where.score) {
-        toWhere += ` AND u.score >= ${where.score.min} AND u.score <= ${where.score.max}`
+        toWhere += ` AND u.score >= {min} AND u.score <= {max}`
+        where.min = Number(where.score.min)
+        where.max = Number(where.score.max)
+        delete where.score
       }
       if (where.tags && where.tags.length) {
         match = ', (u)-[]-(t:Tag)'
-        let tags = []
-        where.tags.forEach(e => tags.push(`'${e}'`))
-        console.log(tags)
-        toWhere += ` AND (t.name=${tags.join(' OR t.name=')})`
+        toWhere += ` AND t.name IN {tags}`
       }
       return new Promise((resolve, reject) => {
        const query =

@@ -18,9 +18,10 @@
     mounted () {
       const auth = this.auth()
       if (!auth.success) return console.log(auth.error)
+      const id = auth.decoded.id
       let promises = []
       if (this.init) {
-        promises.push(this.$http.get(`${CONFIG.BASEURL_API}tags/${auth.decoded.id}`, auth.httpOption))
+        promises.push(this.$http.get(`${CONFIG.BASEURL_API}tags/${id}`, auth.httpOption))
       }
       if (this.autocomplete) {
         promises.push(this.$http.get(`${CONFIG.BASEURL_API}tags`, auth.httpOption))

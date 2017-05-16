@@ -67,7 +67,7 @@
     methods: {
       getPosition () {
         return new Promise((resolve, reject) => {
-          navigator.geolocation.watchPosition(
+          navigator.geolocation.getCurrentPosition(
             pos => resolve(pos.coords),
             err => {
               this.$http.get(`http://ip-api.com/json`).then(res => {

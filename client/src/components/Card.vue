@@ -8,7 +8,7 @@
      <div class="card-content content">
        <div><i class="fa fa-birthday-cake" aria-hidden="true"></i> {{ calculateAge(people.birthday) }} ans</div>
        <div><i class="fa fa-star" aria-hidden="true"></i> {{people.score}} points</div>
-       <div><i class="fa fa-map-marker" aria-hidden="true"></i> {{people.distance}} km</div>
+       <div v-show="people.distance"><i class="fa fa-map-marker" aria-hidden="true"></i> {{people.distance}} km</div>
      </div>
      <div class="card-action">
        <likebutton :httpOption="httpOption" :people="people"></likebutton>

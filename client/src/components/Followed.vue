@@ -2,17 +2,16 @@
   <defaultLayout :auth="auth">
 
     <div class="row">
-      <div class="col s12 m9 l6 center switch">
-        <div @click="list='l_rec'" :class="{'text-yellow-m': list==='l_rec'}" class="col s3 center-align">Likes reçus</div>
-        <div @click="list='l_sen'" :class="{'text-yellow-m': list==='l_sen'}" class="col s3 center-align">Likes envoyés</div>
-        <div @click="list='v_rec'" :class="{'text-yellow-m': list==='v_rec'}" class="col s3 center-align">Visites reçues</div>
-        <div @click="list='v_sen'" :class="{'text-yellow-m': list==='v_sen'}" class="col s3 center-align">Profils visités</div>
+      <div class="col s12 l9 right switch">
+        <div @click="request('liked')" :class="{'text-yellow-m': action==='liked'}" class="col s3 center-align">Likes reçus</div>
+        <div @click="request('like')" :class="{'text-yellow-m': action==='like'}" class="col s3 center-align">Likes envoyés</div>
+        <div @click="request('visited')" :class="{'text-yellow-m': action==='visited'}" class="col s3 center-align">Visites reçues</div>
+        <div @click="request('visite')" :class="{'text-yellow-m': action==='visite'}" class="col s3 center-align">Profils visités</div>
       </div>
     </div>
-    {{list}}
-    {{followed.l_rec}}
-    <div v-for="(peoples, id) in followed" v-show="id === list" class="row">
-       <div v-for="people in peoples" class="col s6 m4 l3">
+    {{followed.liked}}
+    <div v-for="f in followed" v-show="f.action === action" class="row">
+       <div v-for="people in f.peoples" class="col s6 m4 l3">
          <card :httpOption="httpOption" :people="people"></card>
        </div>
      </div>
@@ -32,8 +31,8 @@
     name: 'Followed',
     data () {
       return {
-        followed: {},
-        list: 'l_rec',
+        followed: [],
+        action: null,
         httpOption: null,
         users: {}
       }
@@ -43,44 +42,44 @@
     },
     created () {
       const auth = this.auth()
+      let vm = this
       if (!auth.success) return console.log(auth.error)
       this.httpOption = auth.httpOption
-      Promise.all([
-        this.$http.get(`${CONFIG.BASEURL_API}users/liked`, auth.httpOption),
-        this.$http.get(`${CONFIG.BASEURL_API}users/like`, auth.httpOption),
-        this.$http.get(`${CONFIG.BASEURL_API}users/visited`, auth.httpOption),
-        this.$http.get(`${CONFIG.BASEURL_API}users/visite`, auth.httpOption)
-      ])
-        .then(this.updatePeople)
+      this.request('liked')
         .then(() => this.$socket.emit('online', auth.decoded.id))
+        .then(() => console.log('coucou', this.followed,this.followed.liked))
     },
     methods: {
-      updatePeople (res) {
-        return new Promise((resolve, reject) => {
-          console.log(res)
-          if (!res.every(e => e.body.success)) {
-            console.log('error update people Followed')
-            return reject()
-          }
-          ['l_rec', 'l_sen', 'v_rec', 'l_sen'].forEach((e, k) => {
-            console.log(e, k)
-            this.followed[e] = res[k].body.data
-            this.followed[e].forEach(f => {
+      request (action) {
+        this.action = action
+        return this.$http.get(`${CONFIG.BASEURL_API}users/${action}`, this.httpOption)
+          .then(res => {
+            if (!res.body.success) return console.log(res.body.err)
+            let peoples = res.body.data
+            peoples.forEach(f => {
               this.$set(f, 'status', false)
               if (!f.base64) {
                 f.base64 = `src/assets/${f.sex}-silhouette.jpg`
               }
             })
             this.$on('userUpdate', (users) => {
-              this.followed[e].forEach(f => {
+              peoples.forEach(f => {
                 const user = users.find(user => user.id === f.id)
                 f.status = user ? user.status : 0
               })
             })
+            let found = false
+            this.followed.forEach(e => {
+              if (e.action === action) {
+                e.peoples = peoples
+                found = true
+              }
+            })
+            if (!found) {
+              this.followed.push({peoples, action})
+            }
+            Promise.resolve()
           })
-          console.log(this.followed.l_rec)
-          resolve()
-        })
       }
     },
     watch: {
