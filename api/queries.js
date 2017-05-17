@@ -56,7 +56,9 @@ module.exports = class Queries {
       users.sort((a,b) => a - b)
       this._collection.findOne({users}, (err, docs) => {
         if (err) return reject({error: err})
+        console.log('Find comments', docs)
         if (!docs || !docs.chat) return reject({error: 'No resources found'})
+        console.log(docs.chat)
         docs.chat.sort((a, b) => a.timestamp - b.timestamp)
         resolve(docs.chat)
       })
@@ -65,6 +67,7 @@ module.exports = class Queries {
 
   AddComment (users, message) {
     const comment = message.comment
+    const sender = users[0]
     return new Promise ((resolve, reject) => {
       if (typeof users !== 'object' || users.length !== 2 || !comment)
         return reject({error: 'Parameters incompatible'})
@@ -73,7 +76,7 @@ module.exports = class Queries {
         $push: {
           chat: {
             timestamp: Date.now(),
-            sender: users[0],
+            sender,
             comment
           }
         }

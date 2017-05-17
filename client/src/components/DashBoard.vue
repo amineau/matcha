@@ -8,12 +8,22 @@
         <i @click="list=false" :class="{'text-yellow-m': !list}" class="fa fa-map-o fa-2x col s6 center-align" aria-hidden="true"></i>
       </div>
     </div>
-    <div v-show="list" class="row" id="list">
+    <div v-show="list">
+      <div class="input-field col s12">
+        <select>
+          <option value="score" selected>Popularité</option>
+          <option value="age">Âge</option>
+          <option value="localisation">Distance</option>
+          <option value="tag">Tags en commun</option>
+        </select>
+      </div>
+      <div class="row">
        <div v-for="people in peoples" class="col s6 m4 l3">
          <card :httpOption="httpOption" :people="people"></card>
        </div>
      </div>
-     <googleMap v-if="!list" :markers="markers" :auth="auth"></googleMap>
+   </div>
+   <googleMap v-if="!list" :markers="markers" :auth="auth"></googleMap>
 
   </defaultLayout>
 </template>
@@ -41,6 +51,9 @@
       auth: Function
     },
     created () {
+      $(function() {
+        Materialize.updateTextFields()
+      })
       const auth = this.auth()
       if (!auth.success) return console.log(auth.error)
       this.httpOption = auth.httpOption
@@ -83,17 +96,6 @@
           resolve()
         })
       }
-    },
-    watch: {
-      users () {
-        let list = []
-        Object.keys(this.users.list).map((objectKey) => {
-          list.push(this.users.list[objectKey])
-        })
-        this.peoples.forEach(e => {
-          e.status = list.indexOf(e.id) !== -1
-        })
-      },
     },
     components: {
       search,

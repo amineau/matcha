@@ -82,17 +82,6 @@
           })
       }
     },
-    watch: {
-      users () {
-        let list = []
-        Object.keys(this.users.list).map((objectKey) => {
-          list.push(this.users.list[objectKey])
-        })
-        this.peoples.forEach(e => {
-          e.status = list.indexOf(e.id) !== -1
-        })
-      },
-    },
     components: {
       search,
       defaultLayout,

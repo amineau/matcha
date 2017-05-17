@@ -15,21 +15,21 @@ ifeq ($(UNAME),Linux)
 else
 	SNAP := imagesnap -w 2
 endif
-all: $(NAME) generate
+all: $(NAME)
 
 $(NAME):
 	#screen -X eval "chdir $$PWD"
 	npm install
 	screen -dmS $(NAME)
-	screen -S $(NAME) -p 0 -X stuff $$'mongod --dbpath ~/Documents/Mongodb\n'
+	screen -S $(NAME) -p 0 -X stuff $$'a mongod --dbpath ~/Documents/Mongodb\n'
 	screen -S $(NAME) -X screen 1
-	screen -S $(NAME) -p 1 -X stuff $$'cd client && webpack --watch\n'
+	screen -S $(NAME) -p 1 -X stuff $$'a cd client && webpack --watch\n'
 	screen -S $(NAME) -X screen 2
-	screen -S $(NAME) -p 2 -X stuff $$'cd client && webpack-dev-server\n'
+	screen -S $(NAME) -p 2 -X stuff $$'a cd client && webpack-dev-server\n'
 	screen -S $(NAME) -X screen 3
-	screen -S $(NAME) -p 3 -X stuff $$'nodemon api/app.js\n'
+	screen -S $(NAME) -p 3 -X stuff $$'a nodemon api/app.js\n'
 	screen -S $(NAME) -X screen 4
-	screen -S $(NAME) -p 4 -X stuff $$'neo4j console\n'
+	screen -S $(NAME) -p 4 -X stuff $$'a neo4j console\n'
 	@echo Wait...
 	@$(SNAP) -q ./client/src/assets/profil-0.png
 	@echo Smile !
@@ -39,7 +39,7 @@ $(NAME):
 	@echo Thanks
 
 generate:
-	curl -X POST http://localhost:4242/generate/100
+	curl -X POST http://localhost:4242/generate/30
 
 test:
 	echo $(shell uname)
