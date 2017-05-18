@@ -4,12 +4,15 @@
     <div v-for='photo in photos'>
       <div>
         <img :src="photo.base64" :width="photo.head?360:200" :height="photo.head?360:200" />
+        <!-- <img :src="photo.base64" /> -->
       </div>
       <div v-show="!photo.head" @click="deleteImage(photo.id)">
         <i class="fa fa-close" aria-hidden="true"></i>
         <div>Supprimer</div>
       </div>
-      {{photo.id}}
+      <div v-show="!photo.head" @click="profil(photo.id)" class="valign-wrapper">
+        <div class="center-align">Définir comme profil</div>
+      </div>
     </div>
     <div v-if="photos.length < 5" @click="addPhoto" class="add grey lighten-1">
       <i class="fa fa-plus fa-5x" aria-hidden="true"></i>
@@ -27,7 +30,8 @@
     name: 'setPhoto',
     data () {
       return {
-        photos: []
+        photos: [],
+        httpOption: {}
       }
     },
     props: {
@@ -36,7 +40,8 @@
     created () {
       const auth = this.auth()
       if (!auth.success) return alert(auth.err)
-      this.$http.get(`${CONFIG.BASEURL_API}pic/${auth.decoded.id}`, auth.httpOption).then(res => {
+      this.httpOption = auth.httpOption
+      this.$http.get(`${CONFIG.BASEURL_API}pic/${auth.decoded.id}`, this.httpOption).then(res => {
         if (!res.body.success ) return null
         this.photos = res.body.data
         if (!this.photos.length) {
@@ -58,18 +63,15 @@
         let reader = new FileReader()
         image.onload = () => {
           var canvas = document.createElement("canvas")
-          canvas.height = canvas.width * (image.height / image.width);
-          console.log(image)
-          var octx = canvas.getContext('2d');
+          var octx = canvas.getContext('2d')
 
-          canvas.width = image.width * 0.1;
-          canvas.height = image.height * 0.1;
-          octx.drawImage(image, 0, 0, canvas.width, canvas.height);
+          canvas.width = 640
+          canvas.height = 640
+
+          octx.drawImage(image,(image.width - image.height)/2,0,image.height,image.height,0, 0, 640, 640)
           const base64 = canvas.toDataURL("image/png")
 
-          const auth = this.auth()
-          if (!auth.success) return alert(auth.err)
-          this.$http.post(`${CONFIG.BASEURL_API}pic`, {base64}, auth.httpOption).then(res => {
+          this.$http.post(`${CONFIG.BASEURL_API}pic`, {base64}, this.httpOption).then(res => {
             if (!res.body.success) return alert('Erreur lors du post pic')
               const id = res.body.data[0].id
               this.photos.push({base64, id, head: this.photos.length === 0})
@@ -85,10 +87,24 @@
         reader.readAsDataURL(file)
       },
       deleteImage (id) {
-        const auth = this.auth()
-        this.$http.delete(`${CONFIG.BASEURL_API}pic/${id}`, auth.httpOption).then(res => {
+        this.$http.delete(`${CONFIG.BASEURL_API}pic/${id}`, this.httpOption).then(res => {
           if (!res.body.success) return alert('Erreur lors du delete pic')
           this.photos = this.photos.filter(obj => obj.id !== id)
+        })
+      },
+      profil (id) {
+        console.log(this.httpOption)
+        this.$http.put(`${CONFIG.BASEURL_API}pic/${id}`, {}, this.httpOption).then(res => {
+          if (!res.body.success) return console.log(res.body.err)
+          let index
+          this.photos[0].head = false
+          this.photos.forEach((e, k) => {
+            if (e.id === id) {
+              e.head = true
+              index = k
+            }
+          })
+          this.photos.unshift(this.photos.splice(index, 1)[0])
         })
       }
     },
@@ -120,12 +136,31 @@
     position: absolute;
     z-index: 2;
     display: none;
-    top: 10px;
-    right: 10px;
     padding: 5px;
     border-radius: 20px;
     background-color: rgba(238, 238, 238, 0.5);
     cursor: pointer;
+    top: 10px;
+    right: 10px;
+  }
+
+  .img-profil > div > div:nth-child(3) {
+    background-color: rgba(238, 238, 238, 0.5);
+    position: absolute;
+    z-index: 2;
+    display: none;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: 30%;
+    width: auto;
+    margin: auto;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .img-profil > div > div:nth-child(3) div {
+    width: 100%;
   }
   .img-profil > div > div:nth-child(2) i {
     padding: 5px;
@@ -135,7 +170,7 @@
     overflow: hidden;
     font-weight: bold;
   }
-  .img-profil > div > div:nth-child(2):hover{
+  .img-profil > div > div:nth-child(n+2):hover{
     background-color: rgba(158, 158, 158, 0.7);
     transition: background-color 1s;
     -webkit-transition: background-color 1s;
@@ -147,7 +182,7 @@
     -webkit-transition: max-width 1s;
     max-width: 100px;
   }
-  .img-profil > div:hover > div:nth-child(2) {
+  .img-profil > div:hover > div:nth-child(n+2) {
     display: flex;
   }
   .img-profil .add {

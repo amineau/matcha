@@ -1,7 +1,7 @@
 <template>
   <defaultLayout :auth="auth">
 
-    <search :peoples="peoples" :auth="auth" :update="updatePeople"></search>
+    <search :auth="auth" :update="updatePeople" :selected="selected" :meaning="meaning"></search>
     <div class="row">
       <div class="col s4 right switch">
         <i @click="list=true" :class="{'text-yellow-m': list}" class="fa fa-list-ul fa-2x col s6 center-align" aria-hidden="true"></i>
@@ -9,13 +9,18 @@
       </div>
     </div>
     <div v-show="list">
-      <div class="input-field col s12">
-        <select>
-          <option value="score" selected>Popularité</option>
-          <option value="age">Âge</option>
-          <option value="localisation">Distance</option>
-          <option value="tag">Tags en commun</option>
-        </select>
+      <div class='row'>
+        <div class="input-field col s5 m4 l3">
+          <select v-model="selected">
+            <option v-for="option in options" v-bind:value="option.value">
+              {{ option.text }}
+            </option>
+          </select>
+        </div>
+        <div class="chevron col s1">
+          <i @click="meaning=-1" :class="{'grey-text': meaning===1}" class="fa fa-chevron-up" aria-hidden="true"></i>
+          <i @click="meaning=1" :class="{'grey-text': meaning===-1}" class="fa fa-chevron-down" aria-hidden="true"></i>
+        </div>
       </div>
       <div class="row">
        <div v-for="people in peoples" class="col s6 m4 l3">
@@ -41,6 +46,14 @@
     data () {
       return {
         list: true,
+        selected: 'score',
+        meaning: -1,
+        options: [
+          {text: 'Popularité', value: 'score'},
+          {text: 'Âge', value: 'birthday'},
+          {text: 'Distance', value: 'distance'},
+          {text: 'Tags en commun', value: 'tags'},
+        ],
         peoples: [],
         markers: [],
         httpOption: null,
@@ -51,13 +64,17 @@
       auth: Function
     },
     created () {
+      let vm = this
       $(function() {
-        Materialize.updateTextFields()
+        $('select').material_select()
+        $('select').change((e) => {
+             vm.selected = e.currentTarget.value;
+        })
       })
       const auth = this.auth()
       if (!auth.success) return console.log(auth.error)
       this.httpOption = auth.httpOption
-      this.$http.get(`${CONFIG.BASEURL_API}users?distance=100`, auth.httpOption)
+      this.$http.get(`${CONFIG.BASEURL_API}users?distance=100&sort=${this.selected}&meaning=${this.meaning}`, auth.httpOption)
         .then(this.updatePeople)
         .then(() => this.$socket.emit('online', auth.decoded.id))
     },
@@ -109,5 +126,12 @@
 
 <style>
 
+  .chevron {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
 
 </style>

@@ -6,7 +6,7 @@
             <div class='container'>
 
               <div class="nav-fixed col s12 m8 l4">
-                <router-link to="dash" class="brand-logo hide-on-med-and-down">Matcha</router-link>
+                <router-link :to="{name: 'dashBoard'}" class="brand-logo hide-on-med-and-down">Matcha</router-link>
                 <ul id="nav-mobile" class="right">
                   <li><router-link :to="{name: 'dashBoard'}">DashBoard</router-link></li>
                   <li><router-link :to="{name: 'followed'}">Suivi</router-link></li>

@@ -3,3 +3,4 @@ restrict.log
 .DS_Store
 photo
 profil-*.png
+data/profile/*

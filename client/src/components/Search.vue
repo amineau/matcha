@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <div v-if="active">
       <div class='row'>
         <div class="input-field col s12">
@@ -10,7 +9,6 @@
       </div>
       <formInputs :inputs="inputs" :submit="search" button="Rechercher"></formInputs>
     </div>
-
     <div @click="active=!active" class="search center text-blue-m"><i :class='{"fa-chevron-down": !active, "fa-chevron-up": active}' class="fa" aria-hidden="true"></i> Recherche</div>
   </div>
 </template>
@@ -62,10 +60,21 @@
     },
     props: {
       auth: Function,
-      update: Function
+      update: Function,
+      selected: String,
+      meaning: Number
     },
     methods: {
       search () {
+        const auth = this.auth()
+        if (!auth.success) return console.log(auth.err)
+        this.$http.get(`${CONFIG.BASEURL_API}users?${this.params.join('&')}`, auth.httpOption)
+          .then(this.update)
+          .then(() => this.active=false)
+      }
+    },
+    computed: {
+      params() {
         let params = []
         this.inputs.forEach(e => {
           if (typeof(e.value) !== 'object') {
@@ -75,14 +84,24 @@
             params.push(`${e.name}[max]=${e.value[1]}`)
           }
         })
-        $('.chips').material_chip('data').forEach((e, k) => {
-          params.push(`tags[${k}]=${e.tag}`)
-        })
-        const auth = this.auth()
-        if (!auth.success) return alert(auth.err)
-        this.$http.get(`${CONFIG.BASEURL_API}users?${params.join('&')}`, auth.httpOption)
-          .then(this.update)
-          .then(() => this.active=false)
+        if ($('.chips').material_chip('data')) {
+          $('.chips').material_chip('data').forEach(e => params.push(`tags=${e.tag}`))
+        }
+        if (this.selected) {
+          params.push(`sort=${this.selected}`)
+        }
+        if (this.meaning) {
+          params.push(`meaning=${this.meaning}`)
+        }
+        return params
+      }
+    },
+    watch: {
+      selected () {
+        this.search()
+      },
+      meaning () {
+        this.search()
       }
     },
     components: {

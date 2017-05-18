@@ -33,11 +33,7 @@ module.exports = {
     dns: 'empty',
     fs: 'empty'
   },
-  // vue: {
-  //   loaders: {
-  //     js: 'babel-loader'
-  //   }
-  // },
+
   resolve: {
     alias: {
       vue: 'vue/dist/vue.js',

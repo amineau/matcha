@@ -11,7 +11,7 @@ module.exports = class ChatValidator extends Validator {
         super(toParse, {
             comment: {
               funct: e => e,
-              match: /^(.){1,300}$/,
+              maxLength: 3000,
               message: "Comment invalid"
             }
         })

@@ -188,7 +188,8 @@ module.exports = class UserQuery {
             WHERE h.head = true
             OPTIONAL MATCH (u)<-[l:LIKED]-(p)
             OPTIONAL MATCH (u)<-[:LIKED]-(p), (u)-[c:LIKED]->(p)
-            RETURN id(u) AS id, u AS all, i.path AS path, count(i) AS likable, count(c) AS connected, count(l) AS like`
+            OPTIONAL MATCH (u)-[]-(t:Tag)-[]-(p)
+            RETURN id(u) AS id, u AS all, i.path AS path, count(i) AS likable, count(c) AS connected, count(l) AS like, count(t) AS tags`
 
         db.doDatabaseOperation(query, where)
           .then(data => resolve(data))

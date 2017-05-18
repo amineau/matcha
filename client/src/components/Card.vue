@@ -9,6 +9,7 @@
        <div><i class="fa fa-birthday-cake" aria-hidden="true"></i> {{ calculateAge(people.birthday) }} ans</div>
        <div><i class="fa fa-star" aria-hidden="true"></i> {{people.score}} points</div>
        <div v-show="people.distance"><i class="fa fa-map-marker" aria-hidden="true"></i> {{people.distance}} km</div>
+       tags en commun : {{people.tags}}
      </div>
      <div class="card-action">
        <likebutton :httpOption="httpOption" :people="people"></likebutton>
@@ -41,8 +42,9 @@
 
           var years = (now.getFullYear() - birthDate.getFullYear())
 
-          if (now.getMonth() < birthDate.getMonth() ||
-              now.getMonth() == birthDate.getMonth() && now.getDate() < birthDate.getDate()) {
+          if (now.getMonth() < birthDate.getMonth()
+              || now.getMonth() == birthDate.getMonth()
+              && now.getDate() < birthDate.getDate()) {
               years--
           }
           return years

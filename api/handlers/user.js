@@ -61,7 +61,6 @@ exports.getByData = (req, res) => {
 exports.getAll = (req, res) => {
   const id = req.decoded.id
   const query = req.query
-  console.log(query)
   const showSuccess = (data) => {
     res.json({
       success: true,
@@ -75,6 +74,7 @@ exports.getAll = (req, res) => {
           err: err.error || err
       })
   }
+  console.log(query)
   Promise.all([
     Query.GetAll(_.merge({id}, query))
       .then(Parser.GetData),
@@ -88,7 +88,9 @@ exports.getAll = (req, res) => {
           longitude: data[1][0].longitude
         }
         data[0].forEach(e => e.distance = Distance(myPosition, e))
-
+        if (query.sort && query.meaning) {
+          data[0].sort((a,b) => Number(query.meaning)*(query.sort === 'birthday' ? -1 : 1)*(a[query.sort] - b[query.sort]))
+        }
         resolve(data[0].filter(e => e.distance <= query.distance))
       })
     })

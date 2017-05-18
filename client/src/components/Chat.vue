@@ -8,11 +8,14 @@
       <div id='chat'>
         <div v-for="message in chat" :class="{mine: message.sender === newAuth.decoded.id}" class="message">
           <div :class="{blanco: message.sender === newAuth.decoded.id}"></div>
-          <div class='comment'>{{message.comment}}</div>
+          <div v-html="commentReplace(message.comment)" class='comment'></div>
           <div :class="{blanco: message.sender !== newAuth.decoded.id}"></div>
         </div>
       </div>
-      <formInputs :inputs="[input]" :submit="submit" button="Envoyer"></formInputs>
+      <div class="comment">
+        <textarea :id="input.name" class="materialize-textarea" v-model='input.value' placeholder="Écrivez lui quelque chose..." autofocus></textarea>
+        <i @click="submit" class="text-blue-m fa fa-paper-plane fa-2x" aria-hidden="true"></i>
+      </div>
     </defaultLayout>
 </template>
 
@@ -32,8 +35,6 @@
         users: {},
         input: {
           name: 'comment',
-          type: 'textarea',
-          label: false,
           value: null,
           element: null
         }
@@ -48,7 +49,6 @@
         $(function() {
           this.element = document.getElementById('chat')
           this.element.scrollTop = this.element.scrollHeight
-          console.log(this.element.scrollTop)
         })
       })
       this.$http.get(`${CONFIG.BASEURL_API}user/id/${this.$route.params.id}`, this.newAuth.httpOption).then(res => {
@@ -59,7 +59,6 @@
           this.user.base64 = `src/assets/${this.user.sex}-silhouette.jpg`
         }
         this.$on('userUpdate', (users) => {
-          console.log(users)
           const list = users.find(e => e.id === this.user.id)
           this.user.status = list ? list.status : 0
         })
@@ -76,9 +75,11 @@
       }
     },
     methods: {
-      submit(data) {
-        this.chat.push({comment: data.comment, sender: this.newAuth.decoded.id})
-        this.$http.post(`${CONFIG.BASEURL_API}chat/${this.$route.params.id}`, {comment: data.comment}, this.newAuth.httpOption).then(res => {
+      submit() {
+        if (!this.input.value) return
+        this.input.value = this.input.value.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        this.chat.push({comment: this.input.value, sender: this.newAuth.decoded.id})
+        this.$http.post(`${CONFIG.BASEURL_API}chat/${this.$route.params.id}`, {comment: this.input.value}, this.newAuth.httpOption).then(res => {
           if (!res.body.success) return alert('Erreur lors de l\'obtention des messages')
           this.input.value = null
           $(function() {
@@ -86,6 +87,9 @@
             this.element.scrollTop = this.element.scrollHeight
           })
         })
+      },
+      commentReplace(comment) {
+        return comment.replace('\n', '<br />')
       }
     },
     props: {
@@ -128,7 +132,11 @@
   }
 
   textarea.materialize-textarea {
-    padding: 20px;
+    padding-right: 70px;
+    height: auto;
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
   }
 
   .message div.comment {
@@ -139,6 +147,7 @@
     background-color: #34888C;
     color: white;
     word-wrap: break-word;
+
   }
 
   .mine .blanco{
@@ -148,6 +157,21 @@
   .mine div.comment {
     background-color: #CB6318;
     text-align: right;
+  }
+
+  .comment {
+    position: relative;
+    /*white-space: pre;
+    word-wrap: break-word;*/
+  }
+
+  .comment i {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-100%);
+    right: 20px;
+
+    cursor: pointer;
   }
 
 </style>

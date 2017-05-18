@@ -21,7 +21,7 @@
       liked () {
         this.$http.post(`${CONFIG.BASEURL_API}${this.people.like?'un':''}like/${this.people.id}`, {}, this.httpOption)
           .then(res => {
-            if (!res.body.success) return console.lo(res.body.err)
+            if (!res.body.success) return console.log(res.body.err)
             this.people.like = !this.people.like
             this.people.connected = res.body.connected
             this.$emit('update:people.connected')
