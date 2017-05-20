@@ -1,10 +1,10 @@
 <template>
     <defaultLayout :auth="auth">
-      <div class='profil'>
-        <img :src="user.base64" witdh=50 height=50 />
+      <router-link :to="{name: 'user', params: user.id}" class='profil'>
+        <img :src="user.base64" width=50 height=50 />
         <h5>{{user.login}}</h5>
-        <i :class="{'orange-text': user.status === 2, 'green-text': user.status === 1, 'grey-text': !user.status}" class="fa fa-circle" aria-hidden="true"></i>
-      </div>
+        <online :id="user.id"></online>
+      </router-link>
       <div id='chat'>
         <div v-for="message in chat" :class="{mine: message.sender === newAuth.decoded.id}" class="message">
           <div :class="{blanco: message.sender === newAuth.decoded.id}"></div>
@@ -23,6 +23,7 @@
 
   import CONFIG from '../../config/conf.json'
   import defaultLayout from './layout/Default.vue'
+  import online from './button/Online.vue'
   import formInputs from './Form.vue'
 
   export default {
@@ -51,17 +52,13 @@
           this.element.scrollTop = this.element.scrollHeight
         })
       })
+      .then(() => this.$socket.emit('online', this.newAuth.decoded.id))
       this.$http.get(`${CONFIG.BASEURL_API}user/id/${this.$route.params.id}`, this.newAuth.httpOption).then(res => {
         if (!res.body.success) return console.log(res.body.err)
         this.user = res.body.data[0]
-        this.$set(this.user, 'status', false)
         if (!this.user.base64) {
           this.user.base64 = `src/assets/${this.user.sex}-silhouette.jpg`
         }
-        this.$on('userUpdate', (users) => {
-          const list = users.find(e => e.id === this.user.id)
-          this.user.status = list ? list.status : 0
-        })
       })
       this.$options.sockets.chat = (data) => {
         if (data.recipientId === this.newAuth.decoded.id
@@ -97,7 +94,8 @@
     },
     components: {
       defaultLayout,
-      formInputs
+      formInputs,
+      online
     }
   }
 

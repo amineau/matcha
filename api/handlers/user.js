@@ -34,6 +34,7 @@ function Distance(pos_a, pos_b){
 
 exports.getByData = (req, res) => {
   const {by, data} = req.params
+  const userId = req.decoded.id
   const validate = {
     user: new UserValidator({[by]: data})
   }
@@ -52,7 +53,7 @@ exports.getByData = (req, res) => {
   }
 
   validate.user.Parse([{ name: by }])
-      .then(Query.Get)
+      .then(data => Query.Get(data, {userId}))
       .then(Parser.GetData)
       .then(showSuccess)
       .catch(showError);
@@ -74,15 +75,16 @@ exports.getAll = (req, res) => {
           err: err.error || err
       })
   }
-  console.log(query)
+
   Promise.all([
     Query.GetAll(_.merge({id}, query))
       .then(Parser.GetData),
-    Query.Get({id})
+    Query.GetPrivate({id})
       .then(Parser.GetData)
   ])
     .then(data => {
       return new Promise((resolve) => {
+        console.log(data[1][0])
         const myPosition = {
           latitude: data[1][0].latitude,
           longitude: data[1][0].longitude
@@ -215,8 +217,8 @@ exports.signUp = (req, res) => {
       .then(data => {
         return new Promise((resolve, reject) => {
           Promise.all([
-            Query.Get({email: data.email}),
-            Query.Get({login: data.login}),
+            Query.GetPrivate({email: data.email}),
+            Query.GetPrivate({login: data.login}),
           ])
             .then(result => {
               if (!_.isEmpty(result[0].results[0].data[0]))

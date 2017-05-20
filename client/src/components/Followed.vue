@@ -9,9 +9,8 @@
         <div @click="request('visite')" :class="{'text-yellow-m': action==='visite'}" class="col s3 center-align">Profils visités</div>
       </div>
     </div>
-    {{followed.liked}}
     <div v-for="f in followed" v-show="f.action === action" class="row">
-       <div v-for="people in f.peoples" class="col s6 m4 l3">
+       <div v-for="people in f.peoples" class="col s6 l4">
          <card :httpOption="httpOption" :people="people"></card>
        </div>
      </div>
@@ -47,7 +46,6 @@
       this.httpOption = auth.httpOption
       this.request('liked')
         .then(() => this.$socket.emit('online', auth.decoded.id))
-        .then(() => console.log('coucou', this.followed,this.followed.liked))
     },
     methods: {
       request (action) {
@@ -57,16 +55,9 @@
             if (!res.body.success) return console.log(res.body.err)
             let peoples = res.body.data
             peoples.forEach(f => {
-              this.$set(f, 'status', false)
               if (!f.base64) {
                 f.base64 = `src/assets/${f.sex}-silhouette.jpg`
               }
-            })
-            this.$on('userUpdate', (users) => {
-              peoples.forEach(f => {
-                const user = users.find(user => user.id === f.id)
-                f.status = user ? user.status : 0
-              })
             })
             let found = false
             this.followed.forEach(e => {

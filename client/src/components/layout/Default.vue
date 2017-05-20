@@ -82,7 +82,7 @@
         Object.keys(users).map((objectKey) => {
           list.push(users[objectKey])
         })
-        this.$parent.$emit('userUpdate', list)
+        this.$root.$emit('userUpdate', list)
       }
       let vm = this
       $(window).focus(function() {

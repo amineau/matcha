@@ -12,7 +12,7 @@ const Query  = new UserQuery()
 passport.use(new LocalStrategy({
   usernameField: 'login'
 }, (login, password, done) => {
-  Query.Get({login})
+  Query.GetPrivate({login})
     .then(Parser.GetData)
     .then(user => {
       user = user[0]

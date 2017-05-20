@@ -117,6 +117,7 @@
           }
         })
       })
+      .then(() => this.$socket.emit('online', auth.decoded.id))
     },
     methods: {
       submit (data) {

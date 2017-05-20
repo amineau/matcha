@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="row">
-       <div v-for="people in peoples" class="col s6 m4 l3">
+       <div v-for="people in peoples" class="col s6 l4">
          <card :httpOption="httpOption" :people="people"></card>
        </div>
      </div>
@@ -81,11 +81,11 @@
     methods: {
       updatePeople (res) {
         return new Promise((resolve) => {
-          if (!res.body.success) return res.body.err
+          if (!res.body.success) return console.log(res.body.err)
+          console.log(res.body.data)
           this.peoples = res.body.data
           this.markers = []
           this.peoples.forEach(e => {
-            this.$set(e, 'status', false)
             if (!e.base64) {
               e.base64 = `src/assets/${e.sex}-silhouette.jpg`
             }
@@ -102,12 +102,6 @@
                 }
               },
               path: () => this.$router.push({name: 'user', params: { id: e.id }})
-            })
-          })
-          this.$on('userUpdate', (users) => {
-            this.peoples.forEach((e, k) => {
-              const user = users.find(user => user.id === e.id)
-              e.status = user ? user.status : 0
             })
           })
           resolve()

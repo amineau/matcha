@@ -12,6 +12,7 @@ module.exports = class ConnexionQuery {
             `MATCH (u: User), (i: User)-[:OWNER]-(:Img)
             WHERE id(u) = {userId}
             AND id(i) = {id}
+            AND {id} <> {userId}
             OPTIONAL MATCH (u)-[r:UNLIKED]->(i)
             DELETE r
             MERGE (u)-[l:LIKED]->(i)
@@ -49,6 +50,7 @@ module.exports = class ConnexionQuery {
             `MATCH (u: User), (i: User)
             WHERE id(u) = {userId}
             AND id(i) = {id}
+            AND {id} <> {userId}
             MERGE (u)-[:BLOCKED]->(i)
             ON CREATE SET i.score = i.score + {score}`
 
@@ -100,9 +102,9 @@ module.exports = class ConnexionQuery {
             `MATCH (u: User), (i: User)
             WHERE id(u) = {userId}
             AND id(i) = {id}
+            AND {id} <> {userId}
             MERGE (u)-[r:REPORTED]->(i)
-            ON CREATE SET i.score = i.score + {score}
-            SET r.message = {message},`
+            ON CREATE SET i.score = i.score + {score}`
 
           db.doDatabaseOperation(query, _.merge(data, {score: conf.score.report}))
             .then((data) => resolve(data))
@@ -116,6 +118,7 @@ module.exports = class ConnexionQuery {
             `MATCH (u: User), (i: User)
             WHERE id(u) = {userId}
             AND id(i) = {id}
+            AND {id} <> {userId}
             MERGE (u)-[v:VISITED]->(i)
             ON CREATE SET i.score = i.score + {score}
             SET v.notif = true,

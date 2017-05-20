@@ -8,10 +8,12 @@ module.exports = class UserQuery {
     Create(data) {
         return new Promise((resolve, reject) => {
           let tab = ''
-          for (let key in data)
+          for (let key in data){
             tab += `${key}:{${key}},`
+          }
+          const date = new Date().getTime()
           const query =
-            `CREATE(u: User{${tab} score: 0})
+            `CREATE(u: User{${tab} score: 0, dateCreate: ${date}, lastConnection = ${date}})
             RETURN *`
 
           db.doDatabaseOperation(query, data)
@@ -20,7 +22,22 @@ module.exports = class UserQuery {
         })
     }
 
-    Get(where) {
+    Connection(where) {
+      return new Promise((resolve, reject) => {
+        const date = new Date().getTime()
+        const query =
+          `MATCH (u: User)
+          WHERE id(u) = {id}
+          SET u.lastConnection = ${date}
+          RETURN *`
+
+        db.doDatabaseOperation(query, data)
+          .then(data => resolve(data))
+          .catch(err => reject(err))
+      })
+    }
+
+    Get(where, userId) {
       return new Promise((resolve, reject) => {
         let toWhere = []
         for (let key in where) {
@@ -29,11 +46,24 @@ module.exports = class UserQuery {
        const query =
            `MATCH (u: User), (p: User)
             WHERE ${toWhere.join(' AND ')}
+            AND id(p) = {userId}
+            AND NOT (u)-[:BLOCKED]->(p)
             OPTIONAL MATCH (u)-[h]-(i: Img)
             WHERE h.head = true
-            RETURN id(u) as id, u as all, i.path AS path`
+            OPTIONAL MATCH (u)<-[l:LIKED]-(p)
+            OPTIONAL MATCH (u)<-[b:BLOCKED]-(p)
+            OPTIONAL MATCH (u)<-[r:REPORTED]-(p)
+            OPTIONAL MATCH (u)<-[:LIKED]-(p), (u)-[c:LIKED]->(p)
+            RETURN id(u) AS id,
+              u AS all,
+              i.path AS path,
+              count(i) AS likable,
+              count(c) AS connected,
+              count(l) AS like,
+              count(b) AS blocked,
+              count(r) AS reported`
 
-        db.doDatabaseOperation(query, where)
+        db.doDatabaseOperation(query, _.merge(where, userId))
           .then(data => resolve(data))
           .catch(err => reject(err))
       })
@@ -80,6 +110,7 @@ module.exports = class UserQuery {
            `MATCH (u: User)-[t:LIKED]->(p:User)
             WHERE id(u) <> {id}
             AND id(p) = {id}
+            AND NOT (u)-[:BLOCKED]-(p)
             OPTIONAL MATCH (u)-[h]-(i: Img)
             WHERE h.head = true
             OPTIONAL MATCH (u)<-[l:LIKED]-(p)
@@ -99,6 +130,7 @@ module.exports = class UserQuery {
            `MATCH (u: User)<-[t:LIKED]-(p:User)
             WHERE id(u) <> {id}
             AND id(p) = {id}
+            AND NOT (u)-[:BLOCKED]-(p)
             OPTIONAL MATCH (u)-[h]-(i: Img)
             WHERE h.head = true
             OPTIONAL MATCH (u)-[c:LIKED]->(p)
@@ -117,6 +149,7 @@ module.exports = class UserQuery {
            `MATCH (u: User)-[t:VISITED]->(p:User)
             WHERE id(u) <> {id}
             AND id(p) = {id}
+            AND NOT (u)-[:BLOCKED]-(p)
             OPTIONAL MATCH (u)-[h]-(i: Img)
             WHERE h.head = true
             OPTIONAL MATCH (u)<-[l:LIKED]-(p)
@@ -136,6 +169,7 @@ module.exports = class UserQuery {
            `MATCH (u: User)<-[t:VISITED]-(p:User)
             WHERE id(u) <> {id}
             AND id(p) = {id}
+            AND NOT (u)-[:BLOCKED]-(p)
             OPTIONAL MATCH (u)-[h]-(i: Img)
             WHERE h.head = true
             OPTIONAL MATCH (u)<-[l:LIKED]-(p)
@@ -179,6 +213,7 @@ module.exports = class UserQuery {
            `MATCH (u: User), (p:User)${match}
             WHERE id(u) <> {id}
             AND id(p) = {id}
+            AND NOT (u)-[:BLOCKED]-(p)
             AND (u.sex = p.prefer
               OR p.prefer = 'B'
               OR NOT(exists(p.prefer))

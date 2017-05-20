@@ -35,7 +35,7 @@
           let autocompleteOptions = {data: {}}
           let data = []
           if (this.init) {
-            res[0].body.data.forEach(i => data.push({tag: i}))
+            res[0].body.data.forEach(i => data.push({tag: i.name}))
             if (this.autocomplete) {
               res[1].body.data.forEach(i => autocompleteOptions.data[i] = null)
             }

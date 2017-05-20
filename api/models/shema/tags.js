@@ -24,7 +24,7 @@ module.exports = class TagsQuery {
       const query =
         `MATCH(u: User)-[:LIKED]->(t: Tag)
         WHERE id(u) = {id}
-        RETURN t.name as tag;`
+        RETURN t as tag;`
 
       db.doDatabaseOperation(query, data)
         .then(data => resolve(data))

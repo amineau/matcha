@@ -3,13 +3,12 @@
    <div class="card">
      <div class="card-image">
        <img :src="people.base64"/>
-       <span class="card-title">{{people.login}} <i :class="{'orange-text': people.status === 2, 'green-text': people.status === 1, 'grey-text': !people.status}" class="fa fa-circle" aria-hidden="true"></i></span>
+       <span class="card-title">{{people.login}} <online :id="people.id"></online></span>
      </div>
-     <div class="card-content content">
-       <div><i class="fa fa-birthday-cake" aria-hidden="true"></i> {{ calculateAge(people.birthday) }} ans</div>
-       <div><i class="fa fa-star" aria-hidden="true"></i> {{people.score}} points</div>
-       <div v-show="people.distance"><i class="fa fa-map-marker" aria-hidden="true"></i> {{people.distance}} km</div>
-       tags en commun : {{people.tags}}
+     <div class="card-content content row">
+       <div class="col s12 m6"><i class="fa fa-birthday-cake" aria-hidden="true"></i> {{ calculateAge(people.birthday) }} ans</div>
+       <div class="col s12 m6"><i class="fa fa-star" aria-hidden="true"></i> {{people.score}} points</div>
+       <div v-show="people.distance !== undefined" class="col s12 m6"><i class="fa fa-map-marker" aria-hidden="true"></i> {{people.distance}} km</div>
      </div>
      <div class="card-action">
        <likebutton :httpOption="httpOption" :people="people"></likebutton>
@@ -25,6 +24,7 @@
   import likebutton from './button/Like.vue'
   import chatbutton from './button/Chat.vue'
   import profilbutton from './button/Profil.vue'
+  import online from './button/Online.vue'
 
   export default {
     name: 'Card',
@@ -53,7 +53,8 @@
     components: {
       likebutton,
       chatbutton,
-      profilbutton
+      profilbutton,
+      online
     }
   }
 
@@ -61,17 +62,28 @@
 
 <style>
 
-  .content {
+  /*.content {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+  }*/
+
+  .content div {
+    overflow: visible;
+    max-height: 21px;
   }
 
-  @media only screen and (max-width: 1092px) {
+  .card-action {
+    display:flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+
+  /*@media only screen and (max-width: 1092px) {
     .content {
       flex-direction: column;
       justify-content: space-around;
     }
-  }
+  }*/
 
 </style>

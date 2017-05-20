@@ -62,12 +62,12 @@ exports.generate = (req, res) => {
     const index = Math.round((generator.firstName.length - 1) * Math.random())
 
     const login = generator.login[Math.round((generator.login.length - 1) * Math.random())].login
-    const firstName = generator.firstName[index].firstName
+    const firstName = generator.firstName[index].firstName.charAt(0).toUpperCase() + generator.firstName[index].firstName.slice(1)
     const lastName = generator.lastName[Math.round((generator.lastName.length -1) * Math.random())].lastName
     const sex = generator.firstName[index].sex
     const email = `${firstName.slice(0, 1)}${lastName.replace(' ', '').toLowerCase()}@${generator.email[Math.round((generator.email.length - 1) * Math.random())].email}`
     const prefer = 'MWB'.concat(sexOp(sex).repeat(7)).charAt(Math.round(9 * Math.random()))
-    const bio = generator.bio[Math.round((generator.bio.length - 1) * Math.random())].bio
+    const bio = `Hello, moi c'est ${firstName}`
     const score = Math.round(500 * Math.random())
     const birthday = new Date('12/02/19' + (99 - Math.round(20 * Math.random())).toString()).getTime()
     const longitude = 2 + (0.5 * Math.random())
@@ -96,7 +96,7 @@ exports.generate = (req, res) => {
             .then(() => Query.pic.Add({id, path: path.join(__dirname, '../../client/src/assets/profil-2.png')}))
         } else {
           const dirname = path.join(__dirname, '../../generator/photo', data.results[0].data[i++].row[1])
-          const nbFile = 1// 782
+          const nbFile = 782 //1
           const pathname = path.join(dirname, Math.round((nbFile-1)*Math.random()) + '.jpg')
             promises = Query.pic.Add({id, path: pathname})
               .then(() => Query.pic.Add({id, path: pathname}))

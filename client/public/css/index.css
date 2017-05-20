@@ -1,3 +1,8 @@
+.chip {
+  color: white;
+  background-color: grey;
+}
+
 .btn, .btn-large, .btn-floating {
   background-color: #34888C;
 }
@@ -34,11 +39,6 @@
   color: #CB6318
 }
 
-.chip {
-  color: white;
-  background-color: #CB6318;
-}
-
 .chips.focus {
   border-bottom-color: #CB6318;
 }
@@ -65,12 +65,17 @@ body, .layout {
    flex-direction: column;
  }
 
- /*html {
+ html {
    font-family:  Calibri, Trebuchet, sans-serif;
- }*/
+   color: #34888C;
+ }
 
  main {
    flex: 1 0 auto;
+ }
+
+ a {
+   cursor: pointer;
  }
 
  .switch {

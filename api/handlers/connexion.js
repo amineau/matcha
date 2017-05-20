@@ -118,7 +118,6 @@ exports.unblock = (req, res) => {
 exports.report = (req, res) => {
   const id = Number(req.params.id)
   const userId = req.decoded.id
-  const validate = {connexion: new ConnexionValidator(req.body)}
 
   const showSuccess = (data) => {
     res.json({
@@ -134,8 +133,7 @@ exports.report = (req, res) => {
     })
   }
 
-  validate.connexion.Parse([{name: 'message'}])
-    .then((data) => Query.Report(_.merge({id, userId}, data)))
+  Query.Report({id, userId})
     .then(Parser.GetTrue)
     .then(showSuccess)
     .catch(showError)
@@ -161,7 +159,7 @@ exports.visite = (req, res) => {
     })
   }
 
-  Query.Visite(_.merge({id, userId}))
+  Query.Visite({id, userId})
     .then(Parser.GetTrue)
     .then(showSuccess)
     .catch(showError)
