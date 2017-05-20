@@ -7,5 +7,6 @@ module.exports = (app) => {
 
     app.post('/chat/:id', restrict, chat.add)
     app.get('/chat/:id', restrict, chat.get)
+    app.get('/chat', restrict, chat.getAll)
 
 }

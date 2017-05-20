@@ -65,6 +65,22 @@ module.exports = class Queries {
     })
   }
 
+  FindMessages (id) {
+    // Find some documents
+    return new Promise ((resolve, reject) => {
+      this._collection.find({users: id}).toArray((err, docs) => {
+        if (err) return reject({error: err})
+        docs.forEach(e => {
+          e.chat = e.chat.slice(-1)[0]
+        })
+        docs.sort((a,b) => b.chat.timestamp - a.chat.timestamp)
+        console.log('Find messages', docs)
+        if (!docs) return reject({error: 'No resources found'})
+        resolve(docs)
+      })
+    })
+  }
+
   AddComment (users, message) {
     const comment = message.comment
     const sender = users[0]

@@ -84,7 +84,6 @@ exports.getAll = (req, res) => {
   ])
     .then(data => {
       return new Promise((resolve) => {
-        console.log(data[1][0])
         const myPosition = {
           latitude: data[1][0].latitude,
           longitude: data[1][0].longitude

@@ -7,6 +7,7 @@ import Followed from '../components/Followed.vue'
 import User from '../components/User.vue'
 import Profil from '../components/Profil.vue'
 import Chat from '../components/Chat.vue'
+import Message from '../components/Message.vue'
 import SignIn from '../components/SignIn.vue'
 import SignUp from '../components/SignUp.vue'
 
@@ -43,6 +44,11 @@ export default new Router({
       path: '/chat/:id',
       name: 'chat',
       component: Chat
+    },
+    {
+      path: '/chat',
+      name: 'message',
+      component: Message
     },
     {
       path: '/signin',

@@ -60,6 +60,40 @@ module.exports = class ConnexionQuery {
       })
     }
 
+
+    Chat(data) {
+      return new Promise((resolve, reject) => {
+        const query =
+        `MATCH (u: User)<-[:LIKED]-(i: User), (u)-[:LIKED]->(i)
+        WHERE id(u) = {userId}
+        AND id(i) = {id}
+        AND NOT (u)-[:BLOCKED]->(i)
+        MERGE (u)-[l:CHAT]->(i)
+        SET l.notif = true,
+        l.timestamp = {now}`
+
+
+          db.doDatabaseOperation(query, _.merge(data, {score: conf.score.block}))
+            .then((data) => resolve(data))
+            .catch((err) => reject(err))
+      })
+    }
+
+    ReadChat(data) {
+      return new Promise((resolve, reject) => {
+        const query =
+        `MATCH (u: User)-[r:CHAT]->(i: User)
+        WHERE id(u) = {userId}
+        AND id(i) = {id}
+        DELETE r`
+
+
+          db.doDatabaseOperation(query, _.merge(data, {score: conf.score.block}))
+            .then((data) => resolve(data))
+            .catch((err) => reject(err))
+      })
+    }
+
     Unlike(data) {
       return new Promise((resolve, reject) => {
         const query =

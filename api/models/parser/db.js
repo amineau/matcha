@@ -10,6 +10,7 @@ module.exports = class ParseDatabase {
 				if (body.results[0].stats.contains_updates){
 					return resolve()
 				} else {
+					console.log(body.results[0].stats)
 					return reject({error: "Les données d'entrées ne permettent pas d'effectuer l'opération"})
 				}
 			}

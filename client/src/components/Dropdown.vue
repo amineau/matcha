@@ -123,7 +123,7 @@
     line-height: 15px;
     width: 15px;
     text-align: center;
-    font-size: 0.5em
+    font-size: 0.6em
   }
 
   .notif i {

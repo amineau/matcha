@@ -11,6 +11,7 @@
                   <li><router-link :to="{name: 'dashBoard'}">DashBoard</router-link></li>
                   <li><router-link :to="{name: 'followed'}">Suivi</router-link></li>
                   <li><router-link :to="{name: 'profil'}">Profil</router-link></li>
+                  <li><router-link :to="{name: 'message'}"><i class="fa fa-comments-o" aria-hidden="true"></i></router-link></li>
                   <li><dropdown :auth="auth"></dropdown></li>
                   <li><a @click="logout">Deconnexion</a></li>
                 </ul>
