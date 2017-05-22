@@ -3,6 +3,9 @@
 const user = require('../handlers/user')
 const restrict = require('../models/restrict')
 
+const passport      = require('passport')
+const conf          = require('../config/conf.json')
+
 module.exports = (app) => {
 
 	app.post('/auth/signup', user.signUp)
@@ -18,6 +21,13 @@ module.exports = (app) => {
 	app.get('/users/visited', restrict, user.getVisited)
 	app.get('/users/visite', restrict, user.getVisite)
 	app.get('/user/:by/:data', restrict, user.getByData)
+
+	app.get('oauth2callback', passport.authenticate('google', { failureRedirect: '/auth/signin' }),
+  function(req, res) {
+		console.log('coucou')
+    // Successful authentication, redirect home.
+    res.redirect('/');
+  })
 
 	app.delete('/user', restrict, user.delete)
 

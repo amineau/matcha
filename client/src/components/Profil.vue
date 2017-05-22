@@ -38,7 +38,6 @@
   import tagbutton from './button/Tag.vue'
   import dateformat from 'dateformat'
   import CONFIG from '../../config/conf.json'
-  import VueGoogleAutocomplete from 'vue-google-autocomplete'
 
   export default {
     name: 'Profil',
@@ -243,8 +242,7 @@
       defaultLayout,
       formInputs,
       tagbutton,
-      setPhoto,
-      VueGoogleAutocomplete
+      setPhoto
     }
   }
 

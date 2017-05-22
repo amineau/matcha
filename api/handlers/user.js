@@ -244,7 +244,10 @@ exports.signUp = (req, res) => {
 
 exports.signIn = (req, res, next) => {
   const nconf = req.app.get('nconf')
-  passport.authenticate('local', (err, user, info) => {
+  passport.authenticate('google', (err, user, info) => {
+    console.log('err', err)
+    console.log('user', user)
+    console.log('info', info)
     if (err) {
       return res.json({
         success: false,

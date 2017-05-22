@@ -29,7 +29,7 @@ app.use(morgan('dev'))
 	.use((req, res, next) => {
 		res.header("Access-Control-Allow-Origin", "*")
 		res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE")
-		res.header("Access-Control-Allow-Headers", "Origin, matcha-token,Content-Type")
+		res.header("Access-Control-Allow-Headers", "Origin, matcha-token,Content-Type, *")
 		next()
 	})
 	.use((req, res, next) => {

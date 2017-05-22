@@ -18,6 +18,10 @@
     "host": "localhost",
     "port": "4242"
   },
+  "google": {
+    "CLIENT_ID": "881832148530-86eq6glv70ntmkm07no5gi48uch5e9vj.apps.googleusercontent.com",
+    "CLIENT_SECRET": "0gPcuWu9t1PDZtE8sGPbit1v"
+  },
   "token": {
     "secret": "h6Oo6sNvmpJI1PU",
     "expires": 36000
