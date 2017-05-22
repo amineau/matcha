@@ -15,7 +15,8 @@
   Vue.use(VueSocketio, CONFIG.BASEURL_API)
   Vue.use(VueGoogleMaps, {
     load: {
-      key: CONFIG.KEY_API_GOOGLE
+      key: CONFIG.KEY_API_GOOGLE,
+      libraries: 'places'
     }
   })
 

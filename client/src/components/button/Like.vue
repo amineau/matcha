@@ -1,6 +1,6 @@
 <template>
 
-  <button @click="liked" :class="{'yellow-m': people.like}" :disabled="!people.likable" class="waves-effect waves-light btn-floating">
+  <button @click="liked" :class="{'yellow-m': people.like}" :disabled="!people.likable || people.blocked" class="waves-effect waves-light btn-floating">
     <i class="fa fa-heart-o" aria-hidden="true"></i>
   </button>
 

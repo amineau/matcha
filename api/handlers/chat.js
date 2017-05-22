@@ -29,7 +29,6 @@ exports.get = (req, res) => {
   }
 
   Query.ReadChat({userId: senderId, id: recipientId})
-    .then(Parser.GetTrue)
     .then(() => query.FindComments([senderId, recipientId]))
     .then(showSuccess)
     .catch(showError)

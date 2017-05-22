@@ -17,6 +17,16 @@
       </a>
     </div>
 
+    <a class="modal-trigger waves-effect waves-light btn" href="#changePassword">Changer de mot de passe</a>
+
+    <!-- Modal Structure -->
+    <div id="changePassword" class="modal modal-fixed-footer">
+      <div class="modal-content">
+        <h4>Changement de mot de passe</h4>
+        <formInputs :inputs="password" :submit="submitPassword" button="Modifier"></formInputs>
+      </div>
+    </div>
+
   </defaultLayout>
 </template>
 
@@ -28,11 +38,13 @@
   import tagbutton from './button/Tag.vue'
   import dateformat from 'dateformat'
   import CONFIG from '../../config/conf.json'
+  import VueGoogleAutocomplete from 'vue-google-autocomplete'
 
   export default {
     name: 'Profil',
     data () {
       return {
+        address: '',
         inputs: [{
           name: 'email',
           text: 'Email',
@@ -41,6 +53,17 @@
           name: 'login',
           text: 'Login',
           type: 'text'
+        }, {
+          name: 'localisation',
+          text: 'Localisation',
+          type: 'radio',
+          options: [{
+            name: 'self',
+            text: 'Ma position'
+          }, {
+            name: 'place',
+            text: 'Autre'
+          }]
         }, {
           name: 'firstName',
           text: 'Prénom',
@@ -86,17 +109,28 @@
           name: 'tag',
           text: 'Tag',
           type: 'chips'
+        }],
+        password: [{
+          name: 'oldPassword',
+          text: 'Ancien mot de passe',
+          type: 'password',
+          label: true,
+          value: null
+        }, {
+          name: 'password',
+          text: 'Nouveau mot de passe',
+          type: 'password',
+          label: true,
+          value: null
         }]
       }
     },
     created () {
-      const auth = this.auth()
-      if (!auth.success) return alert(auth.err)
       this.inputs.forEach(e => {
         this.$set(e, 'value', null)
         this.$set(e, 'edit', false)
       })
-      this.$http.get(`${CONFIG.BASEURL_API}user/id/${auth.decoded.id}`, auth.httpOption).then(res => {
+      this.$http.get(`${CONFIG.BASEURL_API}user/id/${this.id}`, this.httpOption).then(res => {
         if (!res.body.success ) return null
         this.inputs.forEach(e => {
           if (res.body.data[0][e.name]) {
@@ -106,6 +140,9 @@
                   e.value = i.name
                 }
               })
+              if (e.name === 'localisation' && e.value === 'place') {
+                this.$set(e, 'place', res.body.data[0].place)
+              }
             } else if (e.type === 'date') {
               const date = new Date(res.body.data[0][e.name])
               e.value = dateformat(date, 'dd/mm/yyyy')
@@ -117,12 +154,15 @@
           }
         })
       })
-      .then(() => this.$socket.emit('online', auth.decoded.id))
+      .then(() => this.$socket.emit('online', this.id))
+      $(function(){
+        $('.modal').modal()
+      })
     },
     methods: {
       submit (data) {
-        const auth = this.auth()
-        this.$http.put(`${CONFIG.BASEURL_API}user`, data, auth.httpOption).then(res => {
+        console.log(data)
+        this.$http.put(`${CONFIG.BASEURL_API}user`, data, this.httpOption).then(res => {
           if (!res.body.success) {
             this.inputs.forEach(n => {
               if (res.body.err[n.name]){
@@ -130,6 +170,7 @@
                 $('#' + n.name).removeClass('valid').addClass('invalid')
               }
             })
+            console.log(res.body.err)
             return null
           }
           const keys = Object.keys(data)
@@ -137,31 +178,73 @@
             this.inputs.forEach(e => {
               if (e.name === key) {
                 e.value = data[key]
+                if (e.name === 'localisation' && data.localisation === 'place') {
+                  this.$set(e, 'place', data.place)
+                }
                 e.edit = false
+                return;
               }
             })
           })
         })
       },
+      submitPassword (data) {
+        this.$http.put(`${CONFIG.BASEURL_API}user/password`, data, this.httpOption)
+          .then(res => {
+            if (!res.body.success) {
+              console.log(res.body.err)
+              this.password.forEach(n => {
+                if (res.body.err[n.name]){
+                  this.$set(n, 'error', res.body.err[n.name].message)
+                  console.log($('#' + n.name))
+                  $('#' + n.name).removeClass('valid').addClass('invalid')
+                }
+              })
+              console.log(this.password)
+              return null
+            }
+            $('.modal').modal('close')
+            this.password.forEach(e => {
+              e.value = null
+            })
+          })
+      },
       textOption (input) {
         let text
         input.options.forEach(e => {
           if (e.name === input.value) {
-            text = e.text
+            if (e.name === 'place') {
+              text = input.place
+            } else {
+              text = e.text
+            }
           }
         })
-        return text
+        return text || input.value
+      },
+      getAddressData (addressData, placeResultData) {
+        this.address = addressData;
       }
     },
     computed: {
-
+      httpOption () {
+        const auth = this.auth()
+        if (!auth.success) return console.log(auth.err)
+        return auth.httpOption
+      },
+      id () {
+        const auth = this.auth()
+        if (!auth.success) return console.log(auth.err)
+        return auth.decoded.id
+      }
     },
     props: ['auth'],
     components: {
       defaultLayout,
       formInputs,
       tagbutton,
-      setPhoto
+      setPhoto,
+      VueGoogleAutocomplete
     }
   }
 
@@ -175,6 +258,10 @@
 
 .collection-item i.fa-pencil{
   display: none;
+}
+
+.pac-container:after{
+    content:none !important;
 }
 
 </style>

@@ -65,6 +65,15 @@ module.exports = class UserValidator extends Validator {
           match: /^[0-9]+$/,
           message: 'Id invalide'
         },
+        localisation: {
+          funct: e => e,
+          match: /^(self|place)$/,
+          message: 'Localisation invalide'
+        },
+        place: {
+          funct: e => e,
+          message: 'Lieu incorrect'
+        },
         sex: {
           funct: e => e,
           match: /^[MW]$/,

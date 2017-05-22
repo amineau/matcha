@@ -1,6 +1,6 @@
 <template>
     <defaultLayout :auth="auth">
-      <router-link :to="{name: 'user', params: user.id}" class='profil'>
+      <router-link v-if="user.id" :to="{name: 'user', params: {id: user.id}}" class='profil'>
         <img :src="user.base64" width=50 height=50 />
         <h5>{{user.login}}</h5>
         <online :id="user.id"></online>
@@ -13,9 +13,15 @@
         </div>
       </div>
       <div class="comment">
-        <textarea :id="input.name" class="materialize-textarea" v-model='input.value' placeholder="Écrivez lui quelque chose..." autofocus></textarea>
+        <textarea v-if="enter" :id="input.name" @keyup.enter="submit" class="materialize-textarea" v-model='input.value' placeholder="Écrivez lui quelque chose..." autofocus></textarea>
+        <textarea v-else :id="input.name" class="materialize-textarea" v-model='input.value' placeholder="Écrivez lui quelque chose..." autofocus></textarea>
         <i @click="submit" class="text-blue-m fa fa-paper-plane fa-2x" aria-hidden="true"></i>
       </div>
+      <div class='right-align' id='enter'>
+        <input type="checkbox" id="checkbox" v-model="enter">
+        <label for="checkbox">Entrée pour envoyer</label>
+      </div>
+
     </defaultLayout>
 </template>
 
@@ -38,7 +44,8 @@
           name: 'comment',
           value: null,
           element: null
-        }
+        },
+        enter: true,
       }
     },
     created () {
@@ -78,11 +85,11 @@
         this.chat.push({comment: this.input.value, sender: this.newAuth.decoded.id})
         this.$http.post(`${CONFIG.BASEURL_API}chat/${this.$route.params.id}`, {comment: this.input.value}, this.newAuth.httpOption).then(res => {
           if (!res.body.success) return alert('Erreur lors de l\'obtention des messages')
-          this.input.value = null
-          $(function() {
-            this.element = document.getElementById('chat')
-            this.element.scrollTop = this.element.scrollHeight
-          })
+        })
+        this.input.value = null
+        $(function() {
+          this.element = document.getElementById('chat')
+          this.element.scrollTop = this.element.scrollHeight
         })
       },
       commentReplace(comment) {
@@ -170,6 +177,10 @@
     right: 20px;
 
     cursor: pointer;
+  }
+
+  #enter {
+    font-size: .2em;
   }
 
 </style>

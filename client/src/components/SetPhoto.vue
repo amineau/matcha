@@ -93,7 +93,6 @@
         })
       },
       profil (id) {
-        console.log(this.httpOption)
         this.$http.put(`${CONFIG.BASEURL_API}pic/${id}`, {}, this.httpOption).then(res => {
           if (!res.body.success) return console.log(res.body.err)
           let index

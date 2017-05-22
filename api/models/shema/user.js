@@ -13,7 +13,7 @@ module.exports = class UserQuery {
           }
           const date = new Date().getTime()
           const query =
-            `CREATE(u: User{${tab} score: 0, dateCreate: ${date}, lastConnection = ${date}})
+            `CREATE(u: User{${tab} score: 0, localisation: self, dateCreate: ${date}, lastConnection = ${date}})
             RETURN *`
 
           db.doDatabaseOperation(query, data)
@@ -31,7 +31,7 @@ module.exports = class UserQuery {
           SET u.lastConnection = ${date}
           RETURN *`
 
-        db.doDatabaseOperation(query, data)
+        db.doDatabaseOperation(query, where)
           .then(data => resolve(data))
           .catch(err => reject(err))
       })
@@ -237,16 +237,32 @@ module.exports = class UserQuery {
           if (_.isEmpty(where) || _.isEmpty(set)) {
             return reject({error: 'Aucun champs de correspond à la base de donnée'})
           }
-          let toWhere = ''
-          let toSet = ''
+          let toWhere = []
+          let toSet = []
           for (let key in where)
-            toWhere += key === 'id' ? `${key}(u)={${key}}AND` : `u.${key}={${key}}AND`
+            toWhere.push(key === 'id' ? `${key}(u)={${key}}` : `u.${key}={${key}}`)
           for (let key in set)
-            toSet += `u.${key}={${key}},`
+            toSet.push(`u.${key}={${key}}`)
           const query =
               `MATCH (u:User)
-              WHERE ${toWhere.slice(0, -3)}
-              SET ${toSet.slice(0, -1)}
+              WHERE ${toWhere.join(' AND ')}
+              SET ${toSet.join(', ')}
+              RETURN *`
+
+          db.doDatabaseOperation(query, _.merge(where, set))
+            .then(data => resolve(data))
+            .catch(err => reject(err))
+      })
+    }
+
+    SetLoc(where, set) {
+        return new Promise((resolve, reject) => {
+          const query =
+              `MATCH (u:User)
+              WHERE id(u) = {id}
+              AND u.localisation = 'self'
+              SET u.latitude = {latitude},
+              u.longitude = {longitude}
               RETURN *`
 
           db.doDatabaseOperation(query, _.merge(where, set))

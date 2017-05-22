@@ -67,13 +67,13 @@ module.exports = class ConnexionQuery {
         `MATCH (u: User)<-[:LIKED]-(i: User), (u)-[:LIKED]->(i)
         WHERE id(u) = {userId}
         AND id(i) = {id}
-        AND NOT (u)-[:BLOCKED]->(i)
+        AND NOT (u)-[:BLOCKED]-(i)
         MERGE (u)-[l:CHAT]->(i)
         SET l.notif = true,
         l.timestamp = {now}`
 
 
-          db.doDatabaseOperation(query, _.merge(data, {score: conf.score.block}))
+          db.doDatabaseOperation(query, data)
             .then((data) => resolve(data))
             .catch((err) => reject(err))
       })
@@ -88,7 +88,7 @@ module.exports = class ConnexionQuery {
         DELETE r`
 
 
-          db.doDatabaseOperation(query, _.merge(data, {score: conf.score.block}))
+          db.doDatabaseOperation(query, data)
             .then((data) => resolve(data))
             .catch((err) => reject(err))
       })

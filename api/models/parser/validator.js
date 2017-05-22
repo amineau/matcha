@@ -14,12 +14,6 @@ module.exports = class Validator {
     this._errors = {}
   }
 
-  /**
-     * @description [description]
-     * @public
-     * @return {Promise}
-     */
-
   Parse (data) {
     let i = 0
     const myParser = (path) => {

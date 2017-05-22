@@ -2,7 +2,7 @@
   <defaultLayout :auth="auth">
 
     <div v-if='ready' class="collection">
-       <router-link v-for="message in messages" :to="{name: 'chat', params: {id: message.user.id}}" class="collection-item avatar">
+       <router-link v-for="message in messages" :key="message.id" :to="{name: 'chat', params: {id: message.user.id}}" class="collection-item avatar">
          <img :src="message.user.base64" alt="" class="circle">
          <span class="title">{{message.user.login}} <online :id="message.user.id"></online></span>
          <p>{{message.chat.comment}}</p>

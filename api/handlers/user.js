@@ -293,6 +293,8 @@ exports.set = (req, res) => {
           {name: 'login', noReq: true},
           {name: 'prefer', noReq: true},
           {name: 'sex', noReq: true},
+          {name: 'localisation', noReq: true},
+          {name: 'place', noReq: true},
           {name: 'bio', noReq: true},
           {name: 'latitude', noReq: true},
           {name: 'longitude', noReq: true}
@@ -326,6 +328,70 @@ exports.set = (req, res) => {
         .then(Parser.GetTrue)
         .then(showSuccess)
         .catch(showError)
+}
+
+exports.setLoc = (req, res) => {
+    const id = req.decoded.id
+    const validate = {
+      user: new UserValidator(req.body)
+    }
+
+    const showSuccess = () => {
+      res.json({
+        success: true
+      })
+    }
+    const showError = (err) => {
+      res.json({
+          success: false,
+          err: err.error
+      })
+    }
+
+    validate.user.Parse([
+      {name: 'latitude'},
+      {name: 'longitude'}
+    ])
+      .then(data => Query.SetLoc({id}, data))
+      .then(Parser.GetData)
+      .then(showSuccess)
+      .catch(showError)
+}
+
+exports.setPassword = (req, res) => {
+    const id = req.decoded.id
+    const password = req.body.oldPassword
+    const validate = {
+      user: new UserValidator(req.body)
+    }
+
+    const showSuccess = () => {
+      res.json({
+        success: true
+      })
+    }
+    const showError = (err) => {
+      console.log(err)
+      res.json({
+          success: false,
+          err: err.error
+      })
+    }
+      Query.GetPrivate({id})
+      .then(Parser.GetData)
+      .then(user => {
+        return new Promise((resolve, reject) => {
+          console.log(password, user[0].password)
+          if (!bcrypt.compareSync(password, user[0].password))
+            return reject({error: {oldPassword: {message: 'Mot de passe incorrect'}}})
+          resolve()
+        })
+      })
+      .then(() => validate.user.Parse([{name: 'password'}]))
+      .then(data => Query.Set({id}, data))
+      .then(Parser.GetTrue)
+      .then(showSuccess)
+      .catch(showError)
 }
 
 exports.delete = (req, res) => {

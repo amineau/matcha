@@ -9,7 +9,19 @@
       <div v-else-if="input.type === 'radio'" class='radio'>
         <p v-for="option in input.options">
           <input :name="input.name" type="radio" :id="option.name" :value="option.name" v-model.lazy='input.value'/>
+          {{input.value}}
           <label :for="option.name">{{option.text}}</label>
+          <div v-if="input.value==='place'">
+            <gmap-autocomplete
+              id='autocomplete'
+              class="validate"
+              @place_changed="setPlace"
+              v-model="autocomplete.place"
+              :types.sync="autocomplete.types"
+              :componentRestrictions.sync="autocomplete.restrictions"
+              >
+            </gmap-autocomplete>
+          </div>
         </p>
       </div>
       <vue-slider v-else-if="input.type === 'range'" v-model="input.value"
@@ -30,7 +42,7 @@
       <input v-else :id="input.name" :type="input.type" class="validate">
       <label v-show="input.label" v-if="input.type !== 'radio'" :for="input.name" :data-error="input.error">{{input.text}}</label>
     </div>
-    <button @click.prevent="submiting(inputs)" class="btn waves-effect waves-light right" type='submit'>{{button}}</button>
+    <button @click.prevent="submiting(inputs)" class="btn waves-effect waves-light waves-green right" type='submit'>{{button}}</button>
   </form>
 </template>
 
@@ -42,7 +54,13 @@
     name: 'formInputs',
     data () {
       return {
-        picker: null
+        picker: null,
+        autocomplete: {
+          place: '',
+          types: ['(regions)'],
+          restrictions: {'country': 'fr'}
+        },
+        latLng: {}
       }
     },
     props: {
@@ -52,6 +70,13 @@
     },
     components: {
       vueSlider
+    },
+    created () {
+      this.inputs.forEach(e => {
+        if (e.place) {
+          this.autocomplete.place = e.place
+        }
+      })
     },
     mounted () {
       $(function() {
@@ -105,11 +130,21 @@
       submiting (body) {
         let data = {}
         let error = false
+        console.log(body)
         body.forEach(e => {
           if (e.type === 'date') {
             data[e.name] = this.picker.get()
           } else {
             data[e.name] = e.value
+          }
+          if (e.value === 'place' && e.name === 'localisation') {
+            data.latitude = this.latLng.lat
+            data.longitude = this.latLng.lng
+            data.place = $('#autocomplete').val()
+            if (!data.latitude) {
+              $('#autocomplete').removeClass('valid').addClass('invalid')
+              error = true
+            }
           }
           if (!data[e.name]) {
             $('#' + e.name).removeClass('valid').addClass('invalid')
@@ -117,6 +152,12 @@
           }
         })
         if (!error) return this.submit(data)
+      },
+      setPlace(place) {
+        this.latLng = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng()
+        }
       }
     }
   }

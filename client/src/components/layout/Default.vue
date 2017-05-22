@@ -107,7 +107,7 @@
       },
       setPosition (coords) {
         if (coords) {
-          this.$http.put(`${CONFIG.BASEURL_API}user`, {
+          this.$http.put(`${CONFIG.BASEURL_API}user/loc`, {
             latitude: coords.latitude,
             longitude: coords.longitude
           }, this.httpOption).then(res => {
@@ -136,6 +136,9 @@
   main.container {
     margin-top: 20px;
     margin-bottom: 20px;
+  }
+  li i {
+    height: auto;
   }
 
   /*@media only screen and (max-width: 992px) {

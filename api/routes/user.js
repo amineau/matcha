@@ -9,6 +9,8 @@ module.exports = (app) => {
 	app.post('/auth/signin', user.signIn)
 
 	app.put('/user', restrict, user.set)
+	app.put('/user/loc', restrict, user.setLoc)
+	app.put('/user/password', restrict, user.setPassword)
 
 	app.get('/users', restrict, user.getAll)
 	app.get('/users/liked', restrict, user.getLiked)

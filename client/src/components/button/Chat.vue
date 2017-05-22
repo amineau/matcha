@@ -1,6 +1,6 @@
 <template>
 
-  <router-link :to="{name: 'chat', params: {id: people.id}}" :disabled="!people.connected" class="waves-effect waves-light btn-floating">
+  <router-link :to="{name: 'chat', params: {id: people.id}}" :disabled="!people.connected || people.blocked" class="waves-effect waves-light btn-floating">
     <i class="fa fa-comment-o" aria-hidden="true"></i>
   </router-link>
 
