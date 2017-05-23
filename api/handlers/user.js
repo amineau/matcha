@@ -244,10 +244,7 @@ exports.signUp = (req, res) => {
 
 exports.signIn = (req, res, next) => {
   const nconf = req.app.get('nconf')
-  passport.authenticate('google', (err, user, info) => {
-    console.log('err', err)
-    console.log('user', user)
-    console.log('info', info)
+  return passport.authenticate('local', (err, user, info) => {
     if (err) {
       return res.json({
         success: false,
@@ -331,6 +328,27 @@ exports.set = (req, res) => {
         .then(Parser.GetTrue)
         .then(showSuccess)
         .catch(showError)
+}
+
+exports.limits = (req, res) => {
+  const showSuccess = (data) => {
+    res.json({
+      success: true,
+      data
+    })
+  }
+  const showError = (err) => {
+    console.log(err)
+      res.json({
+          success: false,
+          err: err.error || err
+      })
+  }
+
+    Query.GetLimit()
+      .then(Parser.GetData)
+      .then(showSuccess)
+      .catch(showError);
 }
 
 exports.setLoc = (req, res) => {

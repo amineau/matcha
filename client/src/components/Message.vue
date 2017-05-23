@@ -23,18 +23,25 @@
     data () {
       return {
         messages: [],
-        ready: false
+        ready: false,
+        id: null,
+        httpOption: {}
       }
     },
     props: {
       auth: Function
     },
     created () {
+      const auth = this.auth()
+      if (!auth.success) return console.log(auth.err)
+      this.id = auth.decoded.id
+      this.httpOption = auth.httpOption
       this.$http.get(`${CONFIG.BASEURL_API}chat`, this.httpOption)
         .then(res => {
           if (!res.body.success) return console.log(res.body.err)
           this.messages = res.body.data
           let promises =[]
+          console.log(this.messages)
           this.messages.forEach(e => {
             promises.push(this.getUser(e))
           })
@@ -45,6 +52,7 @@
     },
     methods: {
       getUser (message) {
+        console.log('message',message)
         const id = message.users.find(e => e !== this.id)
         return this.$http.get(`${CONFIG.BASEURL_API}user/id/${id}`, this.httpOption)
           .then(res => {
@@ -52,18 +60,6 @@
             this.$set(message, 'user', res.body.data[0])
           })
       }
-    },
-    computed: {
-      httpOption () {
-        const auth = this.auth()
-        if (!auth.success) return console.log(auth.err)
-        return auth.httpOption
-      },
-      id () {
-        const auth = this.auth()
-        if (!auth.success) return console.log(auth.err)
-        return auth.decoded.id
-      },
     },
     components: {
       defaultLayout,

@@ -23,6 +23,7 @@
             httpOption: {
               responseType: 'json',
               headers: {
+                "x-forwarded-for": this.ip,
                 "matcha-token": token
               }
             }
@@ -30,6 +31,14 @@
         } catch (err) {
           return {success: false, err}
         }
+      }
+    },
+    computed: {
+      ip() {
+        this.$http.get('http://freegeoip.net/json/').then(res => {
+          if (res.status !== 200) return null
+          return res.data.ip
+        })
       }
     }
   }

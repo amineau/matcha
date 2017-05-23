@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div v-if="active">
+    <div v-show="active">
       <div class='row'>
         <div class="input-field col s12">
           <label>Tags</label>
           <tagbutton :auth="auth" :autocomplete="true" :init="false"></tagbutton>
         </div>
       </div>
-      <formInputs :inputs="inputs" :submit="search" button="Rechercher"></formInputs>
+      <formInputs :inputs="inputs" :submit="search" :active="active" button="Rechercher"></formInputs>
     </div>
     <div @click="active=!active" class="search center text-blue-m"><i :class='{"fa-chevron-down": !active, "fa-chevron-up": active}' class="fa" aria-hidden="true"></i> Recherche</div>
   </div>
@@ -24,15 +24,14 @@
     data () {
       return {
         active: false,
-        httpOption: null,
         inputs: [{
           name: 'age',
           text: 'Âge',
           formatter: '{value}ans',
           type: 'range',
-          min: 18,
-          max: 77,
-          value: [18, 77],
+          min: 0,
+          max: 1,
+          value: [0, 1],
           interval: 1,
           label: true
         },{
@@ -41,8 +40,8 @@
           formatter: '{value} points',
           type: 'range',
           min: 0,
-          max: 2000,
-          value: [0, 2000],
+          max: 10,
+          value: [0, 10],
           interval: 10,
           label: true
         },{
@@ -51,11 +50,12 @@
           formatter: '{value}km',
           type: 'range',
           min: 0,
-          max: 200,
+          max: 2000,
           value: 100,
           interval: 1,
           label: true
-        }]
+        }],
+        httpOption: {}
       }
     },
     props: {
@@ -64,13 +64,41 @@
       selected: String,
       meaning: Number
     },
+    created () {
+      const auth = this.auth()
+      if (!auth.success) return console.log(auth.err)
+      this.httpOption = auth.httpOption
+      this.$http.get(`${CONFIG.BASEURL_API}user/limits`, this.httpOption)
+        .then(res => {
+          if (!res.body.success) return console.log(res.body.err)
+          const data = res.body.data[0]
+          this.inputs[0].min = this.calculateAge(data.age_min)
+          this.inputs[0].max = this.calculateAge(data.age_max)
+          this.inputs[0].value = [this.inputs[0].min, this.inputs[0].max]
+          this.inputs[1].max = data.score
+          this.inputs[1].value = [0, data.score]
+          console.log(this.inputs[1].value)
+        })
+
+    },
     methods: {
       search () {
-        const auth = this.auth()
-        if (!auth.success) return console.log(auth.err)
-        this.$http.get(`${CONFIG.BASEURL_API}users?${this.params.join('&')}`, auth.httpOption)
+        this.$http.get(`${CONFIG.BASEURL_API}users?${this.params.join('&')}`, this.httpOption)
           .then(this.update)
           .then(() => this.active=false)
+      },
+      calculateAge (birthDate) {
+          birthDate = new Date(birthDate)
+          const now = new Date()
+
+          var years = (now.getFullYear() - birthDate.getFullYear())
+
+          if (now.getMonth() < birthDate.getMonth()
+              || now.getMonth() == birthDate.getMonth()
+              && now.getDate() < birthDate.getDate()) {
+              years--
+          }
+          return years
       }
     },
     computed: {

@@ -66,8 +66,9 @@
     data () {
       return {
         ready: false,
-        httpOption: {},
-        notifs: []
+        notifs: [],
+        id: null,
+        httpOption: {}
       }
     },
     props: {
@@ -75,9 +76,10 @@
     },
     created () {
       const auth = this.auth()
-      if (!auth.success) return this.$router.replace('/')
-      this.ready = true
+      if (!auth.success) return console.log(auth.err)
+      this.id = auth.decoded.id
       this.httpOption = auth.httpOption
+      this.ready = true
       this.$options.sockets.user = (users) => {
         let list = []
         Object.keys(users).map((objectKey) => {
@@ -87,16 +89,16 @@
       }
       let vm = this
       $(window).focus(function() {
-        vm.$socket.emit('online', auth.decoded.id)
+        vm.$socket.emit('online', vm.id)
       })
 
       $(window).blur(function() {
-        vm.$socket.emit('focus off', auth.decoded.id)
+        vm.$socket.emit('focus off', vm.id)
       })
       navigator.geolocation.getCurrentPosition(pos => this.setPosition(pos.coords), err => {
         this.$http.get(`http://ip-api.com/json`).then(res => {
           this.setPosition({latitude: res.data.lat, longitude: res.data.lon})
-        }).catch(err => console.log(err))
+        })
       })
     },
     methods: {

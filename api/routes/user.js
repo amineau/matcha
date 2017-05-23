@@ -21,14 +21,10 @@ module.exports = (app) => {
 	app.get('/users/visited', restrict, user.getVisited)
 	app.get('/users/visite', restrict, user.getVisite)
 	app.get('/user/:by/:data', restrict, user.getByData)
-
-	app.get('oauth2callback', passport.authenticate('google', { failureRedirect: '/auth/signin' }),
-  function(req, res) {
-		console.log('coucou')
-    // Successful authentication, redirect home.
-    res.redirect('/');
-  })
+	app.get('/user/limits', restrict, user.limits)
 
 	app.delete('/user', restrict, user.delete)
+
+
 
 }

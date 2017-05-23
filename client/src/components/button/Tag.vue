@@ -16,6 +16,7 @@
       autocomplete: Boolean
     },
     mounted () {
+      console.log('coucou')
       const auth = this.auth()
       if (!auth.success) return console.log(auth.error)
       const id = auth.decoded.id

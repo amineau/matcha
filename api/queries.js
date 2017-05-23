@@ -70,8 +70,13 @@ module.exports = class Queries {
     return new Promise ((resolve, reject) => {
       this._collection.find({users: id}).toArray((err, docs) => {
         if (err) return reject({error: err})
-        docs.forEach(e => {
-          e.chat = e.chat.slice(-1)[0]
+        console.log('docs', docs)
+        docs.forEach((e, k) => {
+          if (e.chat) {
+            e.chat = e.chat.slice(-1)[0]
+          } else {
+            docs.splice(k,1)
+          }
         })
         docs.sort((a,b) => b.chat.timestamp - a.chat.timestamp)
         console.log('Find messages', docs)

@@ -4,7 +4,6 @@
     <div v-for='photo in photos'>
       <div>
         <img :src="photo.base64" :width="photo.head?360:200" :height="photo.head?360:200" />
-        <!-- <img :src="photo.base64" /> -->
       </div>
       <div v-show="!photo.head" @click="deleteImage(photo.id)">
         <i class="fa fa-close" aria-hidden="true"></i>
@@ -42,7 +41,7 @@
       if (!auth.success) return alert(auth.err)
       this.httpOption = auth.httpOption
       this.$http.get(`${CONFIG.BASEURL_API}pic/${auth.decoded.id}`, this.httpOption).then(res => {
-        if (!res.body.success ) return null
+        if (!res.body.success ) return console.log(res.body.err)
         this.photos = res.body.data
         if (!this.photos.length) {
           this.photos.push({base64: `src/assets/M-silhouette.jpg`, head: true})

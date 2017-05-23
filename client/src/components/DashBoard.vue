@@ -23,9 +23,14 @@
         </div>
       </div>
       <div class="row">
-       <div v-for="people in peoples" class="col s6 l4">
-         <card :httpOption="httpOption" :people="people"></card>
+       <div v-for="n in size" class="col s6 l4">
+         <card :httpOption="httpOption" :people="peoples[n-1]"></card>
        </div>
+       <infinite-loading class="col s12" :on-infinite="onInfinite" ref="infiniteLoading">
+         <span slot="no-more">
+            Fin
+         </span>
+       </infinite-loading>
      </div>
    </div>
    <googleMap v-if="!list" :markers="markers" :auth="auth"></googleMap>
@@ -39,6 +44,7 @@
   import card from './Card.vue'
   import googleMap from './Map.vue'
   import search from './Search.vue'
+  import InfiniteLoading from 'vue-infinite-loading'
   import CONFIG from '../../config/conf.json'
 
   export default {
@@ -48,6 +54,7 @@
         list: true,
         selected: 'score',
         meaning: -1,
+        size: 0,
         options: [
           {text: 'Popularité', value: 'score'},
           {text: 'Âge', value: 'birthday'},
@@ -56,14 +63,19 @@
         ],
         peoples: [],
         markers: [],
-        httpOption: null,
-        users: {}
+        users: {},
+        id: null,
+        httpOption: {}
       }
     },
     props: {
       auth: Function
     },
     created () {
+      const auth = this.auth()
+      if (!auth.success) return console.log(auth.err)
+      this.id = auth.decoded.id
+      this.httpOption = auth.httpOption
       let vm = this
       $(function() {
         $('select').material_select()
@@ -71,18 +83,18 @@
              vm.selected = e.currentTarget.value;
         })
       })
-      const auth = this.auth()
-      if (!auth.success) return console.log(auth.error)
-      this.httpOption = auth.httpOption
-      this.$http.get(`${CONFIG.BASEURL_API}users?distance=100&sort=${this.selected}&meaning=${this.meaning}`, auth.httpOption)
+      this.$http.get(`${CONFIG.BASEURL_API}users?distance=100&sort=${this.selected}&meaning=${this.meaning}`, this.httpOption)
         .then(this.updatePeople)
-        .then(() => this.$socket.emit('online', auth.decoded.id))
+        .then(() => {
+          console.log('id', this.id)
+          this.$socket.emit('online', this.id)
+        })
+
     },
     methods: {
       updatePeople (res) {
         return new Promise((resolve) => {
           if (!res.body.success) return console.log(res.body.err)
-          console.log(res.body.data)
           this.peoples = res.body.data
           this.markers = []
           this.peoples.forEach(e => {
@@ -104,15 +116,41 @@
               path: () => this.$router.push({name: 'user', params: { id: e.id }})
             })
           })
+          this.reloadInfinite()
           resolve()
         })
+      },
+      reloadInfinite () {
+        if (!this.$refs.infiniteLoading) return null
+        this.size = Math.min(6, this.peoples.length)
+        this.$nextTick(() => {
+          this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
+        })
+      },
+      onInfinite() {
+        if (!this.$refs.infiniteLoading) return null
+          setTimeout(() => {
+            this.size = Math.min(this.size+6, this.peoples.length)
+            this.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded')
+            if (this.size === this.peoples.length) {
+              this.$refs.infiniteLoading.$emit('$InfiniteLoading:complete')
+            }
+          }, 1000)
+        }
+    },
+    watch: {
+      list() {
+        if (this.list) {
+          this.reloadInfinite()
+        }
       }
     },
     components: {
       search,
       defaultLayout,
       card,
-      googleMap
+      googleMap,
+      InfiniteLoading
     }
   }
 

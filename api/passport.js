@@ -2,11 +2,9 @@
 
 const passport      = require('passport')
 const LocalStrategy = require('passport-local').Strategy
-const GoogleStrategy = require('passport-google-oauth20').Strategy
 const UserQuery     = require("./models/shema/user")
 const DbParser	 	  = require("./models/parser/db")
 const bcrypt        = require('bcrypt')
-const conf          = require('./config/conf.json')
 
 const Parser = new DbParser()
 const Query  = new UserQuery()
@@ -30,18 +28,5 @@ passport.use(new LocalStrategy({
     })
     .catch(err => done(err))
 }))
-
-passport.use(new GoogleStrategy({
-    clientID: conf.google.CLIENT_ID,
-    clientSecret: conf.google.CLIENT_SECRET,
-    callbackURL: "http://localhost:4242/oauth2callback"
-  }, (accessToken, refreshToken, profile, cb) => {
-    console.log('profile', profile)
-    console.log('accessToken', accessToken)
-    console.log('refreshToken', refreshToken)
-    console.log('cb', cb)
-
-  })
-)
 
 module.exports = passport

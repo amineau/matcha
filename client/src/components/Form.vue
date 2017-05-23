@@ -9,7 +9,6 @@
       <div v-else-if="input.type === 'radio'" class='radio'>
         <p v-for="option in input.options">
           <input :name="input.name" type="radio" :id="option.name" :value="option.name" v-model.lazy='input.value'/>
-          {{input.value}}
           <label :for="option.name">{{option.text}}</label>
           <div v-if="input.value==='place'">
             <gmap-autocomplete
@@ -24,7 +23,9 @@
           </div>
         </p>
       </div>
-      <vue-slider v-else-if="input.type === 'range'" v-model="input.value"
+      <vue-slider  v-else-if="input.type === 'range'" v-model="input.value"
+        ref="slider"
+        :real-time="true"
         :min='input.min'
         :max='input.max'
         :style='{"marginLeft": "160px", "marginRight": "20px", "marginBottom": "10px", "marginTop": "10px"}'
@@ -66,7 +67,8 @@
     props: {
       inputs: Array,
       submit: Function,
-      button: String
+      button: String,
+      active: Boolean
     },
     components: {
       vueSlider
@@ -157,6 +159,13 @@
         this.latLng = {
           lat: place.geometry.location.lat(),
           lng: place.geometry.location.lng()
+        }
+      }
+    },
+    watch: {
+      active () {
+        if (this.active) {
+          this.$refs.slider.forEach(e => e.refresh())
         }
       }
     }

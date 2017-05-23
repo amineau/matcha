@@ -232,6 +232,20 @@ module.exports = class UserQuery {
       })
     }
 
+    GetLimit() {
+      return new Promise((resolve, reject) => {
+       const query =
+           `MATCH (u: User)
+            RETURN max(u.birthday)   AS age_min,
+                   min(u.birthday)   AS age_max,
+                   max(u.score) AS score`
+
+        db.doDatabaseOperation(query, {})
+          .then(data => resolve(data))
+          .catch(err => reject(err))
+      })
+    }
+
     Set(where, set) {
         return new Promise((resolve, reject) => {
           if (_.isEmpty(where) || _.isEmpty(set)) {

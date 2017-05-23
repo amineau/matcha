@@ -1,45 +1,49 @@
 <template>
   <defaultLayout :auth="auth">
-    <div v-if="find" class="user">
-      <div class="img-profil">
-        <div v-for='photo in photos'>
-            <img class="materialboxed" :src="photo.base64" :width="photo.head?300:300/4" :height="photo.head?300:300/4" />
+    <div v-show="ready">
+
+      <div v-if="user.id" class="user">
+        <div class="img-profil">
+          <div v-for='photo in photos'>
+              <img class="materialboxed" :src="photo.base64" :width="photo.head?300:300/4" :height="photo.head?300:300/4" />
+          </div>
         </div>
-      </div>
-      <div class='infos'>
+        <div class='infos'>
+          <div>
+            <like :httpOption="httpOption" :people="user"></like>
+            <chat :httpOption="httpOption" :people="user"></chat>
+            <h5><span class='login'>{{user.login}}</span>, <span>{{calculateAge(user.birthday)}} ans</span> <online :id="user.id"></online></h5>
+            <div class='bio'>{{user.bio}}</div>
+            <div>Membre depuis le {{memberSince}}</div>
+            <div v-show="!status">Dernière connexion le {{lastConnection}}</div>
+            <div><i class="fa fa-star-o" aria-hidden="true"></i> {{user.score}} points</div>
+            <div>
+              <i class="fa fa-venus-mars" aria-hidden="true"></i>
+              <span v-if="user.sex === 'M'">Homme</span>
+              <span v-else>Femme</span>
+            </div>
+            <div>
+              <i class="fa fa-heart-o" aria-hidden="true"></i>
+              <span v-if="user.prefer === 'M'">Homme</span>
+              <span v-else-if="user.prefer === 'W'">Femme</span>
+              <span v-else-if="user.prefer === 'B'">Homme et Femme</span>
+              <span v-else>Non renseigné</span>
+            </div>
+            <div class='chips'>
+              <div v-for='tag in tags' :class="{'brown-m': tag.commun}" class='chip'>{{tag.name}}</div>
+            </div>
+          </div>
+        </div>
         <div>
-          <like :httpOption="httpOption" :people="user"></like>
-          <chat :httpOption="httpOption" :people="user"></chat>
-          <h5><span class='login'>{{user.login}}</span>, <span>{{calculateAge(user.birthday)}} ans</span> <online :id="user.id"></online></h5>
-          <div class='bio'>{{user.bio}}</div>
-          <div>Membre depuis le {{memberSince}}</div>
-          <div v-show="!status">Dernière connexion le {{lastConnection}}</div>
-          <div><i class="fa fa-star-o" aria-hidden="true"></i> {{user.score}} points</div>
-          <div>
-            <i class="fa fa-venus-mars" aria-hidden="true"></i>
-            <span v-if="user.sex === 'M'">Homme</span>
-            <span v-else>Femme</span>
-          </div>
-          <div>
-            <i class="fa fa-heart-o" aria-hidden="true"></i>
-            <span v-if="user.prefer === 'M'">Homme</span>
-            <span v-else-if="user.prefer === 'W'">Femme</span>
-            <span v-else-if="user.prefer === 'B'">Homme et Femme</span>
-            <span v-else>Non renseigné</span>
-          </div>
-          <div class='chips'>
-            <div v-for='tag in tags' :class="{'brown-m': tag.commun}" class='chip'>{{tag.name}}</div>
-          </div>
+          <block :httpOption="httpOption" :people="user"></block>
+          <report :httpOption="httpOption" :people="user"></report>
         </div>
       </div>
-      <div>
-        <block :httpOption="httpOption" :people="user"></block>
-        <report :httpOption="httpOption" :people="user"></report>
+      <div v-else>
+        Aucun utilisateur trouvé
       </div>
     </div>
-    <div v-else>
-      Aucun utilisateur trouvé
-    </div>
+
   </defaultLayout>
 </template>
 
@@ -63,8 +67,8 @@
         photos: [],
         tags: [],
         id: Number(this.$route.params.id),
-        find: true,
         status:0,
+        ready: false
       }
     },
     created () {
@@ -107,8 +111,10 @@
               if (!res.body.success) return console.log(res.body.err)
             })
         ]))
+        .then(() => this.ready = true)
+        .catch(() => this.ready = true)
         .then(() => this.$socket.emit('online', this.userId))
-        .catch(err => this.find = false)
+
       this.$root.$on('userUpdate', (users) => this.status = users.find(e => e.id === this.id))
     },
     computed: {

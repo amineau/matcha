@@ -29,7 +29,7 @@ app.use(morgan('dev'))
 	.use((req, res, next) => {
 		res.header("Access-Control-Allow-Origin", "*")
 		res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE")
-		res.header("Access-Control-Allow-Headers", "Origin, matcha-token,Content-Type, *")
+		res.header("Access-Control-Allow-Headers", "Origin, x-forwarded-for, matcha-token,Content-Type, *")
 		next()
 	})
 	.use((req, res, next) => {
@@ -40,6 +40,7 @@ app.use(morgan('dev'))
 	      req.connection.remoteAddress ||
 	      req.socket.remoteAddress ||
 	      req.connection.socket.remoteAddress
+
 	    fs.open(path.join(__dirname, 'logs', 'restrict.log'), 'a', (err, fd) => {
 	      if (err) throw err
 	      const buffer = `${new Date().toUTCString()} | id : ${id} | ${ipInfo} | ${req.method} ${req.originalUrl}\n`
@@ -57,6 +58,7 @@ app.use(morgan('dev'))
 let users = {}
 io.on('connection', function(socket){
 	socket.on('online', (id) => {
+		console.log('socket online id ------------------------ ', users)
 		users[socket.id] = {id, status: 1}
 		io.emit('user', users)
 	})

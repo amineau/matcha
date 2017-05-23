@@ -70,8 +70,8 @@ exports.generate = (req, res) => {
     const bio = `Hello, moi c'est ${firstName}`
     const score = Math.round(500 * Math.random())
     const birthday = new Date('12/02/19' + (99 - Math.round(20 * Math.random())).toString()).getTime()
-    const longitude = 2 + (0.5 * Math.random())
-    const latitude = 48.5 + (0.5 * Math.random())
+    const longitude = 2.18 + (0.3 * Math.random())
+    const latitude = 48.77 + (0.18 * Math.random())
     user.push({login, firstName, lastName, email, sex, prefer, bio, score, birthday, latitude, longitude, password: hash('Youhou55'), localisation: 'self'})
   }
   user.push({login: 'Toto', firstName:'Thomas', lastName:'Durand', email:'tdurand@hotmail.fr', sex:'M', prefer:'W', bio:'', score:10000, password: hash('Youhou55'), localisation: 'self', latitude: 48.896671, longitude: 2.318384, birthday: new Date('12/02/19' + (99 - Math.round(20 * Math.random())).toString()).getTime()})
@@ -96,7 +96,7 @@ exports.generate = (req, res) => {
             .then(() => Query.pic.Add({id, path: path.join(__dirname, '../../client/src/assets/profil-2.png')}))
         } else {
           const dirname = path.join(__dirname, '../../generator/photo', data.results[0].data[i++].row[1])
-          const nbFile = 1 //782
+          const nbFile = 782 //1
           const pathname = path.join(dirname, Math.round((nbFile-1)*Math.random()) + '.jpg')
             promises = Query.pic.Add({id, path: pathname})
               .then(() => Query.pic.Add({id, path: pathname}))
