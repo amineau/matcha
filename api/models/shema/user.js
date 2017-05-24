@@ -7,13 +7,13 @@ module.exports = class UserQuery {
 
     Create(data) {
         return new Promise((resolve, reject) => {
-          let tab = ''
+          let tab = []
           for (let key in data){
-            tab += `${key}:{${key}},`
+            tab.push(`${key}:{${key}}`)
           }
           const date = new Date().getTime()
           const query =
-            `CREATE(u: User{${tab} score: 0, localisation: self, dateCreate: ${date}, lastConnection = ${date}})
+            `CREATE(u: User{${tab.join(', ')}, score: 0, localisation: 'self', dateCreate: ${date}, lastConnection: ${date}})
             RETURN *`
 
           db.doDatabaseOperation(query, data)

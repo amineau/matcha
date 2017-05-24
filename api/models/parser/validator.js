@@ -41,7 +41,6 @@ module.exports = class Validator {
     return new Promise((resolve) => {
       const value = this._toParse[obj]
       if (!optionnal || (value && optionnal)) {
-        console.log('obj :', obj, 'value :', value)
         if (value
           && (!this._parser[obj].match || value.match(this._parser[obj].match))
           && (!this._parser[obj].maxLength || value.length <= this._parser[obj].maxLength)) {

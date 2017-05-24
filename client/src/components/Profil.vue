@@ -18,6 +18,7 @@
     </div>
 
     <a class="modal-trigger waves-effect waves-light btn" href="#changePassword">Changer de mot de passe</a>
+    <router-link class="modal-trigger waves-effect waves-light btn" :to="{name: 'user', params:{id}}">Profil public</router-link>
 
     <!-- Modal Structure -->
     <div id="changePassword" class="modal modal-fixed-footer">
@@ -43,6 +44,8 @@
     name: 'Profil',
     data () {
       return {
+        httpOption: {},
+        id: 0,
         address: '',
         inputs: [{
           name: 'email',
@@ -125,6 +128,10 @@
       }
     },
     created () {
+      const auth = this.auth()
+      if (!auth.success) return console.log(auth.err)
+      this.httpOption = auth.httpOption
+      this.id = auth.decoded.id
       this.inputs.forEach(e => {
         this.$set(e, 'value', null)
         this.$set(e, 'edit', false)
@@ -223,18 +230,6 @@
       },
       getAddressData (addressData, placeResultData) {
         this.address = addressData;
-      }
-    },
-    computed: {
-      httpOption () {
-        const auth = this.auth()
-        if (!auth.success) return console.log(auth.err)
-        return auth.httpOption
-      },
-      id () {
-        const auth = this.auth()
-        if (!auth.success) return console.log(auth.err)
-        return auth.decoded.id
       }
     },
     props: ['auth'],

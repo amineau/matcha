@@ -50,7 +50,7 @@
           formatter: '{value}km',
           type: 'range',
           min: 0,
-          max: 2000,
+          max: 300,
           value: 100,
           interval: 1,
           label: true

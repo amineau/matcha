@@ -14,7 +14,6 @@ exports.get = (req, res) => {
   const query = req.app.get('query')
 
   const showSuccess = (data) => {
-    console.log('data', data)
     res.json({
       data,
       success: true

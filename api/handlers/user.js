@@ -311,7 +311,6 @@ exports.set = (req, res) => {
             return Promise.all(promises)
               .then(res => {
                 res.every((e, k) => {
-                  console.log(e)
                   if (!_.isEmpty(e.results[0].data[0])) {
                     return reject({
                       error: {
@@ -402,7 +401,6 @@ exports.setPassword = (req, res) => {
       .then(Parser.GetData)
       .then(user => {
         return new Promise((resolve, reject) => {
-          console.log(password, user[0].password)
           if (!bcrypt.compareSync(password, user[0].password))
             return reject({error: {oldPassword: {message: 'Mot de passe incorrect'}}})
           resolve()

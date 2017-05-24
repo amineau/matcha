@@ -3,7 +3,7 @@
   <gmap-map
     :center="center"
     :zoom="10"
-    style="width: 100%; height: 400px"
+    style="width: 100%; height: 50vw"
   >
     <gmap-marker
       v-for="m in markers"
@@ -34,8 +34,8 @@
     data () {
       return {
         center: {
-          lat: 48.0,
-          lng: 2.0
+          lat: 48.896460,
+          lng: 2.318439
         },
         myPosition: {}
       }

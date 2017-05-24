@@ -84952,8 +84952,8 @@ exports.default = {
   data: function data() {
     return {
       center: {
-        lat: 48.0,
-        lng: 2.0
+        lat: 48.896460,
+        lng: 2.318439
       },
       myPosition: {}
     };
@@ -85183,12 +85183,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //
 //
 //
+//
 
 
 exports.default = {
   name: 'Profil',
   data: function data() {
     return {
+      httpOption: {},
+      id: 0,
       address: '',
       inputs: [{
         name: 'email',
@@ -85273,6 +85276,10 @@ exports.default = {
   created: function created() {
     var _this = this;
 
+    var auth = this.auth();
+    if (!auth.success) return console.log(auth.err);
+    this.httpOption = auth.httpOption;
+    this.id = auth.decoded.id;
     this.inputs.forEach(function (e) {
       _this.$set(e, 'value', null);
       _this.$set(e, 'edit', false);
@@ -85378,18 +85385,6 @@ exports.default = {
       this.address = addressData;
     }
   },
-  computed: {
-    httpOption: function httpOption() {
-      var auth = this.auth();
-      if (!auth.success) return console.log(auth.err);
-      return auth.httpOption;
-    },
-    id: function id() {
-      var auth = this.auth();
-      if (!auth.success) return console.log(auth.err);
-      return auth.decoded.id;
-    }
-  },
   props: ['auth'],
   components: {
     defaultLayout: _Default2.default,
@@ -85460,7 +85455,7 @@ exports.default = {
         formatter: '{value}km',
         type: 'range',
         min: 0,
-        max: 2000,
+        max: 300,
         value: 100,
         interval: 1,
         label: true
@@ -85600,7 +85595,7 @@ exports.default = {
     var _this = this;
 
     var auth = this.auth();
-    if (!auth.success) return alert(auth.err);
+    if (!auth.success) return console.log(auth.err);
     this.httpOption = auth.httpOption;
     this.$http.get(_conf2.default.BASEURL_API + 'pic/' + auth.decoded.id, this.httpOption).then(function (res) {
       if (!res.body.success) return console.log(res.body.err);
@@ -85619,6 +85614,7 @@ exports.default = {
       var files = e.target.files || e.dataTransfer.files;
       if (!files.length) return;
       this.createImage(files[0]);
+      $('input[type=file]').val('');
     },
     createImage: function createImage(file) {
       var _this2 = this;
@@ -85636,7 +85632,8 @@ exports.default = {
         var base64 = canvas.toDataURL("image/png");
 
         _this2.$http.post(_conf2.default.BASEURL_API + 'pic', { base64: base64 }, _this2.httpOption).then(function (res) {
-          if (!res.body.success) return alert('Erreur lors du post pic');
+          if (!res.body.success) return console.log(res.body.err);
+          console.log(res.body.data);
           var id = res.body.data[0].id;
           _this2.photos.push({ base64: base64, id: id, head: _this2.photos.length === 0 });
         });
@@ -85984,12 +85981,18 @@ exports.default = {
       tags: [],
       id: Number(this.$route.params.id),
       status: 0,
-      ready: false
+      ready: false,
+      httpOption: {},
+      userId: 0
     };
   },
-  created: function created() {
+  mounted: function mounted() {
     var _this = this;
 
+    var auth = this.auth();
+    if (!auth.success) return console.log(auth.err);
+    this.httpOption = auth.httpOption;
+    this.userId = auth.decoded.id;
     this.$http.get(_conf2.default.BASEURL_API + 'user/id/' + this.id, this.httpOption).then(function (res) {
       if (!res.body.success || _lodash2.default.isEmpty(res.body.data)) return _promise2.default.reject(res.body.err);
       _this.user = res.body.data[0];
@@ -86040,17 +86043,6 @@ exports.default = {
   },
 
   computed: {
-    httpOption: function httpOption() {
-      var auth = this.auth();
-      if (auth.decoded.id === this.$route.params.id) return this.$router.replace({ name: 'dashBoard' });
-      if (!auth.success) return console.log(auth.err);
-      return auth.httpOption;
-    },
-    userId: function userId() {
-      var auth = this.auth();
-      if (!auth.success) return console.log(auth.err);
-      return auth.decoded.id;
-    },
     memberSince: function memberSince() {
       return (0, _dateformat2.default)(this.user.dateCreate, 'dd/mm/yyyy');
     },
@@ -86311,12 +86303,15 @@ exports.default = {
   created: function created() {
     var _this = this;
 
-    this.$root.$on('userUpdate', function (users) {
-      var list = users.find(function (e) {
-        return e.id === _this.id;
-      });
-      _this.status = list ? list.status : 0;
-    });
+    this.$options.sockets.user = function (users) {
+      var list = [];
+      for (var elem in users) {
+        if (users[elem].id === _this.id) {
+          return _this.status = users[elem].status;
+        }
+      }
+      return _this.status = 0;
+    };
   }
 };
 
@@ -86555,15 +86550,11 @@ exports.default = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function($) {
+
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _keys = __webpack_require__(153);
-
-var _keys2 = _interopRequireDefault(_keys);
 
 var _Dropdown = __webpack_require__(528);
 
@@ -86657,21 +86648,14 @@ exports.default = {
     this.id = auth.decoded.id;
     this.httpOption = auth.httpOption;
     this.ready = true;
-    this.$options.sockets.user = function (users) {
-      var list = [];
-      (0, _keys2.default)(users).map(function (objectKey) {
-        list.push(users[objectKey]);
-      });
-      _this.$root.$emit('userUpdate', list);
-    };
-    var vm = this;
-    $(window).focus(function () {
-      vm.$socket.emit('online', vm.id);
-    });
-
-    $(window).blur(function () {
-      vm.$socket.emit('focus off', vm.id);
-    });
+    // let vm = this
+    // $(window).focus(function() {
+    //   vm.$socket.emit('online', vm.id)
+    // })
+    //
+    // $(window).blur(function() {
+    //   vm.$socket.emit('focus off', vm.id)
+    // })
     navigator.geolocation.getCurrentPosition(function (pos) {
       return _this.setPosition(pos.coords);
     }, function (err) {
@@ -86682,6 +86666,12 @@ exports.default = {
   },
 
   methods: {
+    online: function online() {
+      this.$socket.emit('online', this.id);
+    },
+    focusOff: function focusOff() {
+      this.$socket.emit('focus off', this.id);
+    },
     logout: function logout() {
       this.$cookie.delete('token');
       this.$router.replace('/');
@@ -86702,7 +86692,6 @@ exports.default = {
     dropdown: _Dropdown2.default
   }
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
 /* 423 */
@@ -88869,7 +88858,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, "\n.img-profil {\n  display: flex;\n  flex-wrap: wrap;\n  width: 300px;\n}\nimg {\n  padding: 5px;\n}\n.user {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: space-around;\n  align-items: center;\n}\n.infos {\n  flex:1;\n  min-width: 300px;\n  padding: 10px;\n  display: flex;\n  justify-content: center;\n}\n.user > div:last-child {\n  width: 100%;\n}\n.login {\n  font-weight: bold;\n}\n.bio {\n  font-style: italic;\n  padding: 0 0 .8em .8em;\n}\n.infos > div > div:not(.chip) {\n  color: #bdbdbd;\n}\n.chips {\n  margin-top: 30px;\n  border-bottom: none;\n}\n\n\n", ""]);
+exports.push([module.i, "\n.img-profil {\n  display: flex;\n  flex-wrap: wrap;\n  width: 300px;\n}\n.img-profil img {\n  padding: 5px;\n}\n.user {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: space-around;\n  align-items: center;\n}\n.infos {\n  flex:1;\n  min-width: 300px;\n  padding: 30px;\n  display: flex;\n  justify-content: center;\n}\n.user > div:last-child {\n  width: 100%;\n}\n.login {\n  font-weight: bold;\n}\n.bio {\n  font-style: italic;\n  padding: 0 0 .8em .8em;\n}\n.infos > div > div:not(.chip) {\n  color: #bdbdbd;\n}\n.infos .chips {\n  margin-top: 30px;\n  border-bottom: none;\n  max-width: 500px;\n}\n\n\n", ""]);
 
 // exports
 
@@ -88897,7 +88886,7 @@ exports = module.exports = __webpack_require__(4)(undefined);
 
 
 // module
-exports.push([module.i, "\n.img-profil {\n  display: flex;\n  align-items: flex-end;\n  flex-wrap: wrap;\n}\n.img-profil > div {\n  position: relative;\n  margin: 10px;\n}\n.img-profil > div > div:nth-child(1) {\n  z-index: 1;\n}\n.img-profil > div > div:nth-child(2) {\n  position: absolute;\n  z-index: 2;\n  display: none;\n  padding: 5px;\n  border-radius: 20px;\n  background-color: rgba(238, 238, 238, 0.5);\n  cursor: pointer;\n  top: 10px;\n  right: 10px;\n}\n.img-profil > div > div:nth-child(3) {\n  background-color: rgba(238, 238, 238, 0.5);\n  position: absolute;\n  z-index: 2;\n  display: none;\n  bottom: 0;\n  right: 0;\n  left: 0;\n  height: 30%;\n  width: auto;\n  margin: auto;\n  cursor: pointer;\n  font-weight: bold;\n}\n.img-profil > div > div:nth-child(3) div {\n  width: 100%;\n}\n.img-profil > div > div:nth-child(2) i {\n  padding: 5px;\n}\n.img-profil > div > div:nth-child(2) div {\n  max-width: 0px;\n  overflow: hidden;\n  font-weight: bold;\n}\n.img-profil > div > div:nth-child(n+2):hover{\n  background-color: rgba(158, 158, 158, 0.7);\n  transition: background-color 1s;\n  -webkit-transition: background-color 1s;\n}\n.img-profil > div > div:nth-child(2):hover div {\n  margin: auto;\n  padding-right: 5px;\n  transition: max-width 1s;\n  -webkit-transition: max-width 1s;\n  max-width: 100px;\n}\n.img-profil > div:hover > div:nth-child(n+2) {\n  display: flex;\n}\n.img-profil .add {\n  width: 200px;\n  height: 200px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  cursor: pointer;\n}\n.img-profil .add:hover i {\n  transition: color 0.5s;\n  -webkit-transition: color 0.5s;\n  color: #4fc3f7\n}\n\n", ""]);
+exports.push([module.i, "\n.img-set {\n  display: flex;\n  align-items: flex-end;\n  flex-wrap: wrap;\n}\n.img-set > div {\n  position: relative;\n  margin: 10px;\n}\n.img-set > div > div:nth-child(1) {\n  z-index: 1;\n}\n.img-set > div > div:nth-child(2) {\n  position: absolute;\n  z-index: 2;\n  display: none;\n  padding: 5px;\n  border-radius: 20px;\n  background-color: rgba(238, 238, 238, 0.5);\n  cursor: pointer;\n  top: 10px;\n  right: 10px;\n}\n.img-set > div > div:nth-child(3) {\n  background-color: rgba(238, 238, 238, 0.5);\n  position: absolute;\n  z-index: 2;\n  display: none;\n  bottom: 0;\n  right: 0;\n  left: 0;\n  height: 30%;\n  width: auto;\n  margin: auto;\n  cursor: pointer;\n  font-weight: bold;\n}\n.img-set > div > div:nth-child(3) div {\n  width: 100%;\n}\n.img-set > div > div:nth-child(2) i {\n  padding: 5px;\n}\n.img-set > div > div:nth-child(2) div {\n  max-width: 0px;\n  overflow: hidden;\n  font-weight: bold;\n}\n.img-set > div > div:nth-child(n+2):hover{\n  background-color: rgba(158, 158, 158, 0.7);\n  transition: background-color 1s;\n  -webkit-transition: background-color 1s;\n}\n.img-set > div > div:nth-child(2):hover div {\n  margin: auto;\n  padding-right: 5px;\n  transition: max-width 1s;\n  -webkit-transition: max-width 1s;\n  max-width: 100px;\n}\n.img-set > div:hover > div:nth-child(n+2) {\n  display: flex;\n}\n.img-set .add {\n  width: 200px;\n  height: 200px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  cursor: pointer;\n}\n.img-set .add:hover i {\n  transition: color 0.5s;\n  -webkit-transition: color 0.5s;\n  color: #4fc3f7\n}\n\n", ""]);
 
 // exports
 
@@ -98888,6 +98877,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       staticClass: "chip",
       class: {
         'brown-m': tag.commun
+      },
+      on: {
+        "click": function($event) {
+          $event.preventDefault();
+          $event.stopPropagation();
+        }
       }
     }, [_vm._v(_vm._s(tag.name))])
   }))], 1)]), _vm._v(" "), _c('div', [_c('block', {
@@ -98938,9 +98933,13 @@ if (false) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "img-profil"
+    staticClass: "img-set"
   }, [_vm._l((_vm.photos), function(photo) {
-    return _c('div', [_c('div', [_c('img', {
+    return _c('div', [_c('div', {
+      style: ({
+        height: photo.head ? '360px' : '200px'
+      })
+    }, [_c('img', {
       attrs: {
         "src": photo.base64,
         "width": photo.head ? 360 : 200,
@@ -99098,6 +99097,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "layout",
     attrs: {
       "id": "default-layout"
+    },
+    on: {
+      "focus": _vm.online,
+      "blur": _vm.focusOff
     }
   }, [_c('header', [_c('nav', [_c('div', {
     staticClass: "container"
@@ -99272,7 +99275,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "href": "#changePassword"
     }
-  }, [_vm._v("Changer de mot de passe")]), _vm._v(" "), _c('div', {
+  }, [_vm._v("Changer de mot de passe")]), _vm._v(" "), _c('router-link', {
+    staticClass: "modal-trigger waves-effect waves-light btn",
+    attrs: {
+      "to": {
+        name: 'user',
+        params: {
+          id: _vm.id
+        }
+      }
+    }
+  }, [_vm._v("Profil public")]), _vm._v(" "), _c('div', {
     staticClass: "modal modal-fixed-footer",
     attrs: {
       "id": "changePassword"
@@ -99728,7 +99741,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   return _c('gmap-map', {
     staticStyle: {
       "width": "100%",
-      "height": "400px"
+      "height": "50vw"
     },
     attrs: {
       "center": _vm.center,

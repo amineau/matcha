@@ -30,7 +30,7 @@
               <span v-else>Non renseigné</span>
             </div>
             <div class='chips'>
-              <div v-for='tag in tags' :class="{'brown-m': tag.commun}" class='chip'>{{tag.name}}</div>
+              <div v-for='tag in tags' @click.prevent.stop :class="{'brown-m': tag.commun}" class='chip'>{{tag.name}}</div>
             </div>
           </div>
         </div>
@@ -68,10 +68,16 @@
         tags: [],
         id: Number(this.$route.params.id),
         status:0,
-        ready: false
+        ready: false,
+        httpOption: {},
+        userId: 0
       }
     },
-    created () {
+    mounted () {
+      const auth = this.auth()
+      if (!auth.success) return console.log(auth.err)
+      this.httpOption = auth.httpOption
+      this.userId = auth.decoded.id
       this.$http.get(`${CONFIG.BASEURL_API}user/id/${this.id}`, this.httpOption)
         .then(res => {
           if (!res.body.success || _.isEmpty(res.body.data)) return Promise.reject(res.body.err)
@@ -118,17 +124,6 @@
       this.$root.$on('userUpdate', (users) => this.status = users.find(e => e.id === this.id))
     },
     computed: {
-      httpOption () {
-        const auth = this.auth()
-        if (auth.decoded.id === this.$route.params.id) return this.$router.replace({name: 'dashBoard'})
-        if (!auth.success) return console.log(auth.err)
-        return auth.httpOption
-      },
-      userId () {
-        const auth = this.auth()
-        if (!auth.success) return console.log(auth.err)
-        return auth.decoded.id
-      },
       memberSince () {
         return dateformat(this.user.dateCreate, 'dd/mm/yyyy')
       },
@@ -174,7 +169,7 @@
     width: 300px;
   }
 
-  img {
+  .img-profil img {
     padding: 5px;
   }
 
@@ -188,7 +183,7 @@
   .infos {
     flex:1;
     min-width: 300px;
-    padding: 10px;
+    padding: 30px;
     display: flex;
     justify-content: center;
   }
@@ -210,9 +205,10 @@
     color: #bdbdbd;
   }
 
-  .chips {
+  .infos .chips {
     margin-top: 30px;
     border-bottom: none;
+    max-width: 500px;
   }
 
 

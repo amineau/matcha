@@ -1,5 +1,5 @@
 <template>
-  <div id="default-layout" class="layout" v-show="ready">
+  <div id="default-layout" class="layout" v-show="ready" @focus="online" @blur="focusOff">
     <header>
 
           <nav>
@@ -80,21 +80,14 @@
       this.id = auth.decoded.id
       this.httpOption = auth.httpOption
       this.ready = true
-      this.$options.sockets.user = (users) => {
-        let list = []
-        Object.keys(users).map((objectKey) => {
-          list.push(users[objectKey])
-        })
-        this.$root.$emit('userUpdate', list)
-      }
-      let vm = this
-      $(window).focus(function() {
-        vm.$socket.emit('online', vm.id)
-      })
-
-      $(window).blur(function() {
-        vm.$socket.emit('focus off', vm.id)
-      })
+      // let vm = this
+      // $(window).focus(function() {
+      //   vm.$socket.emit('online', vm.id)
+      // })
+      //
+      // $(window).blur(function() {
+      //   vm.$socket.emit('focus off', vm.id)
+      // })
       navigator.geolocation.getCurrentPosition(pos => this.setPosition(pos.coords), err => {
         this.$http.get(`http://ip-api.com/json`).then(res => {
           this.setPosition({latitude: res.data.lat, longitude: res.data.lon})
@@ -102,6 +95,12 @@
       })
     },
     methods: {
+      online () {
+        this.$socket.emit('online', this.id)
+      },
+      focusOff () {
+        this.$socket.emit('focus off', this.id)
+      },
       logout () {
         this.$cookie.delete('token')
         this.$router.replace('/')

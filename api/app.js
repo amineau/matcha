@@ -58,25 +58,29 @@ app.use(morgan('dev'))
 let users = {}
 io.on('connection', function(socket){
 	socket.on('online', (id) => {
-		console.log('socket online id ------------------------ ', users)
 		users[socket.id] = {id, status: 1}
+		console.log('online'.green, id)
 		io.emit('user', users)
 	})
 
 	socket.on('logout', () => {
 		const id = users[socket.id]
 		delete users[socket.id]
+		console.log('logout'.red, id, users)
 		io.emit('user', users)
 	})
 
 	socket.on('focus off', (id) => {
+		if (!users[socket.id]) return;
 		users[socket.id] = {id, status: 2}
+		console.log('focus off'.yellow, id)
 		io.emit('user', users)
 	})
 
 	socket.on('disconnect', () => {
 		const id = users[socket.id]
 		delete users[socket.id]
+		console.log('disconnect'.red, id)
 		io.emit('user', users)
 	})
 })

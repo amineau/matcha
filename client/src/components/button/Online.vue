@@ -20,10 +20,15 @@
       }
     },
     created () {
-      this.$root.$on('userUpdate', (users) => {
-        const list = users.find(e => e.id === this.id)
-        this.status = list ? list.status : 0
-      })
+      this.$options.sockets.user = (users) => {
+        let list = []
+        for (let elem in users) {
+          if (users[elem].id === this.id) {
+            return this.status = users[elem].status
+          }
+        }
+        return this.status = 0
+      }
     }
   }
 
