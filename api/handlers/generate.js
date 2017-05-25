@@ -69,7 +69,7 @@ exports.generate = (req, res) => {
     const prefer = 'MWB'.concat(sexOp(sex).repeat(7)).charAt(Math.round(9 * Math.random()))
     const bio = `Hello, moi c'est ${firstName}`
     const score = Math.round(500 * Math.random())
-    const birthday = new Date('12/02/19' + (99 - Math.round(20 * Math.random())).toString()).getTime()
+    const birthday = new Date('12/02/19' + (98 - Math.round(40 * Math.random())).toString()).getTime()
     const longitude = 2.18 + (0.3 * Math.random())
     const latitude = 48.77 + (0.18 * Math.random())
     user.push({login, firstName, lastName, email, sex, prefer, bio, score, birthday, latitude, longitude, password: hash('Youhou55'), localisation: 'self'})

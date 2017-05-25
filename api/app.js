@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const nconf = require('nconf')
+const Mailer = require('./models/mailer')
 const path = require('path')
 const fs = require('fs')
 const Queries = require('./queries')
@@ -19,6 +20,8 @@ nconf.file({file: path.join(__dirname, 'config/conf.json')})
 
 app.set('query', new Queries())
 app.set('nconf', nconf)
+app.set('io', io)
+app.set('mailer', new Mailer(nconf))
 
 app.use(morgan('dev'))
 	.use(bodyParser.json({limit: '50mb'}))
@@ -55,6 +58,7 @@ app.use(morgan('dev'))
 	  })
 	})
 
+
 let users = {}
 io.on('connection', function(socket){
 	socket.on('online', (id) => {
@@ -84,8 +88,6 @@ io.on('connection', function(socket){
 		io.emit('user', users)
 	})
 })
-
-app.set('io', io)
 
 //Routes
 require('./routes/user')(app)

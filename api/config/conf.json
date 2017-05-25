@@ -3,11 +3,12 @@
     "host": "localhost",
     "port": "4242"
   },
+  "domain": "http://localhost:8080",
   "neo4j": {
     "host": "localhost",
     "port": "7474",
-    "user": "neo4j",
-    "pass": "94gV9FNjmS3q5V6v"
+    "user": "xxxxxxxx",
+    "pass": "xxxxxxxx"
   },
   "mongo": {
     "host": "localhost",
@@ -18,12 +19,22 @@
     "host": "localhost",
     "port": "4242"
   },
+  "smtp": {
+    "service": "gmail",
+    "auth": {
+      "user": "xxxxxxx@gmail.com",
+      "pass": "xxxxxxxxx"
+    }
+  },
+  "email": {
+    "noReply": "no-reply@matcha.fr"
+  },
   "google": {
-    "CLIENT_ID": "881832148530-86eq6glv70ntmkm07no5gi48uch5e9vj.apps.googleusercontent.com",
-    "CLIENT_SECRET": "0gPcuWu9t1PDZtE8sGPbit1v"
+    "CLIENT_ID": "xxxxxxxxxxx",
+    "CLIENT_SECRET": "xxxxxxxxxxxx"
   },
   "token": {
-    "secret": "h6Oo6sNvmpJI1PU",
+    "secret": "xxxxxxxxxx",
     "expires": 36000
   },
   "bcrypt": {

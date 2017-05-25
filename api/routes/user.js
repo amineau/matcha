@@ -10,6 +10,7 @@ module.exports = (app) => {
 
 	app.post('/auth/signup', user.signUp)
 	app.post('/auth/signin', user.signIn)
+	app.post('/user/forgotpassword/:login', user.forgotPassword)
 
 	app.put('/user', restrict, user.set)
 	app.put('/user/loc', restrict, user.setLoc)

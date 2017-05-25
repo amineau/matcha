@@ -16,6 +16,7 @@
     "morgan": "~1.7.0",
     "nconf": "^0.8.4",
     "node-uuid": "^1.4.8",
+    "nodemailer": "^4.0.1",
     "nouislider": "^9.2.0",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",

@@ -32,6 +32,29 @@ function Distance(pos_a, pos_b){
     return Math.round(d)
 }
 
+exports.forgotPassword = (req, res) => {
+  const {login} = req.params
+
+  const showSuccess = (data) => {
+    res.json({
+      success: true,
+      data
+    })
+  }
+  const showError = (err) => {
+    console.log(err)
+      res.json({
+          success: false,
+          err: err.error || err
+      })
+  }
+
+  Query.Get({login}))
+      .then(Parser.GetData)
+      .then(showSuccess)
+      .catch(showError);
+} // ----------------------------------------
+
 exports.getByData = (req, res) => {
   const {by, data} = req.params
   const userId = req.decoded.id
