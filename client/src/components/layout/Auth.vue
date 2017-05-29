@@ -1,12 +1,27 @@
 <template>
   <div v-show='ready' id="authLayout" class='layout'>
+
     <header>
-      <!-- <img src='../../assets/logo.png'> -->
-      <router-link :to='{name: linkBtn}' class="waves-effect waves-light btn">{{nameBtn}}</router-link>
+
+      <nav>
+        <div class='container'>
+
+          <div class="nav-fixed col s12 m8 l4">
+            <router-link :to="{name: 'home'}" class="brand-logo hide-on-med-and-down">Matcha</router-link>
+            <ul id="nav-mobile" class="right">
+              <li><router-link :to="{name: 'signup'}">Inscription</router-link></li>
+              <li><router-link :to="{name: 'signin'}">Connexion</router-link></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
     </header>
 
-    <main>
-      <slot></slot>
+    <main class="container">
+      <section>
+        <slot></slot>
+      </section>
     </main>
 
   </div>
@@ -18,20 +33,33 @@
 
   export default {
     name: 'authLayout',
-    props: ['linkBtn', 'nameBtn', 'auth'],
+    props: ['auth'],
     data () {
       return {
         ready: false
       }
     },
     created () {
-      if (this.auth().success) return this.$router.replace('/dash')
+      if (this.auth().success) return this.$router.replace({name: 'dash'})
       this.ready = true
     },
   }
 
 </script>
 
-<style>
+<style scoped>
+
+  section {
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 600px;
+    padding: 50px;
+    background-color: rgba(0,0,0,0.1);
+  }
+
+  main {
+    display: flex;
+    align-items: center;
+  }
 
 </style>

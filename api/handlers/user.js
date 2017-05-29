@@ -8,6 +8,7 @@ const bcrypt        = require('bcrypt')
 const _             = require('lodash')
 const passport      = require('passport')
 const jwt           = require('jsonwebtoken')
+const uuid          = require('node-uuid')
 
 const Parser = new DbParser()
 const Query  = new UserQuery()
@@ -33,7 +34,8 @@ function Distance(pos_a, pos_b){
 }
 
 exports.forgotPassword = (req, res) => {
-  const {login} = req.params
+  const {email} = req.body
+  const mailer = req.app.get('mailer')
 
   const showSuccess = (data) => {
     res.json({
@@ -49,11 +51,72 @@ exports.forgotPassword = (req, res) => {
       })
   }
 
-  Query.Get({login}))
+
+  Query.GetPublic({email})
       .then(Parser.GetData)
+      .then(data => {
+        if (data.length) {
+          console.log('data', data)
+          const linkPassword = uuid.v4()
+          return mailer.ForgotPassword(_.merge(data[0], {linkPassword}))
+            .then(() => Query.Set({id: data[0].id}, {linkPassword}))
+        } else {
+          return Promise.reject({error: {email: {message: 'Email introuvable'}}})
+        }
+      })
       .then(showSuccess)
       .catch(showError);
-} // ----------------------------------------
+}
+
+exports.changePassword = (req, res) => {
+  const linkPassword = req.params.linkPassword
+  const validate = {user: new UserValidator(req.body)}
+  const id = req.body.id
+
+  const showSuccess = (data) => {
+    res.json({
+      success: true,
+      data
+    })
+  }
+  const showError = (err) => {
+    console.log(err)
+      res.json({
+          success: false,
+          err: err.error || err
+      })
+  }
+
+  validate.user.Parse([
+    {name: 'password'}
+  ])
+    .then(data => Query.Set({id, linkPassword}, {password: data.password, linkPassword: null}))
+    .then(Parser.GetDebug)
+    .then(showSuccess)
+    .catch(showError);
+}
+
+exports.getPublic = (req, res) => {
+  const {by, data} = req.params
+  const showSuccess = (data) => {
+    res.json({
+      success: true,
+      data
+    })
+  }
+  const showError = (err) => {
+    console.log(err)
+      res.json({
+          success: false,
+          err: err.error || err
+      })
+  }
+
+  Query.GetPublic({[by]: data})
+    .then(Parser.GetData)
+    .then(showSuccess)
+    .catch(showError);
+}
 
 exports.getByData = (req, res) => {
   const {by, data} = req.params

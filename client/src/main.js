@@ -9,7 +9,6 @@
   import router from './router'
   import CONFIG from '../config/conf.json'
 
-
   Vue.use(VueResource)
   Vue.use(VueCookie)
   Vue.use(VueSocketio, CONFIG.BASEURL_API)

@@ -38,14 +38,15 @@
     },
     created () {
       const auth = this.auth()
-      if (!auth.success) return console.log(auth.err)
+      if (!auth.success) return;
       this.httpOption = auth.httpOption
       this.$http.get(`${CONFIG.BASEURL_API}pic/${auth.decoded.id}`, this.httpOption).then(res => {
-        if (!res.body.success) return console.log(res.body.err)
+        if (!res.body.success) return console.log(res.body);
         this.photos = res.body.data
         if (!this.photos.length) {
-          this.photos.push({base64: `src/assets/M-silhouette.jpg`, head: true})
+          this.photos.push({base64: `src/assets/M-silhouette.jpg`, head: true, silhouette: true})
         }
+        console.log('photoooooooos', this.photos)
       })
     },
     methods: {
@@ -72,10 +73,13 @@
           const base64 = canvas.toDataURL("image/png")
 
           this.$http.post(`${CONFIG.BASEURL_API}pic`, {base64}, this.httpOption).then(res => {
-            if (!res.body.success) return console.log(res.body.err)
-            console.log(res.body.data)
-              const id = res.body.data[0].id
-              this.photos.push({base64, id, head: this.photos.length === 0})
+            if (!res.body.success || !res.body.data.length) return this.errorAddNotif.display(3500)
+            const id = res.body.data[0].id
+            if (this.photos.length === 1 && this.photos[0].silhouette) {
+              this.photos = []
+            }
+            this.photos.push({base64, id, head: this.photos.length === 0})
+            this.successAddNotif.display(3500)
           })
         }
         reader.onload = (e) => {
@@ -89,13 +93,15 @@
       },
       deleteImage (id) {
         this.$http.delete(`${CONFIG.BASEURL_API}pic/${id}`, this.httpOption).then(res => {
-          if (!res.body.success) return alert('Erreur lors du delete pic')
+          console.log(res.body)
+          if (!res.body.success) return this.errorDeleteNotif.display(3500)
           this.photos = this.photos.filter(obj => obj.id !== id)
+          this.successDeleteNotif.display(3500)
         })
       },
       profil (id) {
         this.$http.put(`${CONFIG.BASEURL_API}pic/${id}`, {}, this.httpOption).then(res => {
-          if (!res.body.success) return console.log(res.body.err)
+          if (!res.body.success) return;
           let index
           this.photos[0].head = false
           this.photos.forEach((e, k) => {
@@ -108,8 +114,19 @@
         })
       }
     },
-    watch: {
-
+    computed: {
+      successAddNotif () {
+        return new window.Notif("Ajout réussi", 'success')
+      },
+      successDeleteNotif () {
+        return new window.Notif("Supression réussie", 'success')
+      },
+      errorAddNotif () {
+        return new window.Notif("Erreur lors de l'ajout de la photo... Veuillez réessayer", 'error')
+      },
+      errorDeleteNotif () {
+        return new window.Notif("Erreur lors de la suppression de la photo... Veuillez réessayer", 'error')
+      }
     }
   }
 

@@ -90,7 +90,7 @@ module.exports = class ParseDatabase {
 		})
 	}
 
-	getDebug(body) {
+	GetDebug(body) {
 		console.log(body)
 		return Promise.resolve(body)
 	}

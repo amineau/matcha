@@ -22,11 +22,13 @@ module.exports = class PicQuery {
         const query =
             `MATCH (u: User)
             WHERE id(u) = {id}
-            CREATE(u)-[p:OWNER {head: true}]->(new:Img {path: {path}})
-            WITH p, id(new) AS id, u
+            CREATE (u)-[p:OWNER]->(new:Img {path: {path}})
+            WITH u, p, new
             MATCH (u)-[o:OWNER]->(:Img)
-            WHERE id(o) <> id(p)
-            SET p.head = false
+            WITH p, id(new) AS id, count(o) AS count
+            WITH p, id,
+            CASE WHEN count = 1 THEN true ELSE false END AS head
+            SET p.head = head
             RETURN id LIMIT 1`
 
           db.doDatabaseOperation(query, data)

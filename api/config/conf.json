@@ -3,7 +3,7 @@
     "host": "localhost",
     "port": "4242"
   },
-  "domain": "http://localhost:8080",
+  "domain": "http://localhost:8080/#/",
   "neo4j": {
     "host": "localhost",
     "port": "7474",
@@ -27,11 +27,7 @@
     }
   },
   "email": {
-    "noReply": "no-reply@matcha.fr"
-  },
-  "google": {
-    "CLIENT_ID": "xxxxxxxxxxx",
-    "CLIENT_SECRET": "xxxxxxxxxxxx"
+    "noReply": "Matcha <no-reply@matcha.com>"
   },
   "token": {
     "secret": "xxxxxxxxxx",

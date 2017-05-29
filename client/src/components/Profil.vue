@@ -168,34 +168,35 @@
     methods: {
       submit (data) {
         console.log(data)
-        this.$http.put(`${CONFIG.BASEURL_API}user`, data, this.httpOption).then(res => {
-          if (!res.body.success) {
-            this.inputs.forEach(n => {
-              if (res.body.err[n.name]){
-                this.$set(n, 'error', res.body.err[n.name].message)
-                $('#' + n.name).removeClass('valid').addClass('invalid')
-              }
-            })
-            console.log(res.body.err)
-            return null
-          }
-          const keys = Object.keys(data)
-          keys.forEach(key => {
-            this.inputs.forEach(e => {
-              if (e.name === key) {
-                e.value = data[key]
-                if (e.name === 'localisation' && data.localisation === 'place') {
-                  this.$set(e, 'place', data.place)
+        return this.$http.put(`${CONFIG.BASEURL_API}user`, data, this.httpOption)
+          .then(res => {
+            if (!res.body.success) {
+              this.inputs.forEach(n => {
+                if (res.body.err[n.name]){
+                  this.$set(n, 'error', res.body.err[n.name].message)
+                  $('#' + n.name).removeClass('valid').addClass('invalid')
                 }
-                e.edit = false
-                return;
-              }
+              })
+              console.log(res.body.err)
+              return null
+            }
+            const keys = Object.keys(data)
+            keys.forEach(key => {
+              this.inputs.forEach(e => {
+                if (e.name === key) {
+                  e.value = data[key]
+                  if (e.name === 'localisation' && data.localisation === 'place') {
+                    this.$set(e, 'place', data.place)
+                  }
+                  e.edit = false
+                  return;
+                }
+              })
             })
           })
-        })
       },
       submitPassword (data) {
-        this.$http.put(`${CONFIG.BASEURL_API}user/password`, data, this.httpOption)
+        return this.$http.put(`${CONFIG.BASEURL_API}user/password`, data, this.httpOption)
           .then(res => {
             if (!res.body.success) {
               console.log(res.body.err)

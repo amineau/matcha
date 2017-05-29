@@ -74,7 +74,7 @@ exports.generate = (req, res) => {
     const latitude = 48.77 + (0.18 * Math.random())
     user.push({login, firstName, lastName, email, sex, prefer, bio, score, birthday, latitude, longitude, password: hash('Youhou55'), localisation: 'self'})
   }
-  user.push({login: 'Toto', firstName:'Thomas', lastName:'Durand', email:'tdurand@hotmail.fr', sex:'M', prefer:'W', bio:'', score:10000, password: hash('Youhou55'), localisation: 'self', latitude: 48.896671, longitude: 2.318384, birthday: new Date('12/02/19' + (99 - Math.round(20 * Math.random())).toString()).getTime()})
+  user.push({login: 'Toto', firstName:'Thomas', lastName:'Durand', email:'amineau@student.42.fr', sex:'M', prefer:'W', bio:'', score:10000, password: hash('Youhou55'), localisation: 'self', latitude: 48.896671, longitude: 2.318384, birthday: new Date('12/02/19' + (99 - Math.round(20 * Math.random())).toString()).getTime()})
 
   Query.generate.DeleteAll()
     .then(() => {

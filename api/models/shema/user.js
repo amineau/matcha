@@ -87,6 +87,23 @@ module.exports = class UserQuery {
       })
     }
 
+    GetPublic(where) {
+      return new Promise((resolve, reject) => {
+        let toWhere = []
+        for (let key in where) {
+          toWhere.push(key === 'id' ? `${key}(u)={${key}}` : `u.${key}={${key}}`)
+        }
+       const query =
+           `MATCH (u: User)
+            WHERE ${toWhere.join(' AND ')}
+            RETURN id(u) as id, u as all`
+
+        db.doDatabaseOperation(query, where)
+          .then(data => resolve(data))
+          .catch(err => reject(err))
+      })
+    }
+
     GetForSet(where) {
       return new Promise((resolve, reject) => {
         let toWhere = []
@@ -247,6 +264,7 @@ module.exports = class UserQuery {
     }
 
     Set(where, set) {
+      console.log('where', where, 'set', set)
         return new Promise((resolve, reject) => {
           if (_.isEmpty(where) || _.isEmpty(set)) {
             return reject({error: 'Aucun champs de correspond à la base de donnée'})
@@ -254,15 +272,22 @@ module.exports = class UserQuery {
           let toWhere = []
           let toSet = []
           for (let key in where)
-            toWhere.push(key === 'id' ? `${key}(u)={${key}}` : `u.${key}={${key}}`)
-          for (let key in set)
-            toSet.push(`u.${key}={${key}}`)
+            toWhere.push(key === 'id' ? `${key}(u) = {${key}}` : `u.${key} = {${key}}`)
+          for (let key in set) {
+            if (set[key] === null) {
+              toSet.push(`u.${key} = NULL`)
+              delete set[key]
+            } else {
+              toSet.push(`u.${key} = {${key}}`)
+            }
+          }
           const query =
               `MATCH (u:User)
               WHERE ${toWhere.join(' AND ')}
               SET ${toSet.join(', ')}
               RETURN *`
 
+console.log(query, _.merge(where, set))
           db.doDatabaseOperation(query, _.merge(where, set))
             .then(data => resolve(data))
             .catch(err => reject(err))

@@ -83,7 +83,7 @@
     },
     methods: {
       search () {
-        this.$http.get(`${CONFIG.BASEURL_API}users?${this.params.join('&')}`, this.httpOption)
+        return this.$http.get(`${CONFIG.BASEURL_API}users?${this.params.join('&')}`, this.httpOption)
           .then(this.update)
           .then(() => this.active=false)
       },

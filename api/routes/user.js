@@ -10,7 +10,8 @@ module.exports = (app) => {
 
 	app.post('/auth/signup', user.signUp)
 	app.post('/auth/signin', user.signIn)
-	app.post('/user/forgotpassword/:login', user.forgotPassword)
+	app.post('/auth/forgotpassword', user.forgotPassword)
+	app.post('/auth/changepassword/:linkPassword', user.changePassword)
 
 	app.put('/user', restrict, user.set)
 	app.put('/user/loc', restrict, user.setLoc)
@@ -23,6 +24,7 @@ module.exports = (app) => {
 	app.get('/users/visite', restrict, user.getVisite)
 	app.get('/user/:by/:data', restrict, user.getByData)
 	app.get('/user/limits', restrict, user.limits)
+	app.get('/user/public/:by/:data', user.getPublic)
 
 	app.delete('/user', restrict, user.delete)
 

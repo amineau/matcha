@@ -31,24 +31,27 @@
       <div class="container">
         <div class="row">
           <div class="col l6 s12">
-            <h5 class="white-text">Footer Content</h5>
-            <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+            <h5 class="white-text">Naviguer</h5>
+            <ul>
+              <li><router-link :to="{name: 'dashBoard'}" class="grey-text text-lighten-3">DashBoard</router-link></li>
+              <li><router-link :to="{name: 'followed'}" class="grey-text text-lighten-3">Suivi</router-link></li>
+              <li><router-link :to="{name: 'profil'}" class="grey-text text-lighten-3">Profil</router-link></li>
+              <li><router-link :to="{name: 'message'}" class="grey-text text-lighten-3">Discussion</router-link></li>
+            </ul>
           </div>
           <div class="col l4 offset-l2 s12">
-            <h5 class="white-text">Links</h5>
+            <h5 class="white-text">Menu</h5>
             <ul>
-              <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
-              <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
-              <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
-              <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+              <li><a class="grey-text text-lighten-3">Condition Générales d'Utilisation</a></li>
+              <li><a class="grey-text text-lighten-3">Foire aux Questions</a></li>
+              <li><a class="grey-text text-lighten-3">Contact</a></li>
             </ul>
           </div>
         </div>
       </div>
       <div class="footer-copyright">
         <div class="container">
-        © 2014 Copyright Text
-        <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+        © 2017 Copyright Text
         </div>
       </div>
     </footer>
@@ -76,18 +79,10 @@
     },
     created () {
       const auth = this.auth()
-      if (!auth.success) return console.log(auth.err)
+      if (!auth.success) return this.$router.replace({name: 'home'})
       this.id = auth.decoded.id
       this.httpOption = auth.httpOption
       this.ready = true
-      // let vm = this
-      // $(window).focus(function() {
-      //   vm.$socket.emit('online', vm.id)
-      // })
-      //
-      // $(window).blur(function() {
-      //   vm.$socket.emit('focus off', vm.id)
-      // })
       navigator.geolocation.getCurrentPosition(pos => this.setPosition(pos.coords), err => {
         this.$http.get(`http://ip-api.com/json`).then(res => {
           this.setPosition({latitude: res.data.lat, longitude: res.data.lon})
@@ -126,26 +121,5 @@
 
 <style>
 
-  nav {
-    background-color: transparent;
-  }
-
-  nav ul a, nav .brand-logo {
-    color: #34888C;
-  }
-
-  main.container {
-    margin-top: 20px;
-    margin-bottom: 20px;
-  }
-  li i {
-    height: auto;
-  }
-
-  /*@media only screen and (max-width: 992px) {
-    nav .brand-logo {
-      display: none;
-    }
-  }*/
 
 </style>

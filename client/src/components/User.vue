@@ -118,7 +118,10 @@
             })
         ]))
         .then(() => this.ready = true)
-        .catch(() => this.ready = true)
+        .catch(() => {
+          this.ready = true
+          thie.errorNotif.display(3500)
+        })
         .then(() => this.$socket.emit('online', this.userId))
 
       this.$root.$on('userUpdate', (users) => this.status = users.find(e => e.id === this.id))
@@ -129,6 +132,9 @@
       },
       lastConnection () {
         return dateformat(this.user.lastConnection, 'dd/mm/yyyy')
+      },
+      errorNotif () {
+        return new window.Notif("Utilisateur introuvable", 'error')
       }
     },
     methods: {

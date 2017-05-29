@@ -13,7 +13,7 @@ module.exports = class Mailer {
         const transporter = nodemailer.createTransport(this._nconf.get('smtp'))
         transporter.sendMail(mailOptions, (error, info) => {
           if (error) {
-            reject(error)
+            return reject(error)
           }
           console.log('message send :' + info.response)
           resolve()
@@ -22,28 +22,18 @@ module.exports = class Mailer {
     }
   }
 
-  // Inscription (value) {
-  //   const mailOptions = {
-  //     from: nconf.get('email:NoReply'),
-  //     to: value.email,
-  //     subject: 'Confirmation d\'inscription',
-  //     html: `<h3>Bonjour </h3> <br>
-  //   	  		Pour valider votre compte, merci de cliquer sur ce lien : <a href="${nconf.get('domain')}/validate?code=${value.validation}">click</a> <br><br>
-  //   	  		Une fois la validation faite, vous pourrez vous connecter sur le site de PbyP! <br>
-  //   	  		De ce fait, n'oubliez pas de remplir vos informations personnelles dans la rubrique "Mon Compe" ! <br>
-  //   	  		${this._signature}.`
-  //   }
-  //   return this._sendMail(mailOptions)
-  // }
-
   ForgotPassword (value) {
+    console.log(this._nconf.get('email:noReply'))
     const mailOptions = {
-      from: this._nconf.get('email:NoReply'),
+      from: this._nconf.get('email:noReply'),
       to: value.email,
-      subject: 'Nouveau mot de passe temporaire',
-      html: `<h3>Bonjour </h3> <br>
-    	  	<h2> Voici votre nouveau mot de passe : </h2><br><br> Ceci n'est qu'un mot de passe temporaire.
-    	  	Veuillez le modifier <strong>rapidement</strong> <br>
+      subject: 'Changement de mot de passe',
+      html: `<h5>Bonjour ${value.firstName}</h5>
+    	  	<p>Vous pouvez dès à présent modifier votre mot de passe en suivant ce
+            <a href="${this._nconf.get('domain')}changepassword/${value.linkPassword}">
+              lien
+            </a>
+          </p>
     	  	${this._signature}.`
     }
     return this._sendMail(mailOptions)

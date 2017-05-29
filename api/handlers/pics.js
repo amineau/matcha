@@ -23,6 +23,7 @@ exports.get = (req, res) => {
     })
   }
   const showError = (err) => {
+    console.log(err)
     res.json({
       success: false,
       err: err.error
@@ -62,6 +63,7 @@ exports.add = (req, res) => {
   const id = req.decoded.id
 
   const showSuccess = (data) => {
+    console.log(data)
     res.json({
       data,
       success: true
@@ -74,6 +76,7 @@ exports.add = (req, res) => {
       err: err.error
     })
   }
+
   validate.pic.Parse([{name: 'base64'}])
     .then(data => {
       return new Promise((resolve, reject) => {

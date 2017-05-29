@@ -43,12 +43,16 @@
       <input v-else :id="input.name" :type="input.type" class="validate">
       <label v-show="input.label" v-if="input.type !== 'radio'" :for="input.name" :data-error="input.error">{{input.text}}</label>
     </div>
-    <button @click.prevent="submiting(inputs)" class="btn waves-effect waves-light waves-green right" type='submit'>{{button}}</button>
+    <button @click.prevent="submiting(inputs)" class="btn waves-effect waves-light waves-green right" type='submit'>
+      {{button}}
+    </button>
+    <preloader-circle v-show="loading" class="right"></preloader-circle>
   </form>
 </template>
 
 <script>
 
+  import PreloaderCircle from './button/Circle.vue'
   import vueSlider from 'vue-slider-component'
 
   export default {
@@ -61,7 +65,8 @@
           types: ['(regions)'],
           restrictions: {'country': 'fr'}
         },
-        latLng: {}
+        latLng: {},
+        loading: false
       }
     },
     props: {
@@ -71,7 +76,8 @@
       active: Boolean
     },
     components: {
-      vueSlider
+      vueSlider,
+      PreloaderCircle
     },
     created () {
       this.inputs.forEach(e => {
@@ -130,9 +136,10 @@
     },
     methods: {
       submiting (body) {
+        if (this.loading) return;
+        this.loading = true
         let data = {}
         let error = false
-        console.log(body)
         body.forEach(e => {
           if (e.type === 'date') {
             data[e.name] = this.picker.get()
@@ -153,7 +160,8 @@
             error = true
           }
         })
-        if (!error) return this.submit(data)
+        if (error) return this.loading = false
+        this.submit(data).then(() => this.loading = false)
       },
       setPlace(place) {
         this.latLng = {

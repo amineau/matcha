@@ -67,10 +67,11 @@ body, .layout {
 
  html {
    font-family:  Calibri, Trebuchet, sans-serif;
-   /*color: #34888C;*/
+   color: #34888C;
  }
 
  main {
+   /*display: flex;*/
    flex: 1 0 auto;
  }
 
@@ -93,4 +94,20 @@ body, .layout {
 
  .switch > .col:hover {
    background-color: rgba(0,0,0,0.1);
+ }
+
+ nav {
+   background-color: transparent;
+ }
+
+ nav ul a, nav .brand-logo {
+   color: #34888C;
+ }
+
+ main.container {
+   margin-top: 20px;
+   margin-bottom: 20px;
+ }
+ li i {
+   height: auto;
  }

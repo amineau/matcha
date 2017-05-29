@@ -19,6 +19,7 @@
 <script>
 
   import CONFIG from '../../config/conf.json'
+  import _ from 'lodash'
 
   export default {
     name: 'dropdown',
@@ -29,14 +30,15 @@
       return {
         notifCount: 0,
         httpOption: null,
-        notifs: []
+        notifs: [],
+        new: {}
       }
     },
     created () {
       const auth = this.auth()
       if (!auth.success) return console.log(auth.err)
       this.httpOption = auth.httpOption
-      this.loadNotifs()
+      this.loadNotifs(true)
       this.$options.sockets.notif = (id) => {
         if (id === auth.decoded.id) {
           this.loadNotifs()
@@ -63,12 +65,17 @@
             this.notifCount = 0
           })
       },
-      loadNotifs () {
+      loadNotifs (first = false) {
         this.notifCount = 0
         this.$http.get(`${CONFIG.BASEURL_API}notif`, this.httpOption)
           .then(res => {
             if (!res.body.success) return console.log(res.body.err)
             res.body.data.forEach(e => e.link.notif ? this.notifCount++ : null)
+            if (!_.isEqual(this.notifs, res.body.data) && !first) {
+              console.log(this.notifs, res.body.data)
+              this.new = this.textNotif(res.body.data[0])
+              this.newNotif.display(3500)
+            }
             this.notifs = res.body.data
           })
       },
@@ -83,7 +90,15 @@
           return `${notif.login} vous a envoyé un message`
         }
       }
-    }
+    },
+    computed: {
+      newNotif () {
+        return new window.Notif(this.new, 'confirmed')
+      },
+      errorNotif () {
+        return new window.Notif("Inscription échouée... Veuillez remplir les champs incorrects", 'error')
+      }
+    },
   }
 
 </script>

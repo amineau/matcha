@@ -1,9 +1,11 @@
 <template>
   <homeLayout v-show='ready'>
+    <div>
 
-    <p>Bienvenue sur DoubleMatching</p>
-    <router-link to="/dash" class="waves-effect waves-light btn">DashBoard</router-link>
+      <h1>Bienvenue sur Matcha</h1>
+      <router-link :to="{name: 'signin'}" class="waves-effect waves-light btn">Se connecter</router-link>
 
+    </div>
   </homeLayout>
 </template>
 
@@ -20,7 +22,7 @@
     },
     props: ['auth'],
     created () {
-      if (this.auth().success) return this.$router.replace('/dash')
+      if (this.auth().success) return this.$router.replace({name: 'dashBoard'})
       this.ready = true
     },
     components: {
@@ -31,5 +33,6 @@
 </script>
 
 <style>
+
 
 </style>

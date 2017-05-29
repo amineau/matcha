@@ -10,6 +10,8 @@ import Chat from '../components/Chat.vue'
 import Message from '../components/Message.vue'
 import SignIn from '../components/SignIn.vue'
 import SignUp from '../components/SignUp.vue'
+import Forgot from '../components/Forgot.vue'
+import ChangePassword from '../components/ChangePassword.vue'
 
 Vue.use(Router)
 
@@ -59,6 +61,16 @@ export default new Router({
       path: '/signup',
       name: 'signup',
       component: SignUp
+    },
+    {
+      path: '/forgot',
+      name: 'forgot',
+      component: Forgot
+    },
+    {
+      path: '/changepassword/:uuid',
+      name: 'changePassword',
+      component: ChangePassword
     }
   ]
 })

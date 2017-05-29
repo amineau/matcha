@@ -30,7 +30,6 @@
   import CONFIG from '../../config/conf.json'
   import defaultLayout from './layout/Default.vue'
   import online from './button/Online.vue'
-  import formInputs from './Form.vue'
 
   export default {
     name: 'Chat',
@@ -101,7 +100,6 @@
     },
     components: {
       defaultLayout,
-      formInputs,
       online
     }
   }

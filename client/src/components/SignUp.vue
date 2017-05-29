@@ -1,14 +1,14 @@
 <template>
-  <authLayout :auth="auth" linkBtn="signin" nameBtn='Connexion'>
+  <homeLayout :auth="auth" :frame="true">
 
     <formInputs :inputs='inputs' :submit='submit' button="S'inscrire"></formInputs>
 
-  </authLayout>
+  </homeLayout>
 </template>
 
 <script>
 
-  import authLayout from './layout/Auth.vue'
+  import homeLayout from './layout/Home.vue'
   import formInputs from './Form.vue'
   import _ from 'lodash'
   import CONFIG from '../../config/conf.json'
@@ -78,7 +78,7 @@
         })
       },
       submit (data) {
-        this.getPosition()
+        return this.getPosition()
         .then(coords => this.$http.post(`${CONFIG.BASEURL_API}auth/signup`,
           _.merge(data, coords), {
             responseType: 'json'
@@ -92,21 +92,30 @@
                 $('#' + n.name).removeClass('valid').addClass('invalid')
               }
             })
-          } else {
-            this.$http.post(`${CONFIG.BASEURL_API}auth/signin`, data, {
-              responseType: 'json'
-            }).then(res => {
-              if (!res.body.success) return res.body.err
-              this.$cookie.set('token', res.body.token)
-              this.$router.replace('/dash')
-            })
+            return this.errorNotif.display(3500)
           }
+          this.$http.post(`${CONFIG.BASEURL_API}auth/signin`, data, {
+            responseType: 'json'
+          }).then(res => {
+            if (!res.body.success) return;
+            this.$cookie.set('token', res.body.token)
+            this.$router.replace({name: 'dashBoard'})
+            this.successNotif.display(3500)
+          })
         })
+      }
+    },
+    computed: {
+      successNotif () {
+        return new window.Notif("Inscription réussi... Vous pouvez maintenant consulter les profils présents près de chez vous", 'success')
+      },
+      errorNotif () {
+        return new window.Notif("Inscription échouée... Veuillez remplir les champs incorrects", 'error')
       }
     },
     props: ['auth'],
     components: {
-      authLayout,
+      homeLayout,
       formInputs
     }
   }
