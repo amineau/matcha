@@ -73,7 +73,7 @@
     },
     created () {
       const auth = this.auth()
-      if (!auth.success) return console.log(auth.err)
+      if (!auth.success) return;
       this.id = auth.decoded.id
       this.httpOption = auth.httpOption
       let vm = this
@@ -86,7 +86,6 @@
       this.$http.get(`${CONFIG.BASEURL_API}users?distance=100&sort=${this.selected}&meaning=${this.meaning}`, this.httpOption)
         .then(this.updatePeople)
         .then(() => {
-          console.log('id', this.id)
           this.$socket.emit('online', this.id)
         })
 
@@ -94,7 +93,7 @@
     methods: {
       updatePeople (res) {
         return new Promise((resolve) => {
-          if (!res.body.success) return console.log(res.body.err)
+          if (!res.body.success) return;
           this.peoples = res.body.data
           this.markers = []
           this.peoples.forEach(e => {

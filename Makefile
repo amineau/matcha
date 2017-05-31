@@ -9,7 +9,9 @@ GREENB	= \033[1;32m
 GREEN	= \033[0;32m
 YELLOW	= \033[33m
 CYAN	= \033[36m
-UNAME := $(shell uname)
+
+NB=50
+
 ifeq ($(UNAME),Linux)
 	SNAP := sleep 3 && fswebcam -D 2 --png
 else
@@ -18,18 +20,11 @@ endif
 all: $(NAME)
 
 $(NAME):
-	#screen -X eval "chdir $$PWD"
 	npm install
-	screen -dmS $(NAME)
-	screen -S $(NAME) -p 0 -X stuff $$'mongod --dbpath ~/Documents/Mongodb\n'
-	screen -S $(NAME) -X screen 1
-	screen -S $(NAME) -p 1 -X stuff $$'cd client && webpack --watch\n'
-	screen -S $(NAME) -X screen 2
-	screen -S $(NAME) -p 2 -X stuff $$'cd client && webpack-dev-server\n'
-	screen -S $(NAME) -X screen 3
-	screen -S $(NAME) -p 3 -X stuff $$'nodemon api/app.js\n'
-	screen -S $(NAME) -X screen 4
-	screen -S $(NAME) -p 4 -X stuff $$'neo4j console\n'
+	# mongod --dbpath ~/Documents/Mongodb/ --config ~/mongodb.conf
+	neo4j start
+	cd client && webpack
+	pm2 start api/app.js --watch
 	@echo Wait...
 	$(SNAP)  ./client/src/assets/profil-0.png
 	convert -crop 720x720+260+0 ./client/src/assets/profil-0.png ./client/src/assets/profil-0.png
@@ -42,23 +37,16 @@ $(NAME):
 	@echo Thanks
 
 generate:
-	curl -X POST http://localhost:4242/generate/30
-
-test:
-	echo $(shell uname)
+	curl -X POST http://localhost:4242/generate/$(NB)
 
 clean:
-	screen -S $(NAME) -p 0 -X at "#" stuff $$'\003'
-	screen -S $(NAME) -p 1 -X at "#" stuff $$'\003'
-	screen -S $(NAME) -p 2 -X at "#" stuff $$'\003'
-	screen -S $(NAME) -p 3 -X at "#" stuff $$'\003'
-	screen -S $(NAME) -p 4 -X at "#" stuff $$'\003'
+	pm2 delete app
 
 picclean:
 	rm -rf client/src/assets/profil-*.png
 
 fclean: clean
-	@sleep 10
-	screen -S $(NAME) -X quit
+	neo4j stop
+	pkill -f mongo
 
 re: fclean all

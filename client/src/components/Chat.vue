@@ -3,7 +3,7 @@
       <router-link v-if="user.id" :to="{name: 'user', params: {id: user.id}}" class='profil'>
         <img :src="user.base64" width=50 height=50 />
         <h5>{{user.login}}</h5>
-        <online :id="user.id"></online>
+        <online :id="user.id" :httpOption="newAuth.httpOption"></online>
       </router-link>
       <div id='chat'>
         <div v-for="message in chat" :class="{mine: message.sender === newAuth.decoded.id}" class="message">
@@ -49,9 +49,9 @@
     },
     created () {
       this.newAuth = this.auth()
-      if (!this.newAuth.success) return console.log(this.newAuth.err)
+      if (!this.newAuth.success) return;
       this.$http.get(`${CONFIG.BASEURL_API}chat/${this.$route.params.id}`, this.newAuth.httpOption).then(res => {
-        if (!res.body.success) return console.log('Erreur lors de l\'obtention des messages', res.body.err)
+        if (!res.body.success || !res.body.data.length) return this.$router.replace({name: 'dashBoard'})
         this.chat = res.body.data
         $(function() {
           this.element = document.getElementById('chat')
@@ -60,7 +60,7 @@
       })
       .then(() => this.$socket.emit('online', this.newAuth.decoded.id))
       this.$http.get(`${CONFIG.BASEURL_API}user/id/${this.$route.params.id}`, this.newAuth.httpOption).then(res => {
-        if (!res.body.success) return console.log(res.body.err)
+        if (!res.body.success || !res.body.data.length) return this.$router.replace({name: 'dashBoard'})
         this.user = res.body.data[0]
         if (!this.user.base64) {
           this.user.base64 = `src/assets/${this.user.sex}-silhouette.jpg`
@@ -83,7 +83,7 @@
         this.input.value = this.input.value.replace(/</g, "&lt;").replace(/>/g, "&gt;")
         this.chat.push({comment: this.input.value, sender: this.newAuth.decoded.id})
         this.$http.post(`${CONFIG.BASEURL_API}chat/${this.$route.params.id}`, {comment: this.input.value}, this.newAuth.httpOption).then(res => {
-          if (!res.body.success) return alert('Erreur lors de l\'obtention des messages')
+          if (!res.body.success) return this.$router.replace({name: 'dashBoard'})
         })
         this.input.value = null
         $(function() {

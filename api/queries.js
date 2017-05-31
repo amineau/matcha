@@ -56,9 +56,8 @@ module.exports = class Queries {
       users.sort((a,b) => a - b)
       this._collection.findOne({users}, (err, docs) => {
         if (err) return reject({error: err})
-        console.log('Find comments', docs)
-        if (!docs || !docs.chat) return reject({error: 'No resources found'})
-        console.log(docs.chat)
+        if (!docs || !docs.chat || !docs.visible) return reject({error: 'No resources found'})
+        console.log(docs)
         docs.chat.sort((a, b) => a.timestamp - b.timestamp)
         resolve(docs.chat)
       })
@@ -70,17 +69,17 @@ module.exports = class Queries {
     return new Promise ((resolve, reject) => {
       this._collection.find({users: id}).toArray((err, docs) => {
         if (err) return reject({error: err})
-        console.log('docs', docs)
-        docs.forEach((e, k) => {
-          if (e.chat) {
-            e.chat = e.chat.slice(-1)[0]
-          } else {
-            docs.splice(k,1)
-          }
-        })
-        docs.sort((a,b) => b.chat.timestamp - a.chat.timestamp)
-        console.log('Find messages', docs)
         if (!docs) return reject({error: 'No resources found'})
+        // console.log(docs)
+        for (let i = docs.length - 1; i >= 0; i -= 1)  {
+          if (docs[i].chat && docs[i].visible) {
+            docs[i].chat = docs[i].chat.slice(-1)[0]
+          } else {
+            docs.splice(i,1)
+          }
+        }
+        console.log(docs)
+        docs.sort((a,b) => b.chat.timestamp - a.chat.timestamp)
         resolve(docs)
       })
     })

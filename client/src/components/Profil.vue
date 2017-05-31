@@ -129,7 +129,7 @@
     },
     created () {
       const auth = this.auth()
-      if (!auth.success) return console.log(auth.err)
+      if (!auth.success) return;
       this.httpOption = auth.httpOption
       this.id = auth.decoded.id
       this.inputs.forEach(e => {
@@ -167,7 +167,6 @@
     },
     methods: {
       submit (data) {
-        console.log(data)
         return this.$http.put(`${CONFIG.BASEURL_API}user`, data, this.httpOption)
           .then(res => {
             if (!res.body.success) {
@@ -177,7 +176,6 @@
                   $('#' + n.name).removeClass('valid').addClass('invalid')
                 }
               })
-              console.log(res.body.err)
               return null
             }
             const keys = Object.keys(data)
@@ -199,15 +197,12 @@
         return this.$http.put(`${CONFIG.BASEURL_API}user/password`, data, this.httpOption)
           .then(res => {
             if (!res.body.success) {
-              console.log(res.body.err)
               this.password.forEach(n => {
                 if (res.body.err[n.name]){
                   this.$set(n, 'error', res.body.err[n.name].message)
-                  console.log($('#' + n.name))
                   $('#' + n.name).removeClass('valid').addClass('invalid')
                 }
               })
-              console.log(this.password)
               return null
             }
             $('.modal').modal('close')

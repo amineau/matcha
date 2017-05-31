@@ -63,7 +63,6 @@ exports.add = (req, res) => {
   const id = req.decoded.id
 
   const showSuccess = (data) => {
-    console.log(data)
     res.json({
       data,
       success: true

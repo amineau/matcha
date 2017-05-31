@@ -26,7 +26,7 @@
       blocked () {
         this.$http.post(`${CONFIG.BASEURL_API}${this.people.blocked?'un':''}block/${this.people.id}`, {}, this.httpOption)
           .then(res => {
-            if (!res.body.success) return console.log(res.body.err)
+            if (!res.body.success) return;
             this.people.blocked = !this.people.blocked
           })
       }

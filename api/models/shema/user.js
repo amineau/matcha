@@ -264,7 +264,6 @@ module.exports = class UserQuery {
     }
 
     Set(where, set) {
-      console.log('where', where, 'set', set)
         return new Promise((resolve, reject) => {
           if (_.isEmpty(where) || _.isEmpty(set)) {
             return reject({error: 'Aucun champs de correspond à la base de donnée'})
@@ -287,7 +286,6 @@ module.exports = class UserQuery {
               SET ${toSet.join(', ')}
               RETURN *`
 
-console.log(query, _.merge(where, set))
           db.doDatabaseOperation(query, _.merge(where, set))
             .then(data => resolve(data))
             .catch(err => reject(err))

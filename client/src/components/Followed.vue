@@ -42,7 +42,7 @@
     created () {
       const auth = this.auth()
       let vm = this
-      if (!auth.success) return console.log(auth.error)
+      if (!auth.success) return;
       this.httpOption = auth.httpOption
       this.request('liked')
         .then(() => this.$socket.emit('online', auth.decoded.id))
@@ -52,7 +52,7 @@
         this.action = action
         return this.$http.get(`${CONFIG.BASEURL_API}users/${action}`, this.httpOption)
           .then(res => {
-            if (!res.body.success) return console.log(res.body.err)
+            if (!res.body.success) return;
             let peoples = res.body.data
             peoples.forEach(f => {
               if (!f.base64) {

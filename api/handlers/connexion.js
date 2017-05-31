@@ -20,7 +20,7 @@ exports.like = (req, res) => {
   const showSuccess = (connected) => {
     io.emit('notif', id)
     res.json({
-      connected,
+      connected: connected ? true : false,
       success: true
     })
   }

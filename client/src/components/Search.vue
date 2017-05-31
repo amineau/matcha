@@ -66,18 +66,17 @@
     },
     created () {
       const auth = this.auth()
-      if (!auth.success) return console.log(auth.err)
+      if (!auth.success) return;
       this.httpOption = auth.httpOption
       this.$http.get(`${CONFIG.BASEURL_API}user/limits`, this.httpOption)
         .then(res => {
-          if (!res.body.success) return console.log(res.body.err)
+          if (!res.body.success) return;
           const data = res.body.data[0]
           this.inputs[0].min = this.calculateAge(data.age_min)
           this.inputs[0].max = this.calculateAge(data.age_max)
           this.inputs[0].value = [this.inputs[0].min, this.inputs[0].max]
           this.inputs[1].max = data.score
           this.inputs[1].value = [0, data.score]
-          console.log(this.inputs[1].value)
         })
 
     },

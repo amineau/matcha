@@ -42,10 +42,10 @@
     },
     created () {
       const auth = this.auth()
-      if (!auth.success) return console.log(auth.err)
+      if (!auth.success) return;
       this.$http.get(`${CONFIG.BASEURL_API}user/id/${auth.decoded.id}`, auth.httpOption)
         .then(res => {
-          if (!res.body.success) return console.log(res.body.err)
+          if (!res.body.success) return;
           this.center = {
             lat: res.body.data[0].latitude,
             lng: res.body.data[0].longitude

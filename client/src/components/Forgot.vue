@@ -39,8 +39,14 @@
             })
             return;
           }
+          this.successNotif.display(3500)
           this.$router.replace('signin')
         })
+      }
+    },
+    computed: {
+      successNotif () {
+        return new window.Notif("Un email vous a été envoyé", 'success')
       }
     },
     props: ['auth'],

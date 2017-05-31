@@ -1,5 +1,5 @@
 <template>
-  <div id="default-layout" class="layout" v-show="ready" @focus="online" @blur="focusOff">
+  <div id="default-layout" class="layout" v-show="ready">
     <header>
 
           <nav>
@@ -88,6 +88,15 @@
           this.setPosition({latitude: res.data.lat, longitude: res.data.lon})
         })
       })
+      let vm = this
+      $(window).focus(function() {
+        vm.online()
+      })
+
+      $(window).blur(function() {
+        vm.focusOff()
+      })
+
     },
     methods: {
       online () {
@@ -107,7 +116,7 @@
             latitude: coords.latitude,
             longitude: coords.longitude
           }, this.httpOption).then(res => {
-            if (!res.body.success) return console.log(res.body.err)
+            if (!res.body.success) return;
           })
         }
       }

@@ -31,10 +31,8 @@
     created() {
       this.$http.get(`${CONFIG.BASEURL_API}user/public/linkPassword/${this.linkPassword}`)
         .then(res => {
-          console.log(res.body)
           if (!res.body.success || !res.body.data.length) return this.$router.replace({name: 'signin'})
           this.id = res.body.data[0].id
-          console.log(this.id)
         })
     },
     methods: {
@@ -51,8 +49,14 @@
             })
             return;
           }
+          this.successNotif.display(3500)
           this.$router.replace({name: 'signin'})
         })
+      }
+    },
+    computed: {
+      successNotif () {
+        return new window.Notif("Mot de pass modifié", 'success')
       }
     },
     props: ['auth'],

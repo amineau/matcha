@@ -16,9 +16,8 @@
       autocomplete: Boolean
     },
     mounted () {
-      console.log('coucou')
       const auth = this.auth()
-      if (!auth.success) return console.log(auth.error)
+      if (!auth.success) return;
       const id = auth.decoded.id
       let promises = []
       if (this.init) {
@@ -54,10 +53,10 @@
           }
           if (vm.autocomplete && vm.init) {
             $('.chips').on('chip.add', function(e, chip){
-              vm.$http.post(`${CONFIG.BASEURL_API}tags/${chip.tag}`, {}, auth.httpOption).catch(r => console.log(r))
+              vm.$http.post(`${CONFIG.BASEURL_API}tags/${chip.tag}`, {}, auth.httpOption)
             })
             $('.chips').on('chip.delete', function(e, chip){
-              vm.$http.delete(`${CONFIG.BASEURL_API}tags/${chip.tag}`, auth.httpOption).catch(r => console.log(r))
+              vm.$http.delete(`${CONFIG.BASEURL_API}tags/${chip.tag}`, auth.httpOption)
             })
           }
         })

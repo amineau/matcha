@@ -9,10 +9,13 @@
 
 <script>
 
+  import CONFIG from '../../../config/conf.json'
+
   export default {
     name: 'Online',
     props: {
-      id: Number
+      id: Number,
+      httpOption: Object
     },
     data () {
       return {
@@ -20,6 +23,10 @@
       }
     },
     created () {
+      this.$http.get(`${CONFIG.BASEURL_API}online/${this.id}`, this.httpOption)
+        .then(res => {
+          this.status = res.body.data.status
+        })
       this.$options.sockets.user = (users) => {
         let list = []
         for (let elem in users) {

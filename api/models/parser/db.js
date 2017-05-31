@@ -13,7 +13,6 @@ module.exports = class ParseDatabase {
 					return reject({error: "Les données d'entrées ne permettent pas d'effectuer l'opération"})
 				}
 			}
-			console.log(body.errors[0])
 			return reject({error: "Echec de connection avec la base de donnée"})
 		})
 	}
@@ -85,7 +84,6 @@ module.exports = class ParseDatabase {
 				}
 				resolve(json)
 			}
-			console.log(body.errors[0])
 			reject({error: "Ressource non trouvée"})
 		})
 	}

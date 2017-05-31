@@ -18,13 +18,10 @@ const Queries = require('./queries')
 nconf.env()
 nconf.file({file: path.join(__dirname, 'config/conf.json')})
 
-app.set('query', new Queries())
-app.set('nconf', nconf)
-app.set('io', io)
-app.set('mailer', new Mailer(nconf))
 
-app.use(morgan('dev'))
-	.use(bodyParser.json({limit: '50mb'}))
+
+// app.use(morgan('dev'))
+app.use(bodyParser.json({limit: '50mb'}))
 	.use(bodyParser.urlencoded({limit: '50mb', extended: false}))
 	.use(passport.initialize())
 	.use(passport.session())
@@ -63,31 +60,35 @@ let users = {}
 io.on('connection', function(socket){
 	socket.on('online', (id) => {
 		users[socket.id] = {id, status: 1}
-		console.log('online'.green, id)
 		io.emit('user', users)
 	})
 
 	socket.on('logout', () => {
 		const id = users[socket.id]
 		delete users[socket.id]
-		console.log('logout'.red, id, users)
 		io.emit('user', users)
 	})
 
 	socket.on('focus off', (id) => {
 		if (!users[socket.id]) return;
 		users[socket.id] = {id, status: 2}
-		console.log('focus off'.yellow, id)
 		io.emit('user', users)
 	})
 
 	socket.on('disconnect', () => {
+		if (!users[socket.id]) return;
 		const id = users[socket.id]
 		delete users[socket.id]
-		console.log('disconnect'.red, id)
 		io.emit('user', users)
 	})
 })
+
+app.set('query', new Queries())
+app.set('nconf', nconf)
+app.set('io', io)
+app.set('mailer', new Mailer(nconf))
+app.set('users', users)
+
 
 //Routes
 require('./routes/user')(app)
@@ -96,6 +97,7 @@ require('./routes/pics')(app)
 require('./routes/connexion')(app)
 require('./routes/notif')(app)
 require('./routes/chat')(app)
+require('./routes/online')(app)
 require('./routes/generate')(app)
 
 

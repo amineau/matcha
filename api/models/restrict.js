@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
     }
     Query.Connection({id: decoded.id})
     const life = parseInt(decoded.exp - Date.now() / 1000)
-    console.log('Token expires in ' + life + ' sec')
+    //console.log('Token expires in ' + life + ' sec')
     req.decoded = decoded
     next()
   })

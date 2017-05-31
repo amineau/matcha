@@ -26,7 +26,7 @@
       reported () {
         this.$http.post(`${CONFIG.BASEURL_API}report/${this.people.id}`, {}, this.httpOption)
           .then(res => {
-            if (!res.body.success) return console.log(res.body.err)
+            if (!res.body.success) return;
             this.people.reported = !this.people.reported
           })
       }

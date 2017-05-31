@@ -56,7 +56,6 @@ exports.forgotPassword = (req, res) => {
       .then(Parser.GetData)
       .then(data => {
         if (data.length) {
-          console.log('data', data)
           const linkPassword = uuid.v4()
           return mailer.ForgotPassword(_.merge(data[0], {linkPassword}))
             .then(() => Query.Set({id: data[0].id}, {linkPassword}))

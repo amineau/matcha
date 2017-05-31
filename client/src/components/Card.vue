@@ -3,7 +3,7 @@
    <div class="card">
      <div class="card-image">
        <img :src="people.base64"/>
-       <span class="card-title">{{people.login}} <online :id="people.id"></online></span>
+       <span class="card-title">{{people.login}} <online :id="people.id" :httpOption="httpOption"></online></span>
      </div>
      <div class="card-content content row">
        <div class="col s12 m6"><i class="fa fa-birthday-cake" aria-hidden="true"></i> {{ calculateAge(people.birthday) }} ans</div>

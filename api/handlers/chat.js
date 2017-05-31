@@ -20,7 +20,7 @@ exports.get = (req, res) => {
     })
   }
   const showError = (err) => {
-    console.log('error',err)
+    console.log(err)
     res.json({
       success: false,
       err: err.error

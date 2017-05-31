@@ -11,8 +11,8 @@
         <div class='infos'>
           <div>
             <like :httpOption="httpOption" :people="user"></like>
-            <chat :httpOption="httpOption" :people="user"></chat>
-            <h5><span class='login'>{{user.login}}</span>, <span>{{calculateAge(user.birthday)}} ans</span> <online :id="user.id"></online></h5>
+            <chat :people="user"></chat>
+            <h5><span class='login'>{{user.login}}</span>, <span>{{calculateAge(user.birthday)}} ans</span> <online :id="user.id" :httpOption="httpOption"></online></h5>
             <div class='bio'>{{user.bio}}</div>
             <div>Membre depuis le {{memberSince}}</div>
             <div v-show="!status">Dernière connexion le {{lastConnection}}</div>
@@ -75,7 +75,7 @@
     },
     mounted () {
       const auth = this.auth()
-      if (!auth.success) return console.log(auth.err)
+      if (!auth.success) return;
       this.httpOption = auth.httpOption
       this.userId = auth.decoded.id
       this.$http.get(`${CONFIG.BASEURL_API}user/id/${this.id}`, this.httpOption)
@@ -114,13 +114,13 @@
               })
             })),
             this.$http.post(`${CONFIG.BASEURL_API}visit/${this.id}`, {}, this.httpOption).then(res => {
-              if (!res.body.success) return console.log(res.body.err)
+              if (!res.body.success) return;
             })
         ]))
         .then(() => this.ready = true)
         .catch(() => {
           this.ready = true
-          thie.errorNotif.display(3500)
+          this.errorNotif.display(3500)
         })
         .then(() => this.$socket.emit('online', this.userId))
 
