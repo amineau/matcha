@@ -51,7 +51,7 @@
       this.newAuth = this.auth()
       if (!this.newAuth.success) return;
       this.$http.get(`${CONFIG.BASEURL_API}chat/${this.$route.params.id}`, this.newAuth.httpOption).then(res => {
-        if (!res.body.success || !res.body.data.length) return this.$router.replace({name: 'dashBoard'})
+        if (!res.body.success) return this.$router.replace({name: 'dashBoard'})
         this.chat = res.body.data
         $(function() {
           this.element = document.getElementById('chat')

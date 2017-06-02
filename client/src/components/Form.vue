@@ -54,6 +54,7 @@
 
   import PreloaderCircle from './button/Circle.vue'
   import vueSlider from 'vue-slider-component'
+  import promise from 'bluebird'
 
   export default {
     name: 'formInputs',
@@ -66,6 +67,7 @@
           restrictions: {'country': 'fr'}
         },
         latLng: {},
+        geoloc: {},
         loading: false
       }
     },
@@ -84,6 +86,11 @@
         if (e.place) {
           this.autocomplete.place = e.place
         }
+      })
+      navigator.geolocation.getCurrentPosition(pos => this.geoloc = pos.coords, err => {
+        this.$http.get(`http://ip-api.com/json`).then(res => {
+          this.geoloc = {latitude: res.data.lat, longitude: res.data.lon}
+        })
       })
     },
     mounted () {
@@ -146,13 +153,18 @@
           } else {
             data[e.name] = e.value
           }
-          if (e.value === 'place' && e.name === 'localisation') {
-            data.latitude = this.latLng.lat
-            data.longitude = this.latLng.lng
-            data.place = $('#autocomplete').val()
-            if (!data.latitude) {
-              $('#autocomplete').removeClass('valid').addClass('invalid')
-              error = true
+          if (e.name === 'localisation') {
+            if (e.value === 'place') {
+              data.latitude = this.latLng.lat
+              data.longitude = this.latLng.lng
+              data.place = $('#autocomplete').val()
+              if (!data.latitude) {
+                $('#autocomplete').removeClass('valid').addClass('invalid')
+                error = true
+              }
+            } else {
+              data.latitude = this.geoloc.latitude
+              data.longitude = this.geoloc.longitude
             }
           }
           if (!data[e.name]) {

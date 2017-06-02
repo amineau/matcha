@@ -9,7 +9,7 @@ GREENB	= \033[1;32m
 GREEN	= \033[0;32m
 YELLOW	= \033[33m
 CYAN	= \033[36m
-
+UNAME := $(shell uname)
 NB=50
 
 ifeq ($(UNAME),Linux)
@@ -21,8 +21,8 @@ all: $(NAME)
 
 $(NAME):
 	npm install
-	# mongod --dbpath ~/Documents/Mongodb/ --config ~/mongodb.conf
-	neo4j start
+	# mongod --dbpath ~/Documents/Mongodb/ --config ~/mongodb.conf --fork --logpath /var/log/mongo.log
+	# sudo neo4j start
 	cd client && webpack
 	pm2 start api/app.js --watch
 	@echo Wait...

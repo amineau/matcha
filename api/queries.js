@@ -56,8 +56,8 @@ module.exports = class Queries {
       users.sort((a,b) => a - b)
       this._collection.findOne({users}, (err, docs) => {
         if (err) return reject({error: err})
-        if (!docs || !docs.chat || !docs.visible) return reject({error: 'No resources found'})
-        console.log(docs)
+        if (!docs || !docs.visible) return reject({error: 'No resources found'})
+        if (!docs.chat) return resolve([])
         docs.chat.sort((a, b) => a.timestamp - b.timestamp)
         resolve(docs.chat)
       })
@@ -70,7 +70,6 @@ module.exports = class Queries {
       this._collection.find({users: id}).toArray((err, docs) => {
         if (err) return reject({error: err})
         if (!docs) return reject({error: 'No resources found'})
-        // console.log(docs)
         for (let i = docs.length - 1; i >= 0; i -= 1)  {
           if (docs[i].chat && docs[i].visible) {
             docs[i].chat = docs[i].chat.slice(-1)[0]
@@ -78,7 +77,6 @@ module.exports = class Queries {
             docs.splice(i,1)
           }
         }
-        console.log(docs)
         docs.sort((a,b) => b.chat.timestamp - a.chat.timestamp)
         resolve(docs)
       })

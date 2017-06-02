@@ -18,8 +18,8 @@
           </select>
         </div>
         <div class="chevron col s1">
-          <i @click="meaning=-1" :class="{'grey-text': meaning===1}" class="fa fa-chevron-up" aria-hidden="true"></i>
-          <i @click="meaning=1" :class="{'grey-text': meaning===-1}" class="fa fa-chevron-down" aria-hidden="true"></i>
+          <i @click="meaning=-1" :class="{'grey-text': meaning===1}" class="fa fa-chevron-up fa-2x" aria-hidden="true"></i>
+          <i @click="meaning=1" :class="{'grey-text': meaning===-1}" class="fa fa-chevron-down fa-2x" aria-hidden="true"></i>
         </div>
       </div>
       <div class="row">
@@ -127,8 +127,8 @@
         })
       },
       onInfinite() {
-        if (!this.$refs.infiniteLoading) return null
           setTimeout(() => {
+            if (!this.$refs.infiniteLoading) return null
             this.size = Math.min(this.size+6, this.peoples.length)
             this.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded')
             if (this.size === this.peoples.length) {

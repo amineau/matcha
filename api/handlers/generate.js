@@ -96,7 +96,7 @@ exports.generate = (req, res) => {
             .then(() => Query.pic.Add({id, path: path.join(__dirname, '../../client/src/assets/profil-2.png')}))
         } else {
           const dirname = path.join(__dirname, '../../generator/photo', data.results[0].data[i++].row[1])
-          const nbFile = 782 //1
+          const nbFile = 1 //782
           const pathname = path.join(dirname, Math.round((nbFile-1)*Math.random()) + '.jpg')
             promises = Query.pic.Add({id, path: pathname})
               .then(() => Query.pic.Add({id, path: pathname}))
