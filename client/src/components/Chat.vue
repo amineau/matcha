@@ -1,6 +1,6 @@
 <template>
     <defaultLayout :auth="auth">
-      <router-link v-if="user.id" :to="{name: 'user', params: {id: user.id}}" class='profil'>
+      <router-link v-if="user.id !== undefined" :to="{name: 'user', params: {id: user.id}}" class='profil'>
         <img :src="user.base64" width=50 height=50 />
         <h5>{{user.login}}</h5>
         <online :id="user.id" :httpOption="newAuth.httpOption"></online>

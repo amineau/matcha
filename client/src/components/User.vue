@@ -2,7 +2,7 @@
   <defaultLayout :auth="auth">
     <div v-show="ready">
 
-      <div v-if="user.id" class="user">
+      <div v-if="user.id !== undefined" class="user">
         <div class="img-profil">
           <div v-for='photo in photos'>
               <img class="materialboxed" :src="photo.base64" :width="photo.head?300:300/4" :height="photo.head?300:300/4" />
@@ -124,7 +124,17 @@
         })
         .then(() => this.$socket.emit('online', this.userId))
 
-      this.$root.$on('userUpdate', (users) => this.status = users.find(e => e.id === this.id))
+        this.$options.sockets.user = (users) => {
+          let list = []
+          for (let elem in users) {
+            if (users[elem].id === this.id) {
+              return this.status = users[elem].status
+            }
+          }
+          return this.status = 0
+        }
+
+
     },
     computed: {
       memberSince () {

@@ -46,10 +46,13 @@ clean:
 	pkill -f mongod
 	neo4j stop
 
-picclean:
-	rm -rf client/src/assets/profil-*.png
-
 fclean: clean
-	rm -rf node_modules ~/.brew/Cellar/neo4j/3.1.4/libexec/data/databases/graph.db/ ~/Documents/Mongodb/*
+	rm -rf node_modules
+	rm -rf ~/.brew/Cellar/neo4j/3.1.4/libexec/data/databases/graph.db/
+	rm -rf ~/Documents/Mongodb/*
+	rm -rf client/dist/build.js
+	rm -rf api/logs/restrict.log
+	rm -rf api/data/profile/*
+	rm -rf client/src/assets/profil-*.png
 
 re: fclean all

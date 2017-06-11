@@ -14,7 +14,7 @@
   import homeLayout from './layout/Home.vue'
 
   export default {
-    name: '404',
+    name: 'Erreur',
     components: {
       homeLayout
     }
