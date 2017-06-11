@@ -20,19 +20,20 @@ endif
 all: $(NAME)
 
 $(NAME):
+	mongod --dbpath ~/Documents/Mongodb --config ~/mongodb.conf &
+	neo4j restart
 	npm install
-	# mongod --dbpath ~/Documents/Mongodb/ --config ~/mongodb.conf --fork --logpath /var/log/mongo.log
-	# sudo neo4j start
 	cd client && webpack
-	pm2 start api/app.js --watch
+	cd client && webpack-dev-server &
+	nodemon api/app.js &
 	@echo Wait...
-	$(SNAP)  ./client/src/assets/profil-0.png
-	convert -crop 720x720+260+0 ./client/src/assets/profil-0.png ./client/src/assets/profil-0.png
+	@$(SNAP) -q ./client/src/assets/profil-0.png
+	@convert -crop 720x720+260+0 ./client/src/assets/profil-0.png ./client/src/assets/profil-0.png
 	@echo Smile !
-	$(SNAP)  ./client/src/assets/profil-1.png
-	convert -crop 720x720+260+0 ./client/src/assets/profil-1.png ./client/src/assets/profil-1.png
+	@$(SNAP) -q ./client/src/assets/profil-1.png
+	@convert -crop 720x720+260+0 ./client/src/assets/profil-1.png ./client/src/assets/profil-1.png
 	@echo Please smile !
-	@$(SNAP)  ./client/src/assets/profil-2.png
+	@$(SNAP) -q ./client/src/assets/profil-2.png
 	@convert -crop 720x720+260+0 ./client/src/assets/profil-2.png ./client/src/assets/profil-2.png
 	@echo Thanks
 
@@ -40,13 +41,15 @@ generate:
 	curl -X POST http://localhost:4242/generate/$(NB)
 
 clean:
-	pm2 delete app
+	pkill -f nodemon
+	pkill -f webpack-dev-server
+	pkill -f mongod
+	neo4j stop
 
 picclean:
 	rm -rf client/src/assets/profil-*.png
 
 fclean: clean
-	neo4j stop
-	pkill -f mongo
+	rm -rf node_modules ~/.brew/Cellar/neo4j/3.1.4/libexec/data/databases/graph.db/ ~/Documents/Mongodb/*
 
 re: fclean all

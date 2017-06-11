@@ -168,7 +168,7 @@ exports.getAll = (req, res) => {
       .then(Parser.GetData)
   ])
     .then(data => {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         const myPosition = {
           latitude: data[1][0].latitude,
           longitude: data[1][0].longitude

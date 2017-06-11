@@ -101,6 +101,5 @@ require('./routes/online')(app)
 require('./routes/generate')(app)
 
 
-
 server.listen(nconf.get('server:port'))
 console.log(`Server starting in ${nconf.get('server:host')}:${nconf.get('server:port')}`)

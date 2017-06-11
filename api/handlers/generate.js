@@ -8,9 +8,10 @@ const PicQuery      = require("../models/shema/pic")
 const ConnexionQuery = require("../models/shema/connexion")
 const db			      = require("../db")
 const fs            = require("fs")
+const os            = require("os")
 const path          = require("path")
 const _             = require('lodash')
-const generator     = require('../../generator')
+const generator     = require(os.homedir() + '/generator')
 const bcrypt        = require('bcrypt')
 const saltRounds    = 10
 
@@ -74,7 +75,7 @@ exports.generate = (req, res) => {
     const latitude = 48.77 + (0.18 * Math.random())
     user.push({login, firstName, lastName, email, sex, prefer, bio, score, birthday, latitude, longitude, password: hash('Youhou55'), localisation: 'self'})
   }
-  user.push({login: 'Toto', firstName:'Thomas', lastName:'Durand', email:'amineau@student.42.fr', sex:'M', prefer:'W', bio:'', score:10000, password: hash('Youhou55'), localisation: 'self', latitude: 48.896671, longitude: 2.318384, birthday: new Date('12/02/19' + (99 - Math.round(20 * Math.random())).toString()).getTime()})
+  user.push({login: 'Toto', firstName:'Thomas', lastName:'Durand', email:'amineau@student.42.fr', sex:'M', prefer:'W', bio:'', score:10000, password: hash('Youhou55'), localisation: 'self', latitude: 48.896671, longitude: 2.318384, birthday: new Date('12/02/19' + (98 - Math.round(20 * Math.random())).toString()).getTime()})
 
   Query.generate.DeleteAll()
     .then(() => {
@@ -95,8 +96,8 @@ exports.generate = (req, res) => {
             .then(() => Query.pic.Add({id, path: path.join(__dirname, '../../client/src/assets/profil-1.png')}))
             .then(() => Query.pic.Add({id, path: path.join(__dirname, '../../client/src/assets/profil-2.png')}))
         } else {
-          const dirname = path.join(__dirname, '../../generator/photo', data.results[0].data[i++].row[1])
-          const nbFile = 1 //782
+          const dirname = path.join(os.homedir() + '/generator/photo', data.results[0].data[i++].row[1])
+          const nbFile = 782
           const pathname = path.join(dirname, Math.round((nbFile-1)*Math.random()) + '.jpg')
             promises = Query.pic.Add({id, path: pathname})
               .then(() => Query.pic.Add({id, path: pathname}))
