@@ -45,10 +45,6 @@ Vous devrez donc concevoir une application permettant à deux potentielles âmes
 
 La solution est développée avec Nodejs(express) et Vuejs, ainsi que la base de donnée graphique Neo4j et MongoDb.
 
-Pour installer toutes les dépendances npm:
-
-`npm install`
-
-Pour lancer le serveur et les bases de données:
+Pour lancer le projet:
 
 `make`
