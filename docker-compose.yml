@@ -1,0 +1,38 @@
+version: '3'
+services:
+    api:
+        build: api
+        links:
+            - neo4j
+            - mongo
+        ports: 
+            - 14242:4242
+        volumes:
+            - ./api/app:/app/src
+            - media:/app/media
+            - logs:/app/logs
+
+    client:
+        build: client
+        ports:
+            - 8080:8080
+        volumes:
+            - ./client/app:/app/src
+            - media:/app/media
+        stdin_open: true
+        tty: true
+
+    neo4j:
+        image: neo4j
+        ports:
+            - "17474:7474"
+            - "17687:7687"
+        volumes:
+            - ./db/neo4j/dbms:/data/dbms
+    mongo:
+        image: mongo
+        ports:
+            - "27017:27017"
+volumes:
+    media:
+    logs:

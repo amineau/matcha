@@ -1,6 +1,6 @@
 node_modules
-restrict.log
+logs
 .DS_Store
-photo
-profil-*.png
-data/profile/*
+media/*
+npm-debug.log
+dist

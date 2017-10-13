@@ -2,28 +2,36 @@ var path = require('path')
 var webpack = require('webpack')
 
 module.exports = {
-  // This is the "main" file which should include all other modules
   entry: [
-    './src/main.js'
+    './src/src/main.js'
   ],
-  // Where should the compiled file go?
   output: {
-    path: __dirname + '/dist',
-    filename: 'build.js'
+    path: path.join(__dirname, 'dist'),
+    filename: "build.js"    
   },
   module: {
-    unknownContextCritical: false,
-    exprContextCritical: false,
-    // Special compilation rules
     loaders: [
       {
        test: /\.js$/,
        loader: 'babel-loader',
-       exclude: /node_modules/
+       exclude: /node_modules/,
+       query:{
+         presets: ["env"]
+       }
       },
       {
-       test: /\.vue$/,
-       loader: 'vue-loader'
+        test: /\.scss$/,
+        loaders: ["css-loader", "sass-loader"]
+      },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
+        options: {
+          loaders: {
+              scss: ["vue-style-loader", "css-loader", "sass-loader"],
+              js: "babel-loader"
+          }
+        }
       }
     ]
   },
@@ -37,9 +45,11 @@ module.exports = {
   resolve: {
     alias: {
       vue: 'vue/dist/vue.js',
-      'jquery': path.resolve(__dirname, '../node_modules/jquery/dist/jquery.js')
+      'jquery': path.resolve(__dirname, 'node_modules/jquery/dist/jquery.js')
     }
   },
+  stats: {colors: true},
+  devtool: "cheap-module-source-map",
   plugins: [
     new webpack.ProvidePlugin({
       $: 'jquery',

@@ -59,6 +59,7 @@ exports.getProfil = (req, res) => {
 }
 
 exports.add = (req, res) => {
+  const nconf = req.app.get('nconf')
   const validate = {pic: new PicValidator(req.body)}
   const id = req.decoded.id
 
@@ -79,7 +80,7 @@ exports.add = (req, res) => {
   validate.pic.Parse([{name: 'base64'}])
     .then(data => {
       return new Promise((resolve, reject) => {
-        const pathname = path.join(__dirname, '../data/profile', id.toString())
+        const pathname = path.join(nconf.get('media:path'), id.toString())
         const filename = uuid.v4() + '.png'
         if (!fs.existsSync(pathname)) {
           fs.mkdirSync(pathname)

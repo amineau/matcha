@@ -63,8 +63,9 @@
         if (!res.body.success || !res.body.data.length) return this.$router.replace({name: 'dashBoard'})
         this.user = res.body.data[0]
         if (!this.user.base64) {
-          this.user.base64 = `src/assets/${this.user.sex}-silhouette.jpg`
+          this.user.base64 = `${CONFIG.STATIC_PATH}/assets/${this.user.sex}-silhouette.jpg`
         }
+        console.log(this.user.base64)
       })
       this.$options.sockets.chat = (data) => {
         if (data.recipientId === this.newAuth.decoded.id

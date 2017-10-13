@@ -19,13 +19,11 @@ nconf.env()
 nconf.file({file: path.join(__dirname, 'config/conf.json')})
 
 
-
 // app.use(morgan('dev'))
 app.use(bodyParser.json({limit: '50mb'}))
 	.use(bodyParser.urlencoded({limit: '50mb', extended: false}))
 	.use(passport.initialize())
 	.use(passport.session())
-	.use(express.static(__dirname + '/public'))
 	.use((req, res, next) => {
 		res.header("Access-Control-Allow-Origin", "*")
 		res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE")
@@ -39,9 +37,13 @@ app.use(bodyParser.json({limit: '50mb'}))
 	    const ipInfo = req.headers['x-forwarded-for'] ||
 	      req.connection.remoteAddress ||
 	      req.socket.remoteAddress ||
-	      req.connection.socket.remoteAddress
-
-	    fs.open(path.join(__dirname, 'logs', 'restrict.log'), 'a', (err, fd) => {
+		  req.connection.socket.remoteAddress
+		const pathLogs = nconf.get('logs:path')
+		const fileLogs = nconf.get('logs:file')
+		if (!fs.existsSync(pathLogs)) {
+			fs.mkdirSync(pathLogs)
+		}
+	    fs.open(path.join(pathLogs, fileLogs), 'a', (err, fd) => {
 	      if (err) throw err
 	      const buffer = `${new Date().toUTCString()} | id : ${id} | ${ipInfo} | ${req.method} ${req.originalUrl}\n`
 	      fs.write(fd, buffer, (err, written) => {

@@ -98,7 +98,7 @@
           this.markers = []
           this.peoples.forEach(e => {
             if (!e.base64) {
-              e.base64 = `src/assets/${e.sex}-silhouette.jpg`
+              e.base64 = `${CONFIG.STATIC_PATH}/assets/${e.sex}-silhouette.jpg`
             }
             this.markers.push({
               position: {

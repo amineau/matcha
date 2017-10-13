@@ -44,7 +44,7 @@
         if (!res.body.success) return;
         this.photos = res.body.data
         if (!this.photos.length) {
-          this.photos.push({base64: `src/assets/M-silhouette.jpg`, head: true, silhouette: true})
+          this.photos.push({base64: `${CONFIG.STATIC_PATH}/assets/M-silhouette.jpg`, head: true, silhouette: true})
         }
       })
     },

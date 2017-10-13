@@ -9,7 +9,7 @@
     <ul id='dropdown1' class='dropdown-content'>
       <li v-for="notif in notifs" :class="{'new': notif.link.notif}">
         <router-link :to="{name: notif.action==='CHAT'?'chat':'user', params: {id: notif.id}}"  class="valign-wrapper">
-          <img :src="notif.base64" width=50 height=50/><div>{{textNotif(notif)}}</div>
+          <img :src="photoNotif(notif)" width=50 height=50/><div>{{textNotif(notif)}}</div>
         </router-link>
       </li>
     </ul>
@@ -88,6 +88,12 @@
         } else if (notif.action === 'CHAT') {
           return `${notif.login} vous a envoyé un message`
         }
+      },
+      photoNotif (notif) {
+        if (notif.hasOwnProperty("base64")) {
+          return notif.base64;
+        }
+        return `${CONFIG.STATIC_PATH}/assets/${notif.sex}-silhouette.jpg`
       }
     },
     computed: {

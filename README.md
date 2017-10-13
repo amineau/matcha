@@ -47,4 +47,4 @@ La solution est développée avec Nodejs(express) et Vuejs, ainsi que la base de
 
 Pour lancer le projet:
 
-`make`
+`docker-compose up`

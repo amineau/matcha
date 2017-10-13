@@ -3,20 +3,27 @@
     "host": "localhost",
     "port": "4242"
   },
-  "domain": "http://localhost:8080/#/",
+  "domain": "http://192.168.99.100:80/#/",
   "neo4j": {
-    "host": "localhost",
-    "port": "7474",
-    "user": "xxxxxxxx",
-    "pass": "xxxxxxxx"
+    "host": "192.168.99.100",
+    "port": "17474",
+    "user": "matcha",
+    "pass": "42matcha42"
   },
   "mongo": {
-    "host": "localhost",
+    "host": "192.168.99.100",
     "port": "27017",
     "table": "matcha"
   },
+  "media": {
+    "path": "/media"
+  },
+  "logs": {
+    "path": "/logs",
+    "file": "restrict.log"
+  },
   "server": {
-    "host": "localhost",
+    "host": "192.168.99.100",
     "port": "4242"
   },
   "smtp": {
@@ -30,7 +37,7 @@
     "noReply": "Matcha <no-reply@matcha.com>"
   },
   "token": {
-    "secret": "xxxxxxxxxx",
+    "secret": "h6Oo6sNvmpJI1PU",
     "expires": 36000
   },
   "bcrypt": {

@@ -56,7 +56,7 @@
             let peoples = res.body.data
             peoples.forEach(f => {
               if (!f.base64) {
-                f.base64 = `src/assets/${f.sex}-silhouette.jpg`
+                f.base64 = `${CONFIG.STATIC_PATH}/assets/${f.sex}-silhouette.jpg`
               }
             })
             let found = false
