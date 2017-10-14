@@ -280,7 +280,6 @@ exports.signUp = (req, res) => {
       })
     }
     const showError = (err) => {
-        console.log(err)
         res.json({
             success: false,
             err: err.error
@@ -304,25 +303,25 @@ exports.signUp = (req, res) => {
             Query.GetPrivate({email: data.email}),
             Query.GetPrivate({login: data.login}),
           ])
-            .then(result => {
-              if (!_.isEmpty(result[0].results[0].data[0]))
-                return reject({
-                  error: {
-                    email: {message: 'L\'email existe déjà'}
-                  }
-                })
-              else if (!_.isEmpty(result[1].results[0].data[0]))
-                return reject({
-                  error: {
-                    login : {message: 'Le login existe déjà'}
-                  }
-                })
-              resolve(data)
+          .then(result => {
+            if (!_.isEmpty(result[0].results[0].data[0]))
+            return reject({
+              error: {
+                email: {message: 'L\'email existe déjà'}
+              }
             })
-          })
+            else if (!_.isEmpty(result[1].results[0].data[0]))
+            return reject({
+              error: {
+                login : {message: 'Le login existe déjà'}
+              }
+            })
+            resolve(data)
+          }).catch(err => console.log(err))
+        })
       })
-        .then(Query.Create)
-        .then(Parser.GetTrue)
+      .then(Query.Create)
+      .then(Parser.GetTrue)
         .then(showSuccess)
         .catch(showError)
 }

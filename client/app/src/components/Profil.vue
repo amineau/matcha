@@ -3,7 +3,7 @@
 
     <p>Mon compte</p>
 
-    <setPhoto :auth="auth"></setPhoto>
+    <setPhoto :auth="auth" :sex="sex"></setPhoto>
     <div class="collection">
       <a v-for="input in inputs" @click="input.edit = true" class="row collection-item">
         <div class="col s3">{{input.text}}</div>
@@ -46,6 +46,7 @@
       return {
         httpOption: {},
         id: 0,
+        sex: "",
         address: '',
         inputs: [{
           name: 'email',
@@ -140,6 +141,7 @@
         if (!res.body.success ) return null
         this.inputs.forEach(e => {
           if (res.body.data[0][e.name]) {
+            this.sex = res.body.data[0].sex
             if (e.options){
               e.options.forEach(i => {
                 if (i.name === res.body.data[0][e.name]) {

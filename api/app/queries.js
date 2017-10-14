@@ -1,14 +1,13 @@
 'use strict'
 
 const assert = require('assert')
-const {host, port, table} = require('./config/conf').mongo
 const MongoClient = require('mongodb').MongoClient
 const _ = require('lodash')
 
 module.exports = class Queries {
 
   constructor () {
-    this._txUrl = `mongodb://${host}:${port}/${table}`
+    this._txUrl = `mongodb://mongo:27017/matcha`
     this.Connect().then(collec => this._collection = collec)
     this._db = null
   }
@@ -16,7 +15,6 @@ module.exports = class Queries {
   Connect () {
     return new Promise ((resolve) => {
       MongoClient.connect(this._txUrl, (err, db) => {
-        console.log(err)
         assert.equal(null, err)
         this._db = db
         resolve(this._db.collection('chat'))

@@ -3,7 +3,7 @@
 const request = require('request')
 const db = require('./config/conf').neo4j
 
-const txUrl = `http://${db.user}:${db.pass}@${db.host}:${db.port}/db/data/transaction/commit`
+const txUrl = `http://${db.user}:${db.pass}@neo4j:7474/db/data/transaction/commit`
 
 exports.doDatabaseOperation = (query, params) => {
 	return new Promise(function (resolve, reject) {

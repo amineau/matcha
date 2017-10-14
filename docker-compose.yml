@@ -19,8 +19,6 @@ services:
         volumes:
             - ./client/app:/app/src
             - media:/app/media
-        stdin_open: true
-        tty: true
 
     neo4j:
         image: neo4j
