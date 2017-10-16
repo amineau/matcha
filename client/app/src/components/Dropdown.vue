@@ -18,7 +18,7 @@
 
 <script>
 
-  import CONFIG from '../../config/conf.json'
+  import config from '../../config'
   import _ from 'lodash'
 
   export default {
@@ -59,7 +59,7 @@
     },
     methods: {
       notifToFalse () {
-        this.$http.put(`${CONFIG.BASEURL_API}notif`, {}, this.auth().httpOption)
+        this.$http.put(`${config.api}notif`, {}, this.auth().httpOption)
           .then(res => {
             if (!res.body.success) return res.body.err
             this.notifCount = 0
@@ -67,7 +67,7 @@
       },
       loadNotifs (first = false) {
         this.notifCount = 0
-        this.$http.get(`${CONFIG.BASEURL_API}notif`, this.httpOption)
+        this.$http.get(`${config.api}notif`, this.httpOption)
           .then(res => {
             if (!res.body.success) return;
             res.body.data.forEach(e => e.link.notif ? this.notifCount++ : null)
@@ -93,7 +93,7 @@
         if (notif.hasOwnProperty("base64")) {
           return notif.base64;
         }
-        return `${CONFIG.STATIC_PATH}/assets/${notif.sex}-silhouette.jpg`
+        return `${config.static_path}/assets/${notif.sex}-silhouette.jpg`
       }
     },
     computed: {

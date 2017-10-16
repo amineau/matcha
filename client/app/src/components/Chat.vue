@@ -27,7 +27,7 @@
 
 <script>
 
-  import CONFIG from '../../config/conf.json'
+  import config from '../../config'
   import defaultLayout from './layout/Default.vue'
   import online from './button/Online.vue'
 
@@ -50,7 +50,7 @@
     created () {
       this.newAuth = this.auth()
       if (!this.newAuth.success) return;
-      this.$http.get(`${CONFIG.BASEURL_API}chat/${this.$route.params.id}`, this.newAuth.httpOption).then(res => {
+      this.$http.get(`${config.api}chat/${this.$route.params.id}`, this.newAuth.httpOption).then(res => {
         if (!res.body.success) return this.$router.replace({name: 'dashBoard'})
         this.chat = res.body.data
         $(function() {
@@ -59,11 +59,11 @@
         })
       })
       .then(() => this.$socket.emit('online', this.newAuth.decoded.id))
-      this.$http.get(`${CONFIG.BASEURL_API}user/id/${this.$route.params.id}`, this.newAuth.httpOption).then(res => {
+      this.$http.get(`${config.api}user/id/${this.$route.params.id}`, this.newAuth.httpOption).then(res => {
         if (!res.body.success || !res.body.data.length) return this.$router.replace({name: 'dashBoard'})
         this.user = res.body.data[0]
         if (!this.user.base64) {
-          this.user.base64 = `${CONFIG.STATIC_PATH}/assets/${this.user.sex}-silhouette.jpg`
+          this.user.base64 = `${config.static_path}/assets/${this.user.sex}-silhouette.jpg`
         }
         console.log(this.user.base64)
       })
@@ -83,7 +83,7 @@
         if (!this.input.value) return
         this.input.value = this.input.value.replace(/</g, "&lt;").replace(/>/g, "&gt;")
         this.chat.push({comment: this.input.value, sender: this.newAuth.decoded.id})
-        this.$http.post(`${CONFIG.BASEURL_API}chat/${this.$route.params.id}`, {comment: this.input.value}, this.newAuth.httpOption).then(res => {
+        this.$http.post(`${config.api}chat/${this.$route.params.id}`, {comment: this.input.value}, this.newAuth.httpOption).then(res => {
           if (!res.body.success) return this.$router.replace({name: 'dashBoard'})
         })
         this.input.value = null

@@ -11,6 +11,8 @@ services:
             - ./api/app:/app/src
             - media:/app/media
             - logs:/app/logs
+        environment:
+            - ipHost=192.168.99.100
 
     client:
         build: client
@@ -19,7 +21,9 @@ services:
         volumes:
             - ./client/app:/app/src
             - media:/app/media
-
+        environment:
+            - ipHost=192.168.99.100
+        
     neo4j:
         image: neo4j
         ports:
@@ -27,10 +31,12 @@ services:
             - "17687:7687"
         volumes:
             - ./db/neo4j/dbms:/data/dbms
+
     mongo:
         image: mongo
         ports:
             - "27017:27017"
+
 volumes:
     media:
     logs:

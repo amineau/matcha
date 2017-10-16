@@ -29,7 +29,7 @@
 
 <script>
 
-  import CONFIG from '../../../config/conf.json'
+  import config from '../../../config'
 
   export default {
     name: 'authLayout',

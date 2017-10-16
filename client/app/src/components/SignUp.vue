@@ -11,7 +11,7 @@
   import homeLayout from './layout/Home.vue'
   import formInputs from './Form.vue'
   import _ from 'lodash'
-  import CONFIG from '../../config/conf.json'
+  import config from '../../config'
 
   export default {
     name: 'signup',
@@ -79,7 +79,7 @@
       },
       submit (data) {
         return this.getPosition()
-        .then(coords => this.$http.post(`${CONFIG.BASEURL_API}auth/signup`,
+        .then(coords => this.$http.post(`${config.api}auth/signup`,
           _.merge(data, coords), {
             responseType: 'json'
           })
@@ -94,7 +94,7 @@
             })
             return this.errorNotif.display(3500)
           }
-          this.$http.post(`${CONFIG.BASEURL_API}auth/signin`, data, {
+          this.$http.post(`${config.api}auth/signin`, data, {
             responseType: 'json'
           }).then(res => {
             if (!res.body.success) return;

@@ -9,7 +9,7 @@
 
 <script>
 
-  import CONFIG from '../../../config/conf.json'
+  import config from '../../../config'
 
   export default {
     name: 'Online',
@@ -23,7 +23,7 @@
       }
     },
     created () {
-      this.$http.get(`${CONFIG.BASEURL_API}online/${this.id}`, this.httpOption)
+      this.$http.get(`${config.api}online/${this.id}`, this.httpOption)
         .then(res => {
           this.status = res.body.data.status
         })

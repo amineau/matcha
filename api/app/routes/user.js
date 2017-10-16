@@ -4,7 +4,6 @@ const user = require('../handlers/user')
 const restrict = require('../models/restrict')
 
 const passport      = require('passport')
-const conf          = require('../config/conf.json')
 
 module.exports = (app) => {
 

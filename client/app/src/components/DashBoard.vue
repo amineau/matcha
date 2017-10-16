@@ -45,7 +45,7 @@
   import googleMap from './Map.vue'
   import search from './Search.vue'
   import InfiniteLoading from 'vue-infinite-loading'
-  import CONFIG from '../../config/conf.json'
+  import config from '../../config'
 
   export default {
     name: 'DashBoard',
@@ -83,7 +83,7 @@
              vm.selected = e.currentTarget.value;
         })
       })
-      this.$http.get(`${CONFIG.BASEURL_API}users?distance=100&sort=${this.selected}&meaning=${this.meaning}`, this.httpOption)
+      this.$http.get(`${config.api}users?distance=100&sort=${this.selected}&meaning=${this.meaning}`, this.httpOption)
         .then(this.updatePeople)
         .then(() => {
           this.$socket.emit('online', this.id)
@@ -98,7 +98,7 @@
           this.markers = []
           this.peoples.forEach(e => {
             if (!e.base64) {
-              e.base64 = `${CONFIG.STATIC_PATH}/assets/${e.sex}-silhouette.jpg`
+              e.base64 = `${config.static_path}/assets/${e.sex}-silhouette.jpg`
             }
             this.markers.push({
               position: {

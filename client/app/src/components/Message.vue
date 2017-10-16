@@ -16,7 +16,7 @@
 
   import defaultLayout from './layout/Default.vue'
   import online from './button/Online.vue'
-  import CONFIG from '../../config/conf.json'
+  import config from '../../config'
 
   export default {
     name: 'Message',
@@ -36,7 +36,7 @@
       if (!auth.success) return;
       this.id = auth.decoded.id
       this.httpOption = auth.httpOption
-      this.$http.get(`${CONFIG.BASEURL_API}chat`, this.httpOption)
+      this.$http.get(`${config.api}chat`, this.httpOption)
         .then(res => {
           if (!res.body.success) return;
           this.messages = res.body.data
@@ -52,7 +52,7 @@
     methods: {
       getUser (message) {
         const id = message.users.find(e => e !== this.id)
-        return this.$http.get(`${CONFIG.BASEURL_API}user/id/${id}`, this.httpOption)
+        return this.$http.get(`${config.api}user/id/${id}`, this.httpOption)
           .then(res => {
             if (!res.body.success) return;
             this.$set(message, 'user', res.body.data[0])

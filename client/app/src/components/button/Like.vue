@@ -8,7 +8,7 @@
 
 <script>
 
-  import CONFIG from '../../../config/conf.json'
+  import config from '../../../config'
   import _ from 'lodash'
 
   export default {
@@ -19,7 +19,7 @@
     },
     methods: {
       liked () {
-        this.$http.post(`${CONFIG.BASEURL_API}${this.people.like?'un':''}like/${this.people.id}`, {}, this.httpOption)
+        this.$http.post(`${config.api}${this.people.like?'un':''}like/${this.people.id}`, {}, this.httpOption)
           .then(res => {
             if (!res.body.success) return;
             this.people.like = !this.people.like

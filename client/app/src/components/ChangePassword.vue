@@ -10,7 +10,7 @@
   import homeLayout from './layout/Home.vue'
   import formInputs from './Form.vue'
   import _ from 'lodash'
-  import CONFIG from '../../config/conf.json'
+  import config from '../../config'
 
   export default {
     name: 'changePassword',
@@ -29,7 +29,7 @@
       }
     },
     created() {
-      this.$http.get(`${CONFIG.BASEURL_API}user/public/linkPassword/${this.linkPassword}`)
+      this.$http.get(`${config.api}user/public/linkPassword/${this.linkPassword}`)
         .then(res => {
           if (!res.body.success || !res.body.data.length) return this.$router.replace({name: 'signin'})
           this.id = res.body.data[0].id
@@ -37,7 +37,7 @@
     },
     methods: {
       submit (data) {
-        return this.$http.post(`${CONFIG.BASEURL_API}auth/changepassword/${this.linkPassword}`, _.merge(data, {id: this.id}), {
+        return this.$http.post(`${config.api}auth/changepassword/${this.linkPassword}`, _.merge(data, {id: this.id}), {
           responseType: 'json'
         }).then(res => {
           if (!res.body.success) {

@@ -62,7 +62,7 @@
 <script>
 
   import dropdown from '../Dropdown.vue'
-  import CONFIG from '../../../config/conf.json'
+  import config from '../../../config'
 
   export default {
     name: 'layout',
@@ -112,7 +112,7 @@
       },
       setPosition (coords) {
         if (coords) {
-          this.$http.put(`${CONFIG.BASEURL_API}user/loc`, {
+          this.$http.put(`${config.api}user/loc`, {
             latitude: coords.latitude,
             longitude: coords.longitude
           }, this.httpOption).then(res => {

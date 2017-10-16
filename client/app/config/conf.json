@@ -1,7 +1,0 @@
-{
-  "BASEURL_API": "http://0.0.0.0:14242/",
-  "SECRET_TOKEN": "h6Oo6sNvmpJI1PU",
-  "KEY_API_GOOGLE": "AIzaSyD2lZ4PfsOHxiopvQH_7vCvp5_DwW0ee8k",
-  "MEDIA_PATH": "../../media",
-  "STATIC_PATH": "./src/static"
-}

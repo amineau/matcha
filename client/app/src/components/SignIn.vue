@@ -9,7 +9,7 @@
 
   import homeLayout from './layout/Home.vue'
   import formInputs from './Form.vue'
-  import CONFIG from '../../config/conf.json'
+  import config from '../../config'
 
   export default {
     name: 'signin',
@@ -33,7 +33,7 @@
     },
     methods: {
       submit (data) {
-        return this.$http.post(`${CONFIG.BASEURL_API}auth/signin`, data, {
+        return this.$http.post(`${config.api}auth/signin`, data, {
           responseType: 'json'
         }).then(res => {
           if (!res.body.success) return this.errorNotif.display(3500)

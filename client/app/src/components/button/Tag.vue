@@ -6,7 +6,7 @@
 
 <script>
 
-  import CONFIG from '../../../config/conf.json'
+  import config from '../../../config'
 
   export default {
     name: 'TagButton',
@@ -21,10 +21,10 @@
       const id = auth.decoded.id
       let promises = []
       if (this.init) {
-        promises.push(this.$http.get(`${CONFIG.BASEURL_API}tags/${id}`, auth.httpOption))
+        promises.push(this.$http.get(`${config.api}tags/${id}`, auth.httpOption))
       }
       if (this.autocomplete) {
-        promises.push(this.$http.get(`${CONFIG.BASEURL_API}tags`, auth.httpOption))
+        promises.push(this.$http.get(`${config.api}tags`, auth.httpOption))
       }
       Promise.all(promises).then((res) => {
         return new Promise((resolve) => {
@@ -53,10 +53,10 @@
           }
           if (vm.autocomplete && vm.init) {
             $('.chips').on('chip.add', function(e, chip){
-              vm.$http.post(`${CONFIG.BASEURL_API}tags/${chip.tag}`, {}, auth.httpOption)
+              vm.$http.post(`${config.api}tags/${chip.tag}`, {}, auth.httpOption)
             })
             $('.chips').on('chip.delete', function(e, chip){
-              vm.$http.delete(`${CONFIG.BASEURL_API}tags/${chip.tag}`, auth.httpOption)
+              vm.$http.delete(`${config.api}tags/${chip.tag}`, auth.httpOption)
             })
           }
         })

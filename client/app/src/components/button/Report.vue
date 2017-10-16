@@ -13,7 +13,7 @@
 
 <script>
 
-  import CONFIG from '../../../config/conf.json'
+  import config from '../../../config'
   import _ from 'lodash'
 
   export default {
@@ -24,7 +24,7 @@
     },
     methods: {
       reported () {
-        this.$http.post(`${CONFIG.BASEURL_API}report/${this.people.id}`, {}, this.httpOption)
+        this.$http.post(`${config.api}report/${this.people.id}`, {}, this.httpOption)
           .then(res => {
             if (!res.body.success) return;
             this.people.reported = !this.people.reported

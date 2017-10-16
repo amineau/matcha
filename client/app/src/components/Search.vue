@@ -17,7 +17,7 @@
 
   import tagbutton from './button/Tag.vue'
   import formInputs from './Form.vue'
-  import CONFIG from '../../config/conf.json'
+  import config from '../../config'
 
   export default {
     name: 'Search',
@@ -68,7 +68,7 @@
       const auth = this.auth()
       if (!auth.success) return;
       this.httpOption = auth.httpOption
-      this.$http.get(`${CONFIG.BASEURL_API}user/limits`, this.httpOption)
+      this.$http.get(`${config.api}user/limits`, this.httpOption)
         .then(res => {
           if (!res.body.success) return;
           const data = res.body.data[0]
@@ -82,7 +82,7 @@
     },
     methods: {
       search () {
-        return this.$http.get(`${CONFIG.BASEURL_API}users?${this.params.join('&')}`, this.httpOption)
+        return this.$http.get(`${config.api}users?${this.params.join('&')}`, this.httpOption)
           .then(this.update)
           .then(() => this.active=false)
       },

@@ -23,7 +23,7 @@
 
 <script>
 
-  import CONFIG from '../../config/conf.json'
+  import config from '../../config'
 
   export default {
     name: 'setPhoto',
@@ -41,11 +41,11 @@
       const auth = this.auth()
       if (!auth.success) return;
       this.httpOption = auth.httpOption
-      this.$http.get(`${CONFIG.BASEURL_API}pic/${auth.decoded.id}`, this.httpOption).then(res => {
+      this.$http.get(`${config.api}pic/${auth.decoded.id}`, this.httpOption).then(res => {
         if (!res.body.success) return;
         this.photos = res.body.data
         if (!this.photos.length) {
-          this.photos.push({base64: `${CONFIG.STATIC_PATH}/assets/${this.sex}-silhouette.jpg`, head: true, silhouette: true})
+          this.photos.push({base64: `${config.static_path}/assets/${this.sex}-silhouette.jpg`, head: true, silhouette: true})
         }
       })
     },
@@ -72,7 +72,7 @@
           octx.drawImage(image,(image.width - image.height)/2,0,image.height,image.height,0, 0, 640, 640)
           const base64 = canvas.toDataURL("image/png")
 
-          this.$http.post(`${CONFIG.BASEURL_API}pic`, {base64}, this.httpOption).then(res => {
+          this.$http.post(`${config.api}pic`, {base64}, this.httpOption).then(res => {
             if (!res.body.success || !res.body.data.length) return this.errorAddNotif.display(3500)
             const id = res.body.data[0].id
             if (this.photos.length === 1 && this.photos[0].silhouette) {
@@ -92,14 +92,14 @@
         reader.readAsDataURL(file)
       },
       deleteImage (id) {
-        this.$http.delete(`${CONFIG.BASEURL_API}pic/${id}`, this.httpOption).then(res => {
+        this.$http.delete(`${config.api}pic/${id}`, this.httpOption).then(res => {
           if (!res.body.success) return this.errorDeleteNotif.display(3500)
           this.photos = this.photos.filter(obj => obj.id !== id)
           this.successDeleteNotif.display(3500)
         })
       },
       profil (id) {
-        this.$http.put(`${CONFIG.BASEURL_API}pic/${id}`, {}, this.httpOption).then(res => {
+        this.$http.put(`${config.api}pic/${id}`, {}, this.httpOption).then(res => {
           if (!res.body.success) return;
           let index
           this.photos[0].head = false

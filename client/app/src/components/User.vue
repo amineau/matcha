@@ -57,7 +57,7 @@
   import report from './button/Report.vue'
   import online from './button/Online.vue'
   import defaultLayout from './layout/Default.vue'
-  import CONFIG from '../../config/conf.json'
+  import config from '../../config'
 
   export default {
     name: 'User',
@@ -78,31 +78,36 @@
       if (!auth.success) return;
       this.httpOption = auth.httpOption
       this.userId = auth.decoded.id
-      this.$http.get(`${CONFIG.BASEURL_API}user/id/${this.id}`, this.httpOption)
+      this.$http.get(`${config.api}user/id/${this.id}`, this.httpOption)
         .then(res => {
-          if (!res.body.success || _.isEmpty(res.body.data)) return Promise.reject(res.body.err)
-          this.user = res.body.data[0]
+          return new Promise((resolve, reject) => {
+            if (!res.body.success || _.isEmpty(res.body.data)) return reject(res.body.err)
+            this.user = res.body.data[0]
+            console.log("1 : ", this.user)
+            resolve()
+          })
         })
         .then(Promise.all([
-          this.$http.get(`${CONFIG.BASEURL_API}pic/${this.id}`, this.httpOption)
+          this.$http.get(`${config.api}pic/${this.id}`, this.httpOption)
             .then(res => {
               if (!res.body.success) return null
               this.photos = res.body.data
+              console.log("2 : ", this.user)
               if (!this.photos.length) {
-                this.photos.push({base64: `${CONFIG.STATIC_PATH}/assets/${this.user.sex}-silhouette.jpg`, head: true})
+                this.photos.push({base64: `${config.static_path}/assets/${this.user.sex}-silhouette.jpg`, head: true})
               }
               $(function() {
                 $('.materialboxed').materialbox()
               })
             }),
-          this.$http.get(`${CONFIG.BASEURL_API}tags/${this.id}`, this.httpOption)
+          this.$http.get(`${config.api}tags/${this.id}`, this.httpOption)
             .then(res => {
               if (!res.body.success) return null
               this.tags = res.body.data
               this.tags.forEach(e => {
                 this.$set(e, 'commun', false)
               })
-            }).then(() => this.$http.get(`${CONFIG.BASEURL_API}tags/${this.userId}`, this.httpOption).then(res => {
+            }).then(() => this.$http.get(`${config.api}tags/${this.userId}`, this.httpOption).then(res => {
               if (!res.body.success) return null
               res.body.data.forEach(t => {
                 this.tags.forEach(e => {
@@ -113,7 +118,7 @@
                 this.tags.sort((a,b) => b.commun - a.commun)
               })
             })),
-            this.$http.post(`${CONFIG.BASEURL_API}visit/${this.id}`, {}, this.httpOption).then(res => {
+            this.$http.post(`${config.api}visit/${this.id}`, {}, this.httpOption).then(res => {
               if (!res.body.success) return;
             })
         ]))

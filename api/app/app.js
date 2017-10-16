@@ -17,7 +17,7 @@ const Queries = require('./queries')
 
 nconf.env()
 nconf.file({file: path.join(__dirname, 'config/conf.json')})
-
+nconf.set('domain', `http://${process.env.ipHost}:8080/#/`)
 
 // app.use(morgan('dev'))
 app.use(bodyParser.json({limit: '50mb'}))

@@ -23,7 +23,7 @@
 
 <script>
 
-  import CONFIG from '../../config/conf.json'
+  import config from '../../config'
 
   export default {
     name: 'Map',
@@ -43,7 +43,7 @@
     created () {
       const auth = this.auth()
       if (!auth.success) return;
-      this.$http.get(`${CONFIG.BASEURL_API}user/id/${auth.decoded.id}`, auth.httpOption)
+      this.$http.get(`${config.api}user/id/${auth.decoded.id}`, auth.httpOption)
         .then(res => {
           if (!res.body.success) return;
           this.center = {

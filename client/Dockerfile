@@ -8,8 +8,8 @@ ADD package.json /app
 
 RUN npm install
 
-ADD webpack.config.js /app
 ADD index.html /app
+ADD webpack.config.js /app
 
 EXPOSE 8080
 

@@ -24,7 +24,7 @@
   import card from './Card.vue'
   import googleMap from './Map.vue'
   import search from './Search.vue'
-  import CONFIG from '../../config/conf.json'
+  import config from '../../config'
 
   export default {
     name: 'Followed',
@@ -50,13 +50,13 @@
     methods: {
       request (action) {
         this.action = action
-        return this.$http.get(`${CONFIG.BASEURL_API}users/${action}`, this.httpOption)
+        return this.$http.get(`${config.api}users/${action}`, this.httpOption)
           .then(res => {
             if (!res.body.success) return;
             let peoples = res.body.data
             peoples.forEach(f => {
               if (!f.base64) {
-                f.base64 = `${CONFIG.STATIC_PATH}/assets/${f.sex}-silhouette.jpg`
+                f.base64 = `${config.static_path}/assets/${f.sex}-silhouette.jpg`
               }
             })
             let found = false

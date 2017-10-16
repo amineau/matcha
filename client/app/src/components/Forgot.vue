@@ -9,7 +9,7 @@
 
   import homeLayout from './layout/Home.vue'
   import formInputs from './Form.vue'
-  import CONFIG from '../../config/conf.json'
+  import config from '../../config'
 
   export default {
     name: 'forgot',
@@ -27,7 +27,7 @@
     },
     methods: {
       submit (data) {
-        return this.$http.post(`${CONFIG.BASEURL_API}auth/forgotpassword`, data, {
+        return this.$http.post(`${config.api}auth/forgotpassword`, data, {
           responseType: 'json'
         }).then(res => {
           if (!res.body.success) {

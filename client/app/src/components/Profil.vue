@@ -38,7 +38,7 @@
   import setPhoto from './SetPhoto.vue'
   import tagbutton from './button/Tag.vue'
   import dateformat from 'dateformat'
-  import CONFIG from '../../config/conf.json'
+  import config from '../../config'
 
   export default {
     name: 'Profil',
@@ -46,7 +46,7 @@
       return {
         httpOption: {},
         id: 0,
-        sex: "",
+        sex: "M",
         address: '',
         inputs: [{
           name: 'email',
@@ -137,7 +137,7 @@
         this.$set(e, 'value', null)
         this.$set(e, 'edit', false)
       })
-      this.$http.get(`${CONFIG.BASEURL_API}user/id/${this.id}`, this.httpOption).then(res => {
+      this.$http.get(`${config.api}user/id/${this.id}`, this.httpOption).then(res => {
         if (!res.body.success ) return null
         this.inputs.forEach(e => {
           if (res.body.data[0][e.name]) {
@@ -169,7 +169,7 @@
     },
     methods: {
       submit (data) {
-        return this.$http.put(`${CONFIG.BASEURL_API}user`, data, this.httpOption)
+        return this.$http.put(`${config.api}user`, data, this.httpOption)
           .then(res => {
             if (!res.body.success) {
               this.inputs.forEach(n => {
@@ -196,7 +196,7 @@
           })
       },
       submitPassword (data) {
-        return this.$http.put(`${CONFIG.BASEURL_API}user/password`, data, this.httpOption)
+        return this.$http.put(`${config.api}user/password`, data, this.httpOption)
           .then(res => {
             if (!res.body.success) {
               this.password.forEach(n => {

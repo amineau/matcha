@@ -6,7 +6,7 @@
 
 <script>
 
-  import CONFIG from '../config/conf.json'
+  import config from '../config'
   import jwt from 'jsonwebtoken'
   import 'materialize-css'
 
@@ -16,7 +16,7 @@
       checkToken () {
         try {
           const token = this.$cookie.get('token')
-          let decoded = jwt.verify(token, CONFIG.SECRET_TOKEN)
+          let decoded = jwt.verify(token, config.secret_token)
           delete decoded.iat
           delete decoded.exp
           return {success: true, decoded,
