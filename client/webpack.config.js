@@ -4,7 +4,7 @@ var webpack = require('webpack')
 
 module.exports = {
     entry: [
-      './src/src/main.js'
+      './app/src/main.js'
     ],
     output: {
       path: path.join(__dirname, 'dist'),
@@ -58,10 +58,11 @@ module.exports = {
         'window.jQuery': 'jquery',
         jQuery: 'jquery'
       }),
-      new WEBPACK.DefinePlugin({
+      new webpack.DefinePlugin({
         'process.env': {
-          'api': `http://${process.env.ipHost}:14242/`
-        }
+          'NODE_ENV': '"production"'
+        },
+        API_URL: `"${process.env.ipHost}"`
       })
     ]
 }
