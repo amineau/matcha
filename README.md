@@ -1,54 +1,33 @@
 # Matcha
-## Projet Matcha | Projet Web | Tier 2 | Ecole 42
-### Consigne:<br>
-Pour ce projet, vous êtes libres d’utiliser le langage de votre choix.<br>
-Vous pouvez utiliser un micro-framework, et toutes les librairies du monde pour ce
-projet.<br>
-On considerera qu’un “micro-framework” a un routeur, et éventuellement du templating,
-mais pas d’ORM, de validateurs ou de gestion de comptes utilisateurs. Tant que
-vous respectez ces contraintes, vous êtes libre d’utiliser celui qui vous plaira.<br><br>
-Si vous avez besoin d’inspiration, on suggérera, pour les principaux languages :<br>
+## 42 School Projet | Web Branch | Tier 2
 
-* Sinatra pour Ruby
-* Express pour Node ("oui, nous le considérons comme un micro-framework")
-* Flask pour Python
-* Scalatra pour Scala
-* Slim pour PHP ("Silex n’est pas autorisé en raison de l’intégration de Doctrine")
-* Nickel pour Rust
-* Goji pour Golang
-* Spark pour Java
-* Crow pour C++
+Matcha is the second [project](https://github.com/amineau/matcha/blob/master/matcha.fr.pdf) in the web branch, this is a free-langage project with some restrictions : no ORM, validator, user manager allowed.
 
-Vous êtes libre d’utiliser le serveur web de votre choix, que ce soit Apache, Nginx ou
-même un built-in web server.<br><br>
-L’ensemble de votre application devra être au minimum compatible sur Firefox (>=
-41) et Chrome (>= 46). <br><br>
-Votre site doit avoir une mise en page décente : c’est à dire au moins un header, une
-section principale et un footer. <br><br>
-Votre site devra être présentable sur mobile, et garder une mise en page acceptable
-sur de petites résolutions.<br><br>
-Tous vos formulaires doivent avoir des validations correctes, et l’ensemble de votre
-site devra être sécurisé. Ce point est obligatoire et sera vérifié longuement en soutenance.
-Pour vous faire une petite idée, voici quelques éléments qui ne sont pas considérés comme
-sécurisés :<br>
+### Features
 
-* Avoir des mots de passe “en clair” dans une base de données
-* Pouvoir injecter du code HTML ou JavaScript “utilisateur” dans des variables mal protégées
-* Pouvoir uploader du contenu indésirable
-* Pouvoir modifier une requête SQL
+  - User connection
+  - User profile
+  - Geolocalisation
+  - Research user
+  - Real time information (connection and notification)
+  - Real time chat
 
-## Résumé
-Vous devrez donc concevoir une application permettant à deux potentielles âmes soeurs de se rencontrer, de l’inscription au contact final.
-<br><br>
+### Framework
 
-## Solution
+I used [NodeJs](https://nodejs.org/en/) with [express](https://expressjs.com/) for backend, the framework [VueJS](https://vuejs.org/) for frontend along with [Materialize](http://materializecss.com/).
+The principal database is the graph database [Neo4j](https://neo4j.com/) that manage the user accounts, user connections and notifications.
+Help by [Mongodb](https://www.mongodb.com/) and [socket.io](https://socket.io/) for the chat management. 
 
-La solution est développée avec Nodejs(express) et Vuejs, ainsi que la base de donnée graphique Neo4j et MongoDb.
+### Running
 
-Pour lancer le projet:
+For run, edit in [docker-compose.yml](https://github.com/amineau/matcha/blob/master/docker-compose.yml) your Ip Host for Docker.
 
-`docker-compose up`
+Then you can launch containers with :
+```bash
+$ docker-compose up
+```
+The application is available at http://[DOCKER_IP]:8080.
 
-App   => http://[DOCKER_IP]:8080
+### Demo
 
-Neo4j => http://[DOCKER_IP]:17474
+Here is an online [demo](http://45.55.174.239:8080)
