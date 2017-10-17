@@ -1,7 +1,7 @@
 # Matcha
 ## 42 School Projet | Web Branch | Tier 2
 
-Matcha is the second [project](https://github.com/amineau/matcha/blob/master/matcha.fr.pdf) in the web branch, this is a free-langage project with some restrictions : no ORM, validator, user manager allowed.
+Matcha, a Dating WebSite, is the second [project](https://github.com/amineau/matcha/blob/master/matcha.fr.pdf) in the web branch, this is a free-langage project with some restrictions : no ORM, validator, user manager allowed.
 
 ### Features
 
