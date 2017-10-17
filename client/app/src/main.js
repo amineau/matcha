@@ -17,6 +17,8 @@ Vue.use(VueGoogleMaps, {
   }
 })
 
+console.log(API_URL)
+
 new Vue({
   el: '#app',
   router,
