@@ -83,45 +83,45 @@
           return new Promise((resolve, reject) => {
             if (!res.body.success || _.isEmpty(res.body.data)) return reject(res.body.err)
             this.user = res.body.data[0]
-            console.log("1 : ", this.user)
             resolve()
           })
         })
-        .then(Promise.all([
-          this.$http.get(`${config.api}pic/${this.id}`, this.httpOption)
-            .then(res => {
-              if (!res.body.success) return null
-              this.photos = res.body.data
-              console.log("2 : ", this.user)
-              if (!this.photos.length) {
-                this.photos.push({base64: `${config.static_path}/assets/${this.user.sex}-silhouette.jpg`, head: true})
-              }
-              $(function() {
-                $('.materialboxed').materialbox()
-              })
-            }),
-          this.$http.get(`${config.api}tags/${this.id}`, this.httpOption)
-            .then(res => {
-              if (!res.body.success) return null
-              this.tags = res.body.data
-              this.tags.forEach(e => {
-                this.$set(e, 'commun', false)
-              })
-            }).then(() => this.$http.get(`${config.api}tags/${this.userId}`, this.httpOption).then(res => {
-              if (!res.body.success) return null
-              res.body.data.forEach(t => {
-                this.tags.forEach(e => {
-                  if (t.name === e.name) {
-                    e.commun = true
-                  }
+        .then(() => {
+          return Promise.all([
+            this.$http.get(`${config.api}pic/${this.id}`, this.httpOption)
+              .then(res => {
+                if (!res.body.success) return null
+                this.photos = res.body.data
+                if (!this.photos.length) {
+                  this.photos.push({base64: `${config.static_path}/assets/${this.user.sex}-silhouette.jpg`, head: true})
+                }
+                $(function() {
+                  $('.materialboxed').materialbox()
                 })
-                this.tags.sort((a,b) => b.commun - a.commun)
+              }),
+            this.$http.get(`${config.api}tags/${this.id}`, this.httpOption)
+              .then(res => {
+                if (!res.body.success) return null
+                this.tags = res.body.data
+                this.tags.forEach(e => {
+                  this.$set(e, 'commun', false)
+                })
+              }).then(() => this.$http.get(`${config.api}tags/${this.userId}`, this.httpOption).then(res => {
+                if (!res.body.success) return null
+                res.body.data.forEach(t => {
+                  this.tags.forEach(e => {
+                    if (t.name === e.name) {
+                      e.commun = true
+                    }
+                  })
+                  this.tags.sort((a,b) => b.commun - a.commun)
+                })
+              })),
+              this.$http.post(`${config.api}visit/${this.id}`, {}, this.httpOption).then(res => {
+                if (!res.body.success) return;
               })
-            })),
-            this.$http.post(`${config.api}visit/${this.id}`, {}, this.httpOption).then(res => {
-              if (!res.body.success) return;
-            })
-        ]))
+          ])
+        })
         .then(() => this.ready = true)
         .catch(() => {
           this.ready = true

@@ -12,7 +12,7 @@ services:
             - media:/app/media
             - logs:/app/logs
         environment:
-            - ipHost=0.0.0.0
+            - ipHost=XX.XX.XX.XX
 
     client:
         build: client
@@ -22,7 +22,7 @@ services:
             - ./client/app:/app/src
             - media:/app/media
         environment:
-            - ipHost=0.0.0.0
+            - ipHost=XX.XX.XX.XX
         
     neo4j:
         image: neo4j
