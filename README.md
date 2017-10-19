@@ -30,4 +30,4 @@ The application is available at http://[DOCKER_IP]:8080.
 
 ### Demo
 
-Here is an online [demo](http://45.55.174.239:8080)
+Here is an online [demo](http://54.37.11.129:8080)
