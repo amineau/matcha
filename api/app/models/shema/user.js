@@ -96,7 +96,7 @@ module.exports = class UserQuery {
        const query =
            `MATCH (u: User)
             WHERE ${toWhere.join(' AND ')}
-            RETURN id(u) as id, u as all`
+            RETURN id(u) as id, u.login as login, u.firstName as firstName, u.email as email`
 
         db.doDatabaseOperation(query, where)
           .then(data => resolve(data))
