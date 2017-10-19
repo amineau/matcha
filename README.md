@@ -26,7 +26,7 @@ Then you can launch containers with :
 ```bash
 $ docker-compose up
 ```
-The application is available at http://[DOCKER_IP]:8080.
+The application is available at http://[HOST]:8080.
 
 ### Demo
 
