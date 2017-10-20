@@ -30,4 +30,4 @@ The application is available at http://[HOST]:8080.
 
 ### Demo
 
-Here is an online [demo](http://machta.amineau.me)
+Here is an online [demo](http://matcha.amineau.me)
